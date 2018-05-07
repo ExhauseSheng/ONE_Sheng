@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,11 +31,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
     private Thread mThread;     //线程
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");   //将原本的标题栏清空
+        setSupportActionBar(toolbar);
 
         mHandler = new MyHandler(this);
         //配置轮播图ViewPager
