@@ -3,9 +3,15 @@ package com.sheng.one_sheng.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,15 +37,31 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
     private Thread mThread;     //线程
-    private Toolbar toolbar;
+    private Toolbar toolbar;    //定制toolbar
+    private DrawerLayout mDrawerLayout;     //滑动菜单布局
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");   //将原本的标题栏清空
+        toolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
         setSupportActionBar(toolbar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);      //显示菜单按钮
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);               //显示菜单图片
+        }
+        navView.setCheckedItem(R.id.nav_home);  //首页菜单默认选中
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        });
 
         mHandler = new MyHandler(this);
         //配置轮播图ViewPager
@@ -66,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         ImageView view2 = new ImageView(this);
         view2.setImageResource(R.mipmap.pic2);
 
-        view0.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        view0.setScaleType(ImageView.ScaleType.CENTER_CROP);    //设置缩进方式
         view1.setScaleType(ImageView.ScaleType.CENTER_CROP);
         view2.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
@@ -75,6 +97,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         mItems.add(view2);
     }
 
+    // 菜单按钮监听事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);      //打开滑动菜单
+        }
+        return true;
+    }
+
+    // 设置4个小点
     private void setBottomIndicator(){
         //获取指示器（下面三个小点）
         mBottomLiner = (LinearLayout) findViewById(R.id.live_indicator);

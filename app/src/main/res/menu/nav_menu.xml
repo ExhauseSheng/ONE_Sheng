@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <!--single表示所有的菜单只能够单选-->
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/nav_home"
+            android:title="首  页"/>
+        <item
+            android:id="@+id/nav_paper"
+            android:icon="@drawable/nav_paper"
+            android:title="图  文"/>
+        <item
+            android:id="@+id/nav_read"
+            android:icon="@drawable/nav_read"
+            android:title="阅  读"/>
+        <item
+            android:id="@+id/nav_music"
+            android:icon="@drawable/nav_music"
+            android:title="音  乐"/>
+        <item
+            android:id="@+id/nav_movie"
+            android:icon="@drawable/nav_movie"
+            android:title="影  视"/>
+
+    </group>
+
+</menu>
