@@ -10,9 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
-            android:label="ONE   IS   ALL">
-        </activity>
-
+            android:label="ONE   IS   ALL" />
         <activity android:name=".activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.ReadActivity" />
+        <activity android:name=".activity.MovieActivity" />
+        <activity android:name=".activity.MusicActivity" />
+        <activity android:name=".activity.PaperActivity" />
+        <activity android:name=".activity.AuthorActivity"></activity>
     </application>
 
 </manifest>

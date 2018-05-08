@@ -7,36 +7,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--用ToolBar代替了ActionBar-->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleMarginTop="15dp"
-            app:titleMarginBottom="30dp"
-            app:theme="@style/AppTheme">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!--用ToolBar代替了ActionBar-->
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:text="ONE     IS     ALL"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:minHeight="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:titleMarginTop="15dp"
+                app:titleMarginBottom="30dp"
+                app:theme="@style/AppTheme">
 
-        </android.support.v7.widget.Toolbar>
-        <!--把轮播图片的布局插进此布局-->
-        <include layout="@layout/shuffling_pic"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:text="ONE     IS     ALL"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-    </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+            <!--把轮播图片的布局插进此布局-->
+            <include layout="@layout/shuffling_pic"/>
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
