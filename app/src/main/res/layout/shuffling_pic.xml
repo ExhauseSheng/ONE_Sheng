@@ -11,15 +11,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="340dp">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="220dp">
             <!--轮播图位置-->
             <android.support.v4.view.ViewPager
                 android:id="@+id/live_view_pager"
+                android:gravity="top|center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
             <!--右小角小圆点-->

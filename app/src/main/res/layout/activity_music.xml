@@ -39,14 +39,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/music_image"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/nav_icon"
-            android:layout_gravity="top|center"
-            android:layout_marginTop="10dp"/>
-
         <include layout="@layout/layout_detail_song"/>
 
         <include layout="@layout/layout_detail_head"/>

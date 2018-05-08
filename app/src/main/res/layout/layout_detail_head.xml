@@ -39,8 +39,8 @@
             android:id="@+id/tv_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#222"
-            android:textSize="18sp"
+            android:textColor="#aaa"
+            android:textSize="15sp"
             tools:text="文 / Sheng、"/>
 
     </RelativeLayout>

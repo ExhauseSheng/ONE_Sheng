@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -38,10 +39,34 @@
                     android:textStyle="bold" />
 
             </android.support.v7.widget.Toolbar>
-            <!--把轮播图片的布局插进此布局-->
-            <include layout="@layout/shuffling_pic"/>
 
-        </RelativeLayout>
+            <android.support.v4.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/toolbar">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/shuffling_pic"/>
+
+                        <include layout="@layout/layout_card_paper"/>
+
+                        <include layout="@layout/layout_card_read"/>
+
+                        <include layout="@layout/layout_card_music"/>
+
+                        <include layout="@layout/layout_card_movie"/>
+
+                    </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
+
+
+        </LinearLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
