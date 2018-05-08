@@ -19,7 +19,7 @@
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            tools:text="-  ONE  STORY  -"/>
+            android:text="-  ONE  STORY  -"/>
 
         <include layout="@layout/layout_detail_head"/>
 

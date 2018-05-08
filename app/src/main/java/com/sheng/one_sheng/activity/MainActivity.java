@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,6 +63,26 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.nav_paper:
+                        Intent intentPaper = new Intent(MainActivity.this, PaperActivity.class);
+                        startActivity(intentPaper);
+                        break;
+                    case R.id.nav_read:
+                        Intent intentRead = new Intent(MainActivity.this, ReadActivity.class);
+                        startActivity(intentRead);
+                        break;
+                    case R.id.nav_music:
+                        Intent intentMusic = new Intent(MainActivity.this, MusicActivity.class);
+                        startActivity(intentMusic);
+                        break;
+                    case R.id.nav_movie:
+                        Intent intentMovie = new Intent(MainActivity.this, MovieActivity.class);
+                        startActivity(intentMovie);
+                        break;
+                    default:
+                        break;
+                }
                 mDrawerLayout.closeDrawers();
                 return true;
             }
