@@ -29,7 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener
 {
     public static final int VIEW_PAGER_DELAY = 3500;       //睡眠3.5s
     private MyPagerAdapter mAdapter;
@@ -49,9 +49,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
-        setSupportActionBar(toolbar);
+        setToolbar();
+        changeStatusBar();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         ActionBar actionBar = getSupportActionBar();
@@ -87,19 +86,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 return true;
             }
         });
-        //更改系统状态栏颜色，更改为黑色
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.BLACK);
-        }
 
         mHandler = new MyHandler(this);
         //配置轮播图ViewPager
         mViewPager = (ViewPager) findViewById(R.id.live_view_pager);
         mItems = new ArrayList<>();
-        mAdapter = new MyPagerAdapter(mItems, this);
+        mAdapter = new MyPagerAdapter(mItems, this);    //把图片集传进去
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOnTouchListener(this);
         mViewPager.addOnPageChangeListener(this);
@@ -229,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     //为防止内存泄漏，声明自己的Handler并弱引用Activity
     private static class MyHandler extends Handler{
+
+//        用一个WeakReference管理Activity与Handler通信
         private WeakReference<MainActivity> mWeakReference;
 
         public MyHandler(MainActivity activity){

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import com.sheng.one_sheng.R;
 
-public class StartActivity extends AppCompatActivity {
+public class StartActivity extends BaseActivity {
 
     private ImageView iv_start;
 

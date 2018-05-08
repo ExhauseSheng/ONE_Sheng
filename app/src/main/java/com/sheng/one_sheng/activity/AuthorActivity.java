@@ -5,11 +5,13 @@ import android.os.Bundle;
 
 import com.sheng.one_sheng.R;
 
-public class AuthorActivity extends AppCompatActivity {
+public class AuthorActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_author);
+        setToolbar();
+        changeStatusBar();
     }
 }
