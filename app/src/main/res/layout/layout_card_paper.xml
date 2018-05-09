@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardCornerRadius="4dp">
+    android:layout_margin="10dp"
+    app:cardCornerRadius="15dp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -14,12 +14,13 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/paper_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="-  插  画  -"/>
+            android:text="-  VOL.1529  -"/>
 
         <include layout="@layout/layout_detail_paper"/>
 
