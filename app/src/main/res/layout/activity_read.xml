@@ -29,29 +29,14 @@
 
     </android.support.v7.widget.Toolbar>
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_bar"
-            android:layout_below="@+id/toolbar">
+    <ListView
+        android:id="@+id/read_list_view"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <include layout="@layout/layout_detail_head"/>
-
-                <include layout="@layout/layout_detail_content"/>
-
-            </LinearLayout>
-
-        </ScrollView>
-
-        <include
-            layout="@layout/layout_detail_bottombar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"/>
+    </ListView>
 
 </RelativeLayout>

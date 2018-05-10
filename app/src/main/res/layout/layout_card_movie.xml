@@ -42,8 +42,6 @@
             android:lineSpacingExtra="7dp"
             tools:text="忍耐消融，觉得终有一天自己会被磨成珍珠，但到头来多是变成"/>
 
-        <include layout="@layout/layout_detail_bottombar"/>
-
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
