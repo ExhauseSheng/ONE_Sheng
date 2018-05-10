@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -9,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,6 +44,13 @@ public class PaperActivity extends BaseActivity {
                 (PaperActivity.this, R.layout.layout_card_paper, paperList);
         ListView listView = (ListView) findViewById(R.id.paper_list_view);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(PaperActivity.this, AuthorActivity.class);
+                startActivity(intent);
+            }
+        });
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮

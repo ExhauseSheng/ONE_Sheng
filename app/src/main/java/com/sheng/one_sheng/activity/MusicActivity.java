@@ -1,8 +1,11 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
@@ -28,6 +31,13 @@ public class MusicActivity extends BaseActivity {
                 (MusicActivity.this, R.layout.layout_card_music, musicList);
         ListView listView = (ListView) findViewById(R.id.music_list_view);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MusicActivity.this, AuthorActivity.class);
+                startActivity(intent);
+            }
+        });
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮

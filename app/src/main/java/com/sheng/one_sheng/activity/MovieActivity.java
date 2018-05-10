@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
@@ -7,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
@@ -36,6 +39,14 @@ public class MovieActivity extends BaseActivity {
                 (MovieActivity.this, R.layout.layout_card_movie, movieList);
         ListView listView = (ListView) findViewById(R.id.movie_list_view);
         listView.setAdapter(adapter);
+        //给ListView设置监听事件
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MovieActivity.this, AuthorActivity.class);
+                startActivity(intent);
+            }
+        });
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮

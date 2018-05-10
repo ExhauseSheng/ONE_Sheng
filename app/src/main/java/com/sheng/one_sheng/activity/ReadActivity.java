@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
@@ -7,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
@@ -34,6 +37,14 @@ public class ReadActivity extends BaseActivity {
                 (ReadActivity.this, R.layout.layout_card_read, readList);
         ListView listView = (ListView) findViewById(R.id.read_list_view);
         listView.setAdapter(adapter);
+        //给listView的每一项做监听
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ReadActivity.this, AuthorActivity.class);
+                startActivity(intent);
+            }
+        });
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮

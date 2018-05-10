@@ -4,8 +4,10 @@ package com.sheng.one_sheng.activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -52,7 +54,7 @@ public class BaseActivity extends AppCompatActivity     //作为所有活动的�
         }
     }
 
-    //设置toolbar，代替AvtionBar
+    //设置toolbar，代替AvtionBar，并添加返回按钮
     protected void setToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
