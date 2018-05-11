@@ -20,7 +20,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="12dp"
-        android:src="@drawable/comment_like"/>
+        android:src="@drawable/ic_like"/>
 
     <TextView
         android:id="@+id/tv_like_num"
@@ -40,7 +40,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="12dp"
         android:layout_toRightOf="@id/tv_like_num"
-        android:src="@drawable/share"/>
+        android:src="@drawable/ic_share"/>
 
     <TextView
         android:id="@+id/tv_share_num"
@@ -60,7 +60,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="12dp"
         android:layout_toRightOf="@id/tv_share_num"
-        android:src="@drawable/comment"/>
+        android:src="@drawable/ic_comment"/>
 
     <TextView
         android:id="@+id/tv_comment_num"

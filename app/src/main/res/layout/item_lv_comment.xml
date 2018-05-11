@@ -95,7 +95,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="250dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/comment"/>
+        android:src="@drawable/ic_comment"/>
 
     <ImageView
         android:id="@+id/iv_like"
@@ -106,7 +106,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/iv_comment"
-        android:src="@drawable/comment_like"/>
+        android:src="@drawable/ic_like"/>
 
     <TextView
         android:id="@+id/tv_like_num"

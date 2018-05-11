@@ -12,8 +12,8 @@ public class Movie {
 
     private int id;                  //文章id号
     private String title;            //文章标题
-    private String forward;          //文章引言
-    private int itemId;               //文章详细id号,获取单个文章内容时使用
+    private String forward;          //文章引言=summary
+    private int itemId;               //文章详细id号,获取单个文章内容时使用=movie_id
     private String imageUrl;          //图片Url
     private int likeCount;            //收藏数量
     private String updateDate;         //时间
@@ -22,7 +22,8 @@ public class Movie {
     private int fansTotal;       //粉丝数量
     private String subTitle;           //电影名称
     private int count;                 //数组size
-    private List<data> dataList;       //数据集合
+    private int dataId;                 //对应数据集的id
+    private int praiseNum;              //点赞数量
 
     public int getId() {
         return id;
@@ -120,11 +121,19 @@ public class Movie {
         this.count = count;
     }
 
-    public List<data> getDataList() {
-        return dataList;
+    public int getDataId() {
+        return dataId;
     }
 
-    public void setDataList(List<data> dataList) {
-        this.dataList = dataList;
+    public void setDataId(int dataId) {
+        this.dataId = dataId;
+    }
+
+    public int getPraiseNum() {
+        return praiseNum;
+    }
+
+    public void setPraiseNum(int praiseNum) {
+        this.praiseNum = praiseNum;
     }
 }

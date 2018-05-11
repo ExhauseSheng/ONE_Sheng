@@ -8,18 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class data {
 
-    public int id;
+
     public int movieId;
-    public String title;
     public String content;
-    public String inputDate;
-    public String summary;
-
-    public class user {
-
-        public String userName;
-        public String desc;
-        public int fansTotal;
-
-    }
 }
