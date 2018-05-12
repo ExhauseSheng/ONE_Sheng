@@ -27,10 +27,10 @@ public class HttpUtil {
                     URL url = new URL(address);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    connection.setDoInput(true);
-                    connection.setDoOutput(true);
+//                    connection.setConnectTimeout(8000);
+//                    connection.setReadTimeout(8000);
+//                    connection.setDoInput(true);
+//                    connection.setDoOutput(true);
                     InputStream in = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
@@ -38,9 +38,9 @@ public class HttpUtil {
                     while ((line = reader.readLine()) != null){
                         response.append(line);
                     }
-                    Log.d("PaperActivity", response.toString());
                     if (listener != null){
                         //回调onFinish()方法
+                        Log.d("HttpUtil", response.toString());
                         listener.onFinish(response.toString());
                     }
                 }catch (Exception e){

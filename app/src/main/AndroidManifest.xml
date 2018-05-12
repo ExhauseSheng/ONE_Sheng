@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sheng.one_sheng">
 
-    <!--添加网络权限-->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application

@@ -1,9 +1,6 @@
 package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +28,6 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         resourceId = textViewResoureId;
     }
 
-    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Paper paper = getItem(position);    //获取当前项的Paper实例

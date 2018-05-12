@@ -40,26 +40,46 @@ public class Utilty {
      * 将返回的JSON数据解析成Paper实体类
      */
     public static Paper handlePaperDetailResponse(String response) {
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            JSONObject paperContent = jsonObject.getJSONObject("data");
-            Paper paper = new Paper();
-            paper.setId(paperContent.getInt("hpcontent_id"));
-//            paper.setId(R.drawable.nav_icon_another);
-            paper.setTitle(paperContent.getString("hp_title"));
-            paper.setImageUrl(paperContent.getString("hp_img_url"));
-            paper.setImgUrlOriginal(paperContent.getString("hp_img_origin_url"));
-            paper.setContent(paperContent.getString("hp_content"));
-            paper.setAuthorInfo(paperContent.getString("hp_author"));
-            paper.setImgAuthor(paperContent.getString("image_authors"));
-            paper.setTextAuthor(paperContent.getString("text_authors"));
-            paper.setUpdateDate(paperContent.getString("last_update_date"));
-            paper.setPraiseNum(paperContent.getInt("praisenum"));
-            paper.setShareNum(paperContent.getInt("sharenum"));
-            paper.setCommentNum(paperContent.getInt("commentnum"));
-            return paper;
-        }catch (Exception e){
-            e.printStackTrace();
+        //判断response是否为空
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    JSONObject paperContent = jsonObject.getJSONObject("data");
+                    //获取数据
+                    String paperId = paperContent.getString("hpcontent_id");
+                    String title = paperContent.getString("hp_title");
+                    String imageUrl = paperContent.getString("hp_img_url");
+                    String imageUrlOriginal = paperContent.getString("hp_img_original_url");
+                    String content = paperContent.getString("hp_content");
+                    String authorName = paperContent.getString("hp_author");
+                    String imageAuthorName = paperContent.getString("image_authors");
+                    String textAuthorName = paperContent.getString("text_authors");
+                    String updateDate = paperContent.getString("last_update_date");
+                    int praiseNum = paperContent.getInt("praisenum");
+                    int shareNum = paperContent.getInt("sharenum");
+                    int commentNum = paperContent.getInt("commentnum");
+                    //将数据组装到paper对象中
+                    Paper paper = new Paper();
+//                  paper.setId(paperId);
+                    paper.setId(R.drawable.nav_icon_another);
+                    paper.setTitle(title);
+                    paper.setImageUrl(imageUrl);
+                    paper.setImgUrlOriginal(imageUrlOriginal);
+                    paper.setContent(content);
+                    paper.setAuthorInfo(authorName);
+                    paper.setImgAuthor(imageAuthorName);
+                    paper.setTextAuthor(textAuthorName);
+                    paper.setUpdateDate(updateDate);
+                    paper.setPraiseNum(praiseNum);
+                    paper.setShareNum(shareNum);
+                    paper.setCommentNum(commentNum);
+                    return paper;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return null;
     }

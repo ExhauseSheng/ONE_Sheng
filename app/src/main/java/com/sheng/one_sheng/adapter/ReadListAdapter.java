@@ -32,7 +32,7 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
     public View getView(int position, View convertView, ViewGroup parent) {
         Read read = getItem(position);    //获取当前项的Paper实例
         View view;
-        ReadListAdapter.ReadViewHolder viewHolder;
+        ReadViewHolder viewHolder;
         //优化ListView的运行效率
         if (convertView == null){
             view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
