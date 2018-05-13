@@ -4,8 +4,13 @@ package com.sheng.one_sheng.util;
  * Created by 一个傻傻的小男孩 on 2018/5/9.
  */
 
+import android.util.Log;
+
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.bean.Movie;
+import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.bean.Paper;
+import com.sheng.one_sheng.bean.Read;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,35 +52,127 @@ public class Utilty {
                 String resultCode = jsonObject.getString("res");
                 if (resultCode.equals("0")){
                     JSONObject paperContent = jsonObject.getJSONObject("data");
-                    //获取数据
-                    String paperId = paperContent.getString("hpcontent_id");
-                    String title = paperContent.getString("hp_title");
-                    String imageUrl = paperContent.getString("hp_img_url");
-                    String imageUrlOriginal = paperContent.getString("hp_img_original_url");
-                    String content = paperContent.getString("hp_content");
-                    String authorName = paperContent.getString("hp_author");
-                    String imageAuthorName = paperContent.getString("image_authors");
-                    String textAuthorName = paperContent.getString("text_authors");
-                    String updateDate = paperContent.getString("last_update_date");
-                    int praiseNum = paperContent.getInt("praisenum");
-                    int shareNum = paperContent.getInt("sharenum");
-                    int commentNum = paperContent.getInt("commentnum");
                     //将数据组装到paper对象中
                     Paper paper = new Paper();
-//                  paper.setId(paperId);
+//                  paper.setId(paperContent.getString("hpcontent_id"));
                     paper.setId(R.drawable.nav_icon_another);
-                    paper.setTitle(title);
-                    paper.setImageUrl(imageUrl);
-                    paper.setImgUrlOriginal(imageUrlOriginal);
-                    paper.setContent(content);
-                    paper.setAuthorInfo(authorName);
-                    paper.setImgAuthor(imageAuthorName);
-                    paper.setTextAuthor(textAuthorName);
-                    paper.setUpdateDate(updateDate);
-                    paper.setPraiseNum(praiseNum);
-                    paper.setShareNum(shareNum);
-                    paper.setCommentNum(commentNum);
+                    paper.setTitle(paperContent.getString("hp_title"));
+                    paper.setImageUrl(paperContent.getString("hp_img_url"));
+                    paper.setImgUrlOriginal(paperContent.getString("hp_img_original_url"));
+                    paper.setContent(paperContent.getString("hp_content"));
+                    paper.setAuthorInfo(paperContent.getString("hp_author"));
+                    paper.setImgAuthor(paperContent.getString("image_authors"));
+                    paper.setTextAuthor(paperContent.getString("text_authors"));
+                    paper.setUpdateDate(paperContent.getString("last_update_date"));
+                    paper.setPraiseNum(paperContent.getInt("praisenum"));
+                    paper.setShareNum(paperContent.getInt("sharenum"));
+                    paper.setCommentNum(paperContent.getInt("commentnum"));
                     return paper;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将返回的JSON数据解析成Music实体类
+     */
+    public static List<Music> handleMusicListResponse(String response) {
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    List<Music> musics = new ArrayList<>();
+                    JSONArray musicList = jsonObject.getJSONArray("data");
+                    for (int i = 0; i < musicList.length(); i++) {
+                        Music music = new Music();
+                        music.setId(musicList.getJSONObject(i).getString("id"));
+                        music.setItemId(musicList.getJSONObject(i).getString("item_id"));
+                        music.setForward(musicList.getJSONObject(i).getString("forward"));
+                        music.setTitle(musicList.getJSONObject(i).getString("title"));
+                        music.setImageUrl(musicList.getJSONObject(i).getString("img_url"));
+                        music.setLikeCount(musicList.getJSONObject(i).getInt("like_count"));
+                        music.setUpdateDate(musicList.getJSONObject(i).getString("last_update_date"));
+                        music.setUserName(musicList.getJSONObject(i).getJSONObject("author").getString("user_name"));
+                        music.setDes(musicList.getJSONObject(i).getJSONObject("author").getString("desc"));
+                        music.setFansTotal(musicList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
+                        musics.add(music);
+                    }
+                    Log.d("MusicUtily", "集合1的大小为：" + musics.size() + "");
+                    return musics;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将返回的JSON数据解析成Movie实体类
+     */
+    public static List<Movie> handleMovieListResponse(String response){
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    List<Movie> movies = new ArrayList<>();
+                    JSONArray movieList = jsonObject.getJSONArray("data");
+                    for (int i = 0; i < movieList.length(); i++) {
+                        Movie movie = new Movie();
+                        movie.setId(movieList.getJSONObject(i).getString("id"));
+                        movie.setItemId(movieList.getJSONObject(i).getString("item_id"));
+                        movie.setForward(movieList.getJSONObject(i).getString("forward"));
+                        movie.setTitle(movieList.getJSONObject(i).getString("title"));
+                        movie.setImageUrl(movieList.getJSONObject(i).getString("img_url"));
+                        movie.setLikeCount(movieList.getJSONObject(i).getInt("like_count"));
+                        movie.setUpdateDate(movieList.getJSONObject(i).getString("last_update_date"));
+                        movie.setUserName(movieList.getJSONObject(i).getJSONObject("author").getString("user_name"));
+                        movie.setDes(movieList.getJSONObject(i).getJSONObject("author").getString("desc"));
+                        movie.setFansTotal(movieList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
+                        movies.add(movie);
+                    }
+                    Log.d("MovieUtily", "集合1的大小为：" + movies.size() + "");
+                    return movies;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将返回的JSON数据解析成Read实体类
+     */
+    public static List<Read> handleReadListResponse(String response){
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    List<Read> reads = new ArrayList<>();
+                    JSONArray readList = jsonObject.getJSONArray("data");
+                    for (int i = 0; i < readList.length(); i++) {
+                        Read read = new Read();
+                        read.setId(readList.getJSONObject(i).getString("id"));
+                        read.setItemId(readList.getJSONObject(i).getString("item_id"));
+                        read.setForward(readList.getJSONObject(i).getString("forward"));
+                        read.setTitle(readList.getJSONObject(i).getString("title"));
+                        read.setImageUrl(readList.getJSONObject(i).getString("img_url"));
+                        read.setLikeCount(readList.getJSONObject(i).getInt("like_count"));
+                        read.setUpdateDate(readList.getJSONObject(i).getString("last_update_date"));
+                        read.setUserName(readList.getJSONObject(i).getJSONObject("author").getString("user_name"));
+                        read.setDes(readList.getJSONObject(i).getJSONObject("author").getString("desc"));
+                        read.setFansTotal(readList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
+                        reads.add(read);
+                    }
+                    Log.d("ReadUtily", "集合1的大小为：" + reads.size() + "");
+                    return reads;
                 }
             }catch (Exception e){
                 e.printStackTrace();

@@ -47,8 +47,8 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
             viewHolder = (MovieViewHolder) view.getTag();
         }
         viewHolder.movieTitle.setText(movie.getTitle());
-        viewHolder.movieImage.setImageResource(movie.getId());
-        viewHolder.movieAuthor.setText(movie.getUserName());
+        viewHolder.movieImage.setImageResource(R.drawable.nav_icon_another);
+        viewHolder.movieAuthor.setText(" 文 / " + movie.getUserName());
         viewHolder.movieForward.setText(movie.getForward());
         return view;
     }

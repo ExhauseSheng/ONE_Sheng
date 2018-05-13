@@ -50,8 +50,8 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
             viewHolder = (ReadListAdapter.ReadViewHolder) view.getTag();        //重新获取viewHolder
         }
         viewHolder.readTitle.setText(read.getTitle());
-        viewHolder.storyImage.setImageResource(read.getId());
-        viewHolder.readAuthor.setText(read.getUserName());
+        viewHolder.storyImage.setImageResource(R.drawable.nav_icon_another);
+        viewHolder.readAuthor.setText(" 文 / " + read.getUserName());
         viewHolder.storyDesc.setText(read.getForward());
         viewHolder.likeNum.setText(read.getLikeCount() + "");
         viewHolder.shareNum.setText(read.getShareNum() + "");

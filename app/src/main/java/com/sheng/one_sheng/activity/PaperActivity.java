@@ -1,6 +1,7 @@
 package com.sheng.one_sheng.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -34,8 +35,26 @@ import java.util.List;
 
 public class PaperActivity extends BaseActivity {
 
-    public List<String> paperIdList = new ArrayList<>();
-    public List<Paper> paperList = new ArrayList<>();
+    private List<Paper> paperList = new ArrayList<>();
+    private List<String> paperIdList = new ArrayList<>();
+    private ListView listView;
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_paper);
+        setToolbar();
+        changeStatusBar();
+        requestPaperId();     //发送请求获取数据
+
+        setAdapter();
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -49,20 +68,14 @@ public class PaperActivity extends BaseActivity {
         return true;
     }
 
-    public void requestPaperId(){
+    private void requestPaperId(){
         String paperIdUrl = "http://v3.wufazhuce.com:8000/api/hp/idlist/0?version=3.5.0&platform=android";
         HttpUtil.sendHttpRequest(paperIdUrl, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 //取出处理之后出来的Id集合
-                String responseText = response;
-                paperIdList = Utilty.handlePaperIdResponse(responseText);
-
-                for (int i = 0; i < paperIdList.size(); i++){
-                    String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
-                                    "?version=3.5.0&platform=android";
-                    requestPaper(paperUrl);
-                }
+                paperIdList = Utilty.handlePaperIdResponse(response);
+                requestPaper(paperIdList);
             }
 
             @Override
@@ -71,7 +84,7 @@ public class PaperActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(PaperActivity.this, "获取信息失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PaperActivity.this, "获取id信息失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -79,9 +92,12 @@ public class PaperActivity extends BaseActivity {
     }
 
     //向服务器发送请求并获取到返回的数据
-    public void requestPaper(String paperUrl) {
+    private void requestPaper(List<String> paperIdList) {
 
-        //循环取出插画id列表中的数据
+        for (int i = 0 ;i < paperIdList.size(); i++){
+            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
+                    "?version=3.5.0&platform=android";
+            //循环取出插画id列表中的数据
             HttpUtil.sendHttpRequest(paperUrl, new HttpCallbackListener() {
                 @Override
                 public void onFinish(String response) {
@@ -97,23 +113,19 @@ public class PaperActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(PaperActivity.this, "获取信息失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PaperActivity.this, "获取详细信息失败", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             });
+        }
     }
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_paper);
-        setToolbar();
-        changeStatusBar();
-        requestPaperId();     //发送请求获取数据
+    private void setAdapter(){
 
         PaperListAdapter adapter = new PaperListAdapter
                 (PaperActivity.this, R.layout.layout_card_paper, paperList);
-        ListView listView = (ListView) findViewById(R.id.paper_list_view);
+        listView = (ListView) findViewById(R.id.paper_list_view);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -123,12 +135,5 @@ public class PaperActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
-        }
     }
-
 }

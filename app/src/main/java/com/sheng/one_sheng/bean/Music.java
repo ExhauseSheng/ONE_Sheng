@@ -9,16 +9,16 @@ import java.util.List;
 
 public class Music {
 
-    private int id;                  //文章id号
+    private String id;                  //文章id号
     private String title;            //文章标题
     private String forward;          //文章引言
-    private int itemId;               //文章详细id号,获取单个文章内容时使用
+    private String itemId;               //文章详细id号,获取单个文章内容时使用
     private String imageUrl;          //图片Url
     private int likeCount;            //收藏数量
     private String updateDate;         //时间
     private String userName;     //作者名称
     private String des;          //作家简介
-    private int fansTotal;       //粉丝数量
+    private String fansTotal;       //粉丝数量
     private int songId;          //歌曲id
     private String songTitle;    //歌曲名称
     private String cover;        //专辑封面
@@ -34,11 +34,11 @@ public class Music {
     private int shareNum;                //分享数量
     private int commentNum;              //评论数量
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -58,11 +58,11 @@ public class Music {
         this.forward = forward;
     }
 
-    public int getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
@@ -106,11 +106,11 @@ public class Music {
         this.des = des;
     }
 
-    public int getFansTotal() {
+    public String getFansTotal() {
         return fansTotal;
     }
 
-    public void setFansTotal(int fansTotal) {
+    public void setFansTotal(String fansTotal) {
         this.fansTotal = fansTotal;
     }
 

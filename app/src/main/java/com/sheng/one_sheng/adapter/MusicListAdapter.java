@@ -51,8 +51,8 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
             viewHolder = (MusicViewHolder) view.getTag();        //重新获取viewHolder
         }
         viewHolder.musicTitle.setText(music.getTitle());
-        viewHolder.musicImage.setImageResource(music.getId());
-        viewHolder.musicAuthor.setText(music.getUserName());
+        viewHolder.musicImage.setImageResource(R.drawable.nav_icon);
+        viewHolder.musicAuthor.setText(" 文 / " + music.getUserName());
         viewHolder.musicForward.setText(music.getForward());
         viewHolder.likeNum.setText(music.getLikeCount() + "");
         viewHolder.shareNum.setText(music.getShareNum() + "");
