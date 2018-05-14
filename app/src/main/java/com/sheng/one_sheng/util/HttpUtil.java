@@ -1,11 +1,17 @@
 package com.sheng.one_sheng.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -18,6 +24,11 @@ import java.net.URL;
  */
 public class HttpUtil {
 
+    /**
+     * 在这里向服务器发送请求
+     * @param address
+     * @param listener
+     */
     public static void sendHttpRequest(final String address, final HttpCallbackListener listener){
         new Thread(new Runnable() {
             @Override
@@ -55,5 +66,41 @@ public class HttpUtil {
                 }
             }
         }).start();
+    }
+
+    /**
+     * 发送网络请求将一个图片地址转换成BitMap对象
+     * @param url
+     * @return
+     */
+    public static Bitmap downloadBitmap(String url){
+
+        URL fileUrl = null;
+        Bitmap bitmap = null;
+        HttpURLConnection conn = null;
+
+        try {
+            fileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try{
+            conn = (HttpURLConnection) fileUrl.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(10000);
+
+            //获得图像的字符流
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null){
+                conn.disconnect();
+            }
+        }
+        return bitmap;
     }
 }

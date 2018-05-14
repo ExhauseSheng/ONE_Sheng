@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.bean.Paper;
+import com.sheng.one_sheng.util.HttpUtil;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
             viewHolder = (MusicViewHolder) view.getTag();        //重新获取viewHolder
         }
         viewHolder.musicTitle.setText(music.getTitle());
-        viewHolder.musicImage.setImageResource(R.drawable.nav_icon);
+        viewHolder.musicImage.setImageBitmap(HttpUtil.downloadBitmap(music.getImageUrl()));
         viewHolder.musicAuthor.setText(" 文 / " + music.getUserName());
         viewHolder.musicForward.setText(music.getForward());
         viewHolder.likeNum.setText(music.getLikeCount() + "");

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
+import com.sheng.one_sheng.util.HttpUtil;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
             viewHolder = (MovieViewHolder) view.getTag();
         }
         viewHolder.movieTitle.setText(movie.getTitle());
-        viewHolder.movieImage.setImageResource(R.drawable.nav_icon_another);
+        viewHolder.movieImage.setImageBitmap(HttpUtil.downloadBitmap(movie.getImageUrl()));
         viewHolder.movieAuthor.setText(" 文 / " + movie.getUserName());
         viewHolder.movieForward.setText(movie.getForward());
         return view;

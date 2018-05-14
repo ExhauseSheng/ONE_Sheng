@@ -4,6 +4,8 @@ package com.sheng.one_sheng.util;
  * Created by 一个傻傻的小男孩 on 2018/5/9.
  */
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.sheng.one_sheng.R;
@@ -15,6 +17,9 @@ import com.sheng.one_sheng.bean.Read;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,5 +184,22 @@ public class Utilty {
             }
         }
         return null;
+    }
+
+    /**
+     * 图片工具类:生成Drawable图片
+     * @param url
+     * @return
+     */
+    public static Drawable getPicture(String url){
+        InputStream is = null;
+        Drawable d = null;
+        try {
+            is = (InputStream) new URL(url).getContent();   //查看网页源代码
+            d = Drawable.createFromStream(is, "src name");  //生成Drawable
+            return d;
+        }catch (Exception e){
+            return null;
+        }
     }
 }
