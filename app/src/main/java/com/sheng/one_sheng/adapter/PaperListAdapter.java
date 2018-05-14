@@ -51,13 +51,14 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
             viewHolder = (PaperViewHolder) view.getTag();        //重新获取viewHolder
         }
         viewHolder.paperTitle.setText(paper.getTitle());
-        viewHolder.paperImage.setImageResource(paper.getId());
         viewHolder.paperAuthor.setText(paper.getTextAuthor());
         viewHolder.paperEssayContent.setText(paper.getContent());
         viewHolder.paperEssayAuthor.setText(paper.getAuthorInfo());
         viewHolder.likeNum.setText(paper.getPraiseNum() + "");
         viewHolder.shareNum.setText(paper.getShareNum() + "");
         viewHolder.commentNum.setText(paper.getCommentNum() + "");
+
+        viewHolder.paperImage.setImageResource(paper.getId());
         return view;
     }
 

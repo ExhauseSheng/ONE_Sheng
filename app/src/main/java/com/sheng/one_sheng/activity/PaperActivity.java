@@ -35,7 +35,6 @@ import java.util.List;
 
 public class PaperActivity extends BaseActivity {
 
-    private List<Paper> paperList = new ArrayList<>();
     private List<String> paperIdList = new ArrayList<>();
     private ListView listView;
 
@@ -45,8 +44,6 @@ public class PaperActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
         requestPaperId();     //发送请求获取数据
-
-        setAdapter();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -94,17 +91,23 @@ public class PaperActivity extends BaseActivity {
     //向服务器发送请求并获取到返回的数据
     private void requestPaper(List<String> paperIdList) {
 
-        for (int i = 0 ;i < paperIdList.size(); i++){
-            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
+            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(1) +
                     "?version=3.5.0&platform=android";
             //循环取出插画id列表中的数据
             HttpUtil.sendHttpRequest(paperUrl, new HttpCallbackListener() {
                 @Override
                 public void onFinish(String response) {
                     //将服务器返回来的数据解析成Paper实体类
-                    String responseText = response;
-                    Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                    paperList.add(paper);
+                    final String responseText = response;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Paper paper = Utilty.handlePaperDetailResponse(responseText);
+                            List<Paper> paperList = new ArrayList<Paper>();
+                            paperList.add(paper);
+                        }
+                    });
+
                 }
 
                 @Override
@@ -118,10 +121,9 @@ public class PaperActivity extends BaseActivity {
                     });
                 }
             });
-        }
     }
 
-    private void setAdapter(){
+    private void setAdapter(List<Paper> paperList){
 
         PaperListAdapter adapter = new PaperListAdapter
                 (PaperActivity.this, R.layout.layout_card_paper, paperList);

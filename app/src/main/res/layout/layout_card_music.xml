@@ -35,9 +35,9 @@
             android:id="@+id/tv_music_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginTop="25dp"
             android:layout_marginBottom="15dp"
             android:lineSpacingExtra="7dp"
             tools:text="忍耐消融，觉得终有一天自己会被磨成珍珠，但到头来多是变成"/>

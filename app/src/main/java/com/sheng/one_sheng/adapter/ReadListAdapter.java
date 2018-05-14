@@ -2,14 +2,9 @@ package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +29,7 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 public class ReadListAdapter extends ArrayAdapter<Read> {
 
     private int resourceId;     //用来指定列表某子项的id
-    private android.util.LruCache<String, BitmapDrawable> mMemoryCache;
+    private LruCache<String, BitmapDrawable> mMemoryCache;
     private ListView mListView;
 
     public ReadListAdapter (Context context, int textViewResoureId, List<Read> objects){
@@ -56,17 +51,14 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         if (mListView == null){
             mListView = (ListView) parent;      //parent就是一个ListView实例
         }
-        Read read = getItem(position);    //获取当前项的Paper实例
-        String url = read.getImageUrl();
         View view;
-        //优化ListView的运行效率
         if (convertView == null){
             view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-
-
         } else {
             view = convertView;
         }
+        Read read = getItem(position);    //获取当前项的Paper实例
+        //优化ListView的运行效率
         TextView readTitle = (TextView) view.findViewById(R.id.tv_title);
         ImageView storyImage = (ImageView) view.findViewById(R.id.iv_story_image);
         TextView readAuthor = (TextView) view.findViewById(R.id.tv_author);
@@ -81,8 +73,9 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         shareNum.setText(read.getShareNum() + "");
         commentNum.setText(read.getCommentNum() + "");
 
+        String url = read.getImageUrl();
         storyImage.setImageResource(R.drawable.loading);
-        storyImage.setTag(read.getImageUrl());
+        storyImage.setTag(url);
         BitmapDrawable drawable = getBitmapFromMemoryCache(url);
         if (drawable != null) {
             storyImage.setImageDrawable(drawable);
@@ -94,8 +87,7 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
     }
 
     /**
-     * 将一张图片存储到LruCache中。
-     *
+     * 将一张图片存储到LruCache中
      * @param key
      *            LruCache的键，这里传入图片的URL地址。
      * @param drawable
