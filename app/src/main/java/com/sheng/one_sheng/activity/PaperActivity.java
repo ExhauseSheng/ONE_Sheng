@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
 import com.sheng.one_sheng.bean.Paper;
@@ -35,7 +36,6 @@ import java.util.List;
 
 public class PaperActivity extends BaseActivity {
 
-    private List<String> paperIdList = new ArrayList<>();
     private ListView listView;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,8 @@ public class PaperActivity extends BaseActivity {
             @Override
             public void onFinish(String response) {
                 //取出处理之后出来的Id集合
-                paperIdList = Utilty.handlePaperIdResponse(response);
+                final String responseText = response;
+                final List<String> paperIdList = Utilty.handlePaperIdResponse(response);
                 requestPaper(paperIdList);
             }
 
@@ -90,8 +91,11 @@ public class PaperActivity extends BaseActivity {
 
     //向服务器发送请求并获取到返回的数据
     private void requestPaper(List<String> paperIdList) {
+''
+        List<Paper> paperList = new ArrayList<>();
 
-            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(1) +
+        for (int i = 0; i < paperIdList.size(); i++){
+            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
                     "?version=3.5.0&platform=android";
             //循环取出插画id列表中的数据
             HttpUtil.sendHttpRequest(paperUrl, new HttpCallbackListener() {
@@ -103,7 +107,7 @@ public class PaperActivity extends BaseActivity {
                         @Override
                         public void run() {
                             Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                            List<Paper> paperList = new ArrayList<Paper>();
+                            paperList = new ArrayList<Paper>();
                             paperList.add(paper);
                         }
                     });
@@ -121,6 +125,8 @@ public class PaperActivity extends BaseActivity {
                     });
                 }
             });
+        }
+
     }
 
     private void setAdapter(List<Paper> paperList){
@@ -129,13 +135,5 @@ public class PaperActivity extends BaseActivity {
                 (PaperActivity.this, R.layout.layout_card_paper, paperList);
         listView = (ListView) findViewById(R.id.paper_list_view);
         listView.setAdapter(adapter);
-
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(PaperActivity.this, AuthorActivity.class);
-//                startActivity(intent);
-//            }
-//        });
     }
 }

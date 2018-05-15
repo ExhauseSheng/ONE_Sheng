@@ -3,8 +3,10 @@ package com.sheng.one_sheng.activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -39,6 +41,12 @@ public class MovieDetailActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+        }
+
         //初始化各控件
         movieLayout = (ScrollView) findViewById(R.id.movie_detail_layout);
         title = (TextView) findViewById(R.id.tv_title);
@@ -60,6 +68,18 @@ public class MovieDetailActivity extends BaseActivity {
         movieLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestMovieDetail(itemId);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void requestMovieDetail(String itemId){

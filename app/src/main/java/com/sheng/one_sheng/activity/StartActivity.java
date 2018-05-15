@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 
 public class StartActivity extends BaseActivity {
@@ -46,7 +47,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                Intent intent = new Intent(MyApplication.getContext(), MainActivity.class);
                 startActivity(intent);
                 //用于呈现淡入淡出效果
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

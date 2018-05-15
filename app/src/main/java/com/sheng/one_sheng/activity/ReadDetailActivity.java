@@ -1,11 +1,15 @@
 package com.sheng.one_sheng.activity;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +18,8 @@ import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
+import com.sheng.one_sheng.util.ImageCallBack;
+import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
 
 public class ReadDetailActivity extends BaseActivity {
@@ -38,6 +44,12 @@ public class ReadDetailActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+        }
+
         //初始化各控件
         readLayout = (ScrollView) findViewById(R.id.read_detail_layout);
         title = (TextView) findViewById(R.id.tv_title);
@@ -59,6 +71,18 @@ public class ReadDetailActivity extends BaseActivity {
         readLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestReadDetail(itemId);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void requestReadDetail(final String itemId){
@@ -94,19 +118,18 @@ public class ReadDetailActivity extends BaseActivity {
     }
 
     private void showReadInfo(Read read){
-        if (read != null){
-            title.setText(read.getTitle());
-            author.setText("文 / " + read.getUserName());
-            updateDate.setText(read.getUpdateDate());
-            forward.setText(read.getGuideWord());
-            essayContent.setText(Html.fromHtml(read.getContent()));
-            authorName.setText(read.getUserName());
-            authorDesc.setText(read.getDes());
-            authorFans.setText(read.getFansTotal() + "关注");
-            praiseNum.setText(read.getPraiseNum() + "");
-            shareNum.setText(read.getShareNum() + "");
-            commentNum.setText(read.getCommentNum() + "");
-            readLayout.setVisibility(View.VISIBLE);
-        }
+
+        title.setText(read.getTitle());
+        author.setText("文 / " + read.getUserName());
+        updateDate.setText(read.getUpdateDate());
+        forward.setText(read.getGuideWord());
+        essayContent.setText(Html.fromHtml(read.getContent()));
+        authorName.setText(read.getUserName());
+        authorDesc.setText(read.getDes());
+        authorFans.setText(read.getFansTotal() + "关注");
+        praiseNum.setText(read.getPraiseNum() + "");
+        shareNum.setText(read.getShareNum() + "");
+        commentNum.setText(read.getCommentNum() + "");
+        readLayout.setVisibility(View.VISIBLE);
     }
 }

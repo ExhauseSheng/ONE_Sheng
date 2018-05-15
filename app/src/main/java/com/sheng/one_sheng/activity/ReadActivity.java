@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
 import com.sheng.one_sheng.adapter.ReadListAdapter;
@@ -83,7 +84,7 @@ public class ReadActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ReadActivity.this, "获取阅读列表失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyApplication.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -99,7 +100,7 @@ public class ReadActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ReadActivity.this, ReadDetailActivity.class);
+                Intent intent = new Intent(MyApplication.getContext(), ReadDetailActivity.class);
                 intent.putExtra("item_id", readList.get(position).getItemId());
                 Log.d("ReadDetailActivity", "传递之前详细内容id为：" + readList.get(position).getItemId());
                 startActivity(intent);

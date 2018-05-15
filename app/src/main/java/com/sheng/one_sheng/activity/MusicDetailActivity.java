@@ -9,10 +9,12 @@ import android.graphics.drawable.LevelListDrawable;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -63,6 +65,12 @@ public class MusicDetailActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+        }
+
         //初始化各控件
         musicLayout = (ScrollView) findViewById(R.id.music_detail_layout);
         musicImage = (ImageView) findViewById(R.id.music_image);
@@ -89,6 +97,18 @@ public class MusicDetailActivity extends BaseActivity {
         musicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestMusicDetail(itemId);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void requestMusicDetail(String itemId){
@@ -148,7 +168,6 @@ public class MusicDetailActivity extends BaseActivity {
 
             NetWorkImageGetter imageGetter = new NetWorkImageGetter();
             Spanned spanned = Html.fromHtml(music.getStory(), imageGetter, null);
-            essayContent.setGravity(Gravity.CENTER_HORIZONTAL);
             essayContent.setText(spanned);
 
             authorName.setText(music.getUserName());
