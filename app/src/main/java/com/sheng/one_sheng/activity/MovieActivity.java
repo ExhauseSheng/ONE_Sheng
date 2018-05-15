@@ -87,16 +87,18 @@ public class MovieActivity extends BaseActivity {
         });
     }
 
-    private void setAdapter(List<Movie> movieList){
+    private void setAdapter(final List<Movie> movieList){
         MovieListAdapter adapter = new MovieListAdapter
                 (MovieActivity.this, R.layout.layout_card_movie, movieList);
         ListView listView = (ListView) findViewById(R.id.movie_list_view);
         listView.setAdapter(adapter);
         //给ListView设置监听事件
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MovieActivity.this, AuthorActivity.class);
+                Intent intent = new Intent(MovieActivity.this, MovieDetailActivity.class);
+                intent.putExtra("item_id", movieList.get(position).getItemId());
                 startActivity(intent);
             }
         });

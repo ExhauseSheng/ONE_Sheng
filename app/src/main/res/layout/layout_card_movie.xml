@@ -23,6 +23,17 @@
 
         <include layout="@layout/layout_detail_head"/>
 
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="#000"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="电影：《功夫》"/>
+
         <ImageView
             android:id="@+id/movie_image"
             android:layout_width="match_parent"
@@ -41,6 +52,8 @@
             android:layout_marginBottom="15dp"
             android:lineSpacingExtra="7dp"
             tools:text="忍耐消融，觉得终有一天自己会被磨成珍珠，但到头来多是变成"/>
+
+        <include layout="@layout/layout_card_bottombar"/>
 
     </LinearLayout>
 

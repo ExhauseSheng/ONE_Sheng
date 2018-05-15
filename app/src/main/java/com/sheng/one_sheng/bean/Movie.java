@@ -23,6 +23,9 @@ public class Movie {
     private int count;                 //数组size
     private int dataId;                 //对应数据集的id
     private int praiseNum;              //点赞数量
+    private String movieId;
+    private String content;
+    private String summary;             //结语
 
     public String getId() {
         return id;
@@ -134,5 +137,29 @@ public class Movie {
 
     public void setPraiseNum(int praiseNum) {
         this.praiseNum = praiseNum;
+    }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

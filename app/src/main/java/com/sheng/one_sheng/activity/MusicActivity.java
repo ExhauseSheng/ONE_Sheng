@@ -79,7 +79,7 @@ public class MusicActivity extends BaseActivity {
         });
     }
 
-    private void setAdapter(List<Music> musicList){
+    private void setAdapter(final List<Music> musicList){
 
         MusicListAdapter adapter = new MusicListAdapter
                 (MusicActivity.this, R.layout.layout_card_music, musicList);
@@ -89,7 +89,9 @@ public class MusicActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MusicActivity.this, AuthorActivity.class);
+                Intent intent = new Intent(MusicActivity.this, MusicDetailActivity.class);
+                intent.putExtra("item_id", musicList.get(position).getItemId());
+                Log.d("MusicActivity", "传递之前为：" + musicList.get(position).getItemId());
                 startActivity(intent);
             }
         });

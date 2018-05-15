@@ -19,7 +19,7 @@ public class Music {
     private String userName;     //作者名称
     private String des;          //作家简介
     private String fansTotal;       //粉丝数量
-    private int songId;          //歌曲id
+    private String songId;          //歌曲id
     private String songTitle;    //歌曲名称
     private String cover;        //专辑封面
     private String storyTitle;   //文章名称
@@ -28,11 +28,12 @@ public class Music {
     private String lyric;        //歌词纯文本
     private String album;        //专辑名
     private String info;         //歌曲信息
-    private int nextId;                  //下一篇文章的id
-    private int preId;                   //上一篇文章的id
+    private String nextId;                  //下一篇文章的id
+    private String preId;                   //上一篇文章的id
     private int praiseNum;               //点赞数量
     private int shareNum;                //分享数量
     private int commentNum;              //评论数量
+    private String readNum;              //阅读数量
 
     public String getId() {
         return id;
@@ -114,11 +115,11 @@ public class Music {
         this.fansTotal = fansTotal;
     }
 
-    public int getSongId() {
+    public String getSongId() {
         return songId;
     }
 
-    public void setSongId(int songId) {
+    public void setSongId(String songId) {
         this.songId = songId;
     }
 
@@ -186,19 +187,19 @@ public class Music {
         this.info = info;
     }
 
-    public int getNextId() {
+    public String getNextId() {
         return nextId;
     }
 
-    public void setNextId(int nextId) {
+    public void setNextId(String nextId) {
         this.nextId = nextId;
     }
 
-    public int getPreId() {
+    public String getPreId() {
         return preId;
     }
 
-    public void setPreId(int preId) {
+    public void setPreId(String preId) {
         this.preId = preId;
     }
 
@@ -224,5 +225,13 @@ public class Music {
 
     public void setCommentNum(int commentNum) {
         this.commentNum = commentNum;
+    }
+
+    public String getReadNum() {
+        return readNum;
+    }
+
+    public void setReadNum(String readNum) {
+        this.readNum = readNum;
     }
 }

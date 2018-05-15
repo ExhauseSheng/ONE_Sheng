@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="#000"
+        android:textSize="18sp"
+        android:text="作者"/>
+
+    <View
+        android:layout_width="70dp"
+        android:layout_height="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/tv_title"
+        android:background="#000"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_author_name"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textColor="#000"
+            android:textSize="15sp"
+            tools:text="文 / Sheng、"/>
+
+        <TextView
+            android:id="@+id/tv_author_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_below="@+id/tv_author_name"
+            android:textColor="#000"
+            android:textSize="13sp"
+            tools:text="广东工业大学计算机学院软件工程2班"/>
+
+        <TextView
+            android:id="@+id/follow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/follow_bg"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:paddingBottom="7dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingTop="4dp"
+            android:text="关注"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_fans_num"
+            android:layout_below="@+id/follow"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="#999"
+            android:textSize="13sp"
+            android:text="99关注"/>
+    </RelativeLayout>
+
+</LinearLayout>

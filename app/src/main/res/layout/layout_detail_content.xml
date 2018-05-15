@@ -13,7 +13,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:textColor="#222"
-        android:lineSpacingExtra="7dp"
+        android:lineSpacingExtra="10dp"
+        android:textSize="14sp"
         tools:text="这是一个悲伤的故事"/>
 
 </LinearLayout>

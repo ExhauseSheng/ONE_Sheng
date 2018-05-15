@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_read_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:titleMarginTop="15dp"
+        app:titleMarginBottom="30dp"
+        app:theme="@style/AppTheme">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:text=" -  ONE  MUSIC  - "
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/music_detail_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottom_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/layout_detail_song"/>
+
+            <include layout="@layout/layout_detail_head"/>
+
+            <TextView
+                android:id="@+id/tv_forward"
+                android:layout_below="@+id/tv_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="#aaa"
+                android:textSize="17sp"
+                android:text="我开始明白这个世界经常不按牌理出牌，但是每一次仓促的见招拆招，却未必不是另一段奇遇的开始。"/>
+
+            <include layout="@layout/layout_detail_content"/>
+
+            <include layout="@layout/layout_detail_author"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include
+        layout="@layout/layout_detail_bottombar"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

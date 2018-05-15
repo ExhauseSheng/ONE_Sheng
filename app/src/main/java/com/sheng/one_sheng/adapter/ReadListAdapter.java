@@ -62,16 +62,14 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         TextView readTitle = (TextView) view.findViewById(R.id.tv_title);
         ImageView storyImage = (ImageView) view.findViewById(R.id.iv_story_image);
         TextView readAuthor = (TextView) view.findViewById(R.id.tv_author);
+        TextView updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
         TextView storyDesc = (TextView) view.findViewById(R.id.tv_story_desc);
         TextView likeNum = (TextView) view.findViewById(R.id.tv_like_num);
-        TextView shareNum = (TextView) view.findViewById(R.id.tv_share_num);
-        TextView commentNum = (TextView) view.findViewById(R.id.tv_comment_num);
         readTitle.setText(read.getTitle());
         readAuthor.setText(" 文 / " + read.getUserName());
+        updateDate.setText(read.getUpdateDate());
         storyDesc.setText(read.getForward());
         likeNum.setText(read.getLikeCount() + "");
-        shareNum.setText(read.getShareNum() + "");
-        commentNum.setText(read.getCommentNum() + "");
 
         String url = read.getImageUrl();
         storyImage.setImageResource(R.drawable.loading);

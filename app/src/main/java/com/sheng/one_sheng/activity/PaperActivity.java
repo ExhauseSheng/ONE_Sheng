@@ -130,12 +130,12 @@ public class PaperActivity extends BaseActivity {
         listView = (ListView) findViewById(R.id.paper_list_view);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(PaperActivity.this, AuthorActivity.class);
-                startActivity(intent);
-            }
-        });
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent(PaperActivity.this, AuthorActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 }

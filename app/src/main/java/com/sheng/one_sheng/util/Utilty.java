@@ -82,7 +82,7 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Music实体类
+     * 将返回的JSON数据解析成Music实体类用于临时装载列表数据
      */
     public static List<Music> handleMusicListResponse(String response) {
         if (response != null){
@@ -117,7 +117,7 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Movie实体类
+     * 将返回的JSON数据解析成Movie实体类用于临时装载列表数据
      */
     public static List<Movie> handleMovieListResponse(String response){
         if (response != null){
@@ -135,6 +135,7 @@ public class Utilty {
                         movie.setTitle(movieList.getJSONObject(i).getString("title"));
                         movie.setImageUrl(movieList.getJSONObject(i).getString("img_url"));
                         movie.setLikeCount(movieList.getJSONObject(i).getInt("like_count"));
+                        movie.setSubTitle(movieList.getJSONObject(i).getString("subtitle"));
                         movie.setUpdateDate(movieList.getJSONObject(i).getString("last_update_date"));
                         movie.setUserName(movieList.getJSONObject(i).getJSONObject("author").getString("user_name"));
                         movie.setDes(movieList.getJSONObject(i).getJSONObject("author").getString("desc"));
@@ -152,7 +153,7 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Read实体类
+     * 将返回的JSON数据解析成Read实体类用于临时装载列表数据
      */
     public static List<Read> handleReadListResponse(String response){
         if (response != null){
@@ -187,19 +188,105 @@ public class Utilty {
     }
 
     /**
-     * 图片工具类:生成Drawable图片
-     * @param url
-     * @return
+     * 将返回的JSON数据解析成Read实体类用于临时展示阅读详细内容
      */
-    public static Drawable getPicture(String url){
-        InputStream is = null;
-        Drawable d = null;
-        try {
-            is = (InputStream) new URL(url).getContent();   //查看网页源代码
-            d = Drawable.createFromStream(is, "src name");  //生成Drawable
-            return d;
-        }catch (Exception e){
-            return null;
+    public static Read handleReadDetailResponse(String response) {
+        if (response != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")) {
+                    Read read = new Read();
+                    JSONObject readContent = jsonObject.getJSONObject("data");
+                    read.setContentId(readContent.getString("content_id"));
+                    read.setTitle(readContent.getString("hp_title"));
+                    read.setUserName(readContent.getString("hp_author"));
+                    read.setContent(readContent.getString("hp_content"));
+                    read.setWbImgUrl(readContent.getString("wb_img_url"));
+                    read.setUpdateDate(readContent.getString("last_update_date"));
+                    read.setGuideWord(readContent.getString("guide_word"));
+                    read.setDes(readContent.getJSONArray("author").getJSONObject(0).getString("desc"));
+                    read.setFansTotal(readContent.getJSONArray("author").getJSONObject(0).getString("fans_total"));
+                    read.setNextId(readContent.getString("next_id"));
+                    read.setPreId(readContent.getString("previous_id"));
+                    read.setPraiseNum(readContent.getInt("praisenum"));
+                    read.setShareNum(readContent.getInt("sharenum"));
+                    read.setCommentNum(readContent.getInt("commentnum"));
+                    return read;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        return null;
+    }
+
+    /**
+     * 将返回的JSON数据解析成Music实体类用于临时展示音乐详细内容
+     */
+    public static Music handleMusicDetailResponse(String response){
+        if (response != null){
+            try{
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    Music music = new Music();
+                    JSONObject musicContent = jsonObject.getJSONObject("data");
+                    music.setSongId(musicContent.getString("id"));
+                    music.setSongTitle(musicContent.getString("title"));
+                    music.setCover(musicContent.getString("cover"));
+                    music.setStoryTitle(musicContent.getString("story_title"));
+                    music.setSummary(musicContent.getString("story_summary"));
+                    music.setStory(musicContent.getString("story"));
+                    music.setLyric(musicContent.getString("lyric"));
+                    music.setAlbum(musicContent.getString("album"));
+                    music.setInfo(musicContent.getString("info"));
+                    music.setUpdateDate(musicContent.getString("last_update_date"));
+                    music.setPraiseNum(musicContent.getInt("praisenum"));
+                    music.setShareNum(musicContent.getInt("sharenum"));
+                    music.setCommentNum(musicContent.getInt("commentnum"));
+                    music.setReadNum(musicContent.getString("read_num"));
+                    music.setUserName(musicContent.getJSONObject("author").getString("user_name"));
+                    music.setDes(musicContent.getJSONObject("author").getString("desc"));
+                    music.setFansTotal(musicContent.getJSONObject("author").getString("fans_total"));
+                    music.setNextId(musicContent.getString("next_id"));
+                    music.setPreId(musicContent.getString("previous_id"));
+                    return music;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将返回的JSON数据解析成Movie实体类用于临时展示影视详细内容
+     */
+    public static Movie handleMovieDetailResponse(String response){
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    Movie movie = new Movie();
+                    JSONObject movieContent = jsonObject.getJSONObject("data");
+                    movie.setCount(movieContent.getInt("count"));
+                    movie.setMovieId(movieContent.getJSONArray("data").getJSONObject(0).getString("id"));
+                    movie.setTitle(movieContent.getJSONArray("data").getJSONObject(0).getString("title"));
+                    movie.setContent(movieContent.getJSONArray("data").getJSONObject(0).getString("content"));
+                    movie.setPraiseNum(movieContent.getJSONArray("data").getJSONObject(0).getInt("praisenum"));
+                    movie.setUpdateDate(movieContent.getJSONArray("data").getJSONObject(0).getString("input_date"));
+                    movie.setSummary(movieContent.getJSONArray("data").getJSONObject(0).getString("summary"));
+                    movie.setUserName(movieContent.getJSONArray("data").getJSONObject(0).getJSONObject("user").getString("user_name"));
+                    movie.setDes(movieContent.getJSONArray("data").getJSONObject(0).getJSONObject("user").getString("desc"));
+                    movie.setFansTotal(movieContent.getJSONArray("data").getJSONObject(0).getJSONObject("user").getString("fans_total"));
+                    return movie;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

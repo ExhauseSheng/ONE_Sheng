@@ -44,7 +44,7 @@
             android:lineSpacingExtra="7dp"
             tools:text="忍耐消融，觉得终有一天自己会被磨成珍珠，但到头来多是变成"/>
 
-        <include layout="@layout/layout_detail_bottombar"/>
+        <include layout="@layout/layout_card_bottombar"/>
 
     </LinearLayout>
 

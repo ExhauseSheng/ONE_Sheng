@@ -14,20 +14,20 @@
         android:background="#eee"/>
 
     <ImageView
-        android:id="@+id/iv_like"
+        android:id="@+id/iv_praise"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="12dp"
-        android:src="@drawable/ic_like"/>
+        android:src="@drawable/ic_praise"/>
 
     <TextView
-        android:id="@+id/tv_like_num"
+        android:id="@+id/tv_praise_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/iv_like"
+        android:layout_toRightOf="@id/iv_praise"
         android:textColor="#aaa"
         android:textSize="13sp"
         tools:text="786"/>
@@ -39,7 +39,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="12dp"
-        android:layout_toRightOf="@id/tv_like_num"
+        android:layout_toRightOf="@id/tv_praise_num"
         android:src="@drawable/ic_share"/>
 
     <TextView
@@ -71,5 +71,16 @@
         android:textColor="#aaa"
         android:textSize="13sp"
         tools:text="68"/>
+
+    <TextView
+        android:id="@+id/tv_update_date"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:textColor="#aaa"
+        android:textSize="13sp"
+        tools:text="2018-5-15  15:51"/>
 
 </RelativeLayout>

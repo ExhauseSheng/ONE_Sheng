@@ -19,13 +19,13 @@ public class Read  {
     private String userName;     //作者名称
     private String des;          //作家简介
     private String fansTotal;       //粉丝数量
-    private int contentId;               //同itemId
+    private String contentId;               //同itemId
     private String essayTitle;           //详细文章标题
     private String wbImgUrl;             //详细文章图片
     private String guideWord;            //详细文章引言
     private String content;              //文章主体
-    private int nextId;                  //下一篇文章的id
-    private int preId;                   //上一篇文章的id
+    private String nextId;                  //下一篇文章的id
+    private String preId;                   //上一篇文章的id
     private int praiseNum;               //点赞数量
     private int shareNum;                //分享数量
     private int commentNum;              //评论数量
@@ -110,11 +110,11 @@ public class Read  {
         this.fansTotal = fansTotal;
     }
 
-    public int getContentId() {
+    public String getContentId() {
         return contentId;
     }
 
-    public void setContentId(int contentId) {
+    public void setContentId(String contentId) {
         this.contentId = contentId;
     }
 
@@ -150,19 +150,19 @@ public class Read  {
         this.content = content;
     }
 
-    public int getNextId() {
+    public String getNextId() {
         return nextId;
     }
 
-    public void setNextId(int nextId) {
+    public void setNextId(String nextId) {
         this.nextId = nextId;
     }
 
-    public int getPreId() {
+    public String getPreId() {
         return preId;
     }
 
-    public void setPreId(int preId) {
+    public void setPreId(String preId) {
         this.preId = preId;
     }
 

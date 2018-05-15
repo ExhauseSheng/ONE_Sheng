@@ -90,7 +90,7 @@ public class ReadActivity extends BaseActivity {
         });
     }
 
-    private void setAdapter(List<Read> readList){
+    private void setAdapter(final List<Read> readList){
         ReadListAdapter adapter = new ReadListAdapter
                 (ReadActivity.this, R.layout.layout_card_read, readList);
         ListView listView = (ListView) findViewById(R.id.read_list_view);
@@ -99,7 +99,9 @@ public class ReadActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ReadActivity.this, AuthorActivity.class);
+                Intent intent = new Intent(ReadActivity.this, ReadDetailActivity.class);
+                intent.putExtra("item_id", readList.get(position).getItemId());
+                Log.d("ReadDetailActivity", "传递之前详细内容id为：" + readList.get(position).getItemId());
                 startActivity(intent);
             }
         });

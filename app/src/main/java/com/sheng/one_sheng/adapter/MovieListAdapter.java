@@ -61,16 +61,21 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
             viewHolder.movieTitle = (TextView) view.findViewById(R.id.tv_title);
             viewHolder.movieImage = (ImageView) view.findViewById(R.id.movie_image);
             viewHolder.movieAuthor = (TextView) view.findViewById(R.id.tv_author);
+            viewHolder.movieName = (TextView) view.findViewById(R.id.movie_title);
+            viewHolder.updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
             viewHolder.movieForward = (TextView) view.findViewById(R.id.tv_movie_desc);
+            viewHolder.likeNum = (TextView) view.findViewById(R.id.tv_like_num);
             view.setTag(viewHolder);        //将viewHolder储存在View中
         } else {
             view = convertView;
             viewHolder = (MovieViewHolder) view.getTag();
         }
         viewHolder.movieTitle.setText(movie.getTitle());
-
         viewHolder.movieAuthor.setText(" 文 / " + movie.getUserName());
+        viewHolder.movieName.setText(movie.getSubTitle());
+        viewHolder.updateDate.setText(movie.getUpdateDate());
         viewHolder.movieForward.setText(movie.getForward());
+        viewHolder.likeNum.setText(movie.getLikeCount() + "");
 
         String url = movie.getImageUrl();
         viewHolder.movieImage.setImageResource(R.drawable.loading);
@@ -88,8 +93,11 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
     class MovieViewHolder{
         TextView movieTitle;
         TextView movieAuthor;
+        TextView movieName;
+        TextView updateDate;
         ImageView movieImage;
         TextView movieForward;
+        TextView likeNum;
     }
 
     /**

@@ -42,7 +42,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
             viewHolder.paperAuthor = (TextView) view.findViewById(R.id.paper_author);
             viewHolder.paperEssayContent = (TextView) view.findViewById(R.id.paper_essay_content);
             viewHolder.paperEssayAuthor = (TextView) view.findViewById(R.id.paper_essay_author);
-            viewHolder.likeNum = (TextView) view.findViewById(R.id.tv_like_num);
+            viewHolder.praiseNum = (TextView) view.findViewById(R.id.tv_praise_num);
             viewHolder.shareNum = (TextView) view.findViewById(R.id.tv_share_num);
             viewHolder.commentNum = (TextView) view.findViewById(R.id.tv_comment_num);
             view.setTag(viewHolder);        //将viewHolder储存在View中
@@ -54,7 +54,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         viewHolder.paperAuthor.setText(paper.getTextAuthor());
         viewHolder.paperEssayContent.setText(paper.getContent());
         viewHolder.paperEssayAuthor.setText(paper.getAuthorInfo());
-        viewHolder.likeNum.setText(paper.getPraiseNum() + "");
+        viewHolder.praiseNum.setText(paper.getPraiseNum() + "");
         viewHolder.shareNum.setText(paper.getShareNum() + "");
         viewHolder.commentNum.setText(paper.getCommentNum() + "");
 
@@ -68,7 +68,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         TextView paperAuthor;
         TextView paperEssayContent;
         TextView paperEssayAuthor;
-        TextView likeNum;
+        TextView praiseNum;
         TextView shareNum;
         TextView commentNum;
     }

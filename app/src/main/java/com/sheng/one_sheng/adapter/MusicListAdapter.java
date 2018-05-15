@@ -62,10 +62,9 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
             viewHolder.musicTitle = (TextView) view.findViewById(R.id.tv_title);
             viewHolder.musicImage = (ImageView) view.findViewById(R.id.music_image);
             viewHolder.musicAuthor = (TextView) view.findViewById(R.id.tv_author);
+            viewHolder.updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
             viewHolder.musicForward = (TextView) view.findViewById(R.id.tv_music_desc);
             viewHolder.likeNum = (TextView) view.findViewById(R.id.tv_like_num);
-            viewHolder.shareNum = (TextView) view.findViewById(R.id.tv_share_num);
-            viewHolder.commentNum = (TextView) view.findViewById(R.id.tv_comment_num);
             view.setTag(viewHolder);        //将viewHolder储存在View中
         } else {
             view = convertView;
@@ -73,10 +72,9 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
         }
         viewHolder.musicTitle.setText(music.getTitle());
         viewHolder.musicAuthor.setText(" 文 / " + music.getUserName());
+        viewHolder.updateDate.setText(music.getUpdateDate());
         viewHolder.musicForward.setText(music.getForward());
         viewHolder.likeNum.setText(music.getLikeCount() + "");
-        viewHolder.shareNum.setText(music.getShareNum() + "");
-        viewHolder.commentNum.setText(music.getCommentNum() + "");
 
         String url = music.getImageUrl();
         viewHolder.musicImage.setImageResource(R.drawable.loading);
@@ -85,7 +83,7 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
         if (drawable != null) {
             viewHolder.musicImage.setImageDrawable(drawable);
         } else {
-            MusicListAdapter.BitmapWorkerTask task = new MusicListAdapter.BitmapWorkerTask();
+            BitmapWorkerTask task = new BitmapWorkerTask();
             task.execute(url);
         }
 
@@ -96,11 +94,10 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
     class MusicViewHolder{
         TextView musicTitle;
         TextView musicAuthor;
+        TextView updateDate;
         ImageView musicImage;
         TextView musicForward;
         TextView likeNum;
-        TextView shareNum;
-        TextView commentNum;
     }
 
     /**
