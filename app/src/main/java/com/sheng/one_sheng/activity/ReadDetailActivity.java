@@ -14,13 +14,19 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.adapter.CommentListAdapter;
+import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Read;
+import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
 import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
+
+import java.util.List;
 
 public class ReadDetailActivity extends BaseActivity {
 
@@ -36,6 +42,7 @@ public class ReadDetailActivity extends BaseActivity {
     private TextView praiseNum;
     private TextView shareNum;
     private TextView commentNum;
+    private MyListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class ReadDetailActivity extends BaseActivity {
         readLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestReadDetail(itemId);
+        requestCommentList(itemId);
     }
 
     @Override
@@ -117,6 +125,35 @@ public class ReadDetailActivity extends BaseActivity {
         });
     }
 
+    private void requestCommentList(String itemId){
+        Log.d("ReadDetailActivity", "传递之后详细内容的id为：" + itemId);
+        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
+                "/0?&platform=android";
+        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
+            @Override
+            public void onFinish(String response) {
+                final String responseText = response;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
+                        setAdapter(commentList);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
     private void showReadInfo(Read read){
 
         title.setText(read.getTitle());
@@ -131,5 +168,13 @@ public class ReadDetailActivity extends BaseActivity {
         shareNum.setText(read.getShareNum() + "");
         commentNum.setText(read.getCommentNum() + "");
         readLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void setAdapter(List<Comment> commentList){
+        Log.d("MovieDetailActivity", "此步骤没有出错！");
+        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
+                R.layout.layout_item_comment, commentList);
+        listView = (MyListView) findViewById(R.id.lv_comment_list_view);
+        listView.setAdapter(adapter);
     }
 }

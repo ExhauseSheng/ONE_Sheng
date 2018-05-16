@@ -7,8 +7,13 @@ package com.sheng.one_sheng.util;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.bean.Paper;
@@ -289,4 +294,36 @@ public class Utilty {
         }
         return null;
     }
+
+    /**
+     * 将返回的JSON数据解析成Comment实体类用于临时展示列表数据
+     */
+    public static List<Comment> handleCommentResponse(String response){
+        if (response != null){
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String resultCode = jsonObject.getString("res");
+                if (resultCode.equals("0")){
+                    List<Comment> comments = new ArrayList<>();
+                    JSONObject commentContent = jsonObject.getJSONObject("data");
+                    JSONArray commentList = commentContent.getJSONArray("data");
+                    for (int i = 0; i < commentList.length(); i++){
+                        Comment comment = new Comment();
+                        comment.setQuote(commentList.getJSONObject(i).getString("quote"));
+                        comment.setContent(commentList.getJSONObject(i).getString("content"));
+                        comment.setPraiseNum(commentList.getJSONObject(i).getInt("praisenum"));
+                        comment.setCreateTime(commentList.getJSONObject(i).getString("created_at"));
+                        comment.setUserName(commentList.getJSONObject(i).getJSONObject("user").getString("user_name"));
+//                        comment.setTouserName(commentList.getJSONObject(i).getJSONObject("touser").getString("user_name"));
+                        comments.add(comment);
+                    }
+                    return comments;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 }

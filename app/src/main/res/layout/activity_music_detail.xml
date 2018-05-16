@@ -58,6 +58,8 @@
 
             <include layout="@layout/layout_detail_author"/>
 
+            <include layout="@layout/layout_detail_comment"/>
+
         </LinearLayout>
 
     </ScrollView>

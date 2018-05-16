@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="15dp"
+    android:clickable="true"
+    android:paddingRight="15dp"
+    android:paddingTop="20dp">
+
+    <TextView
+        android:id="@+id/tv_comment_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginLeft="8dp"
+        android:gravity="center"
+        android:textColor="#daa520"
+        android:textSize="13sp"
+        tools:text="Sheng、"/>
+
+    <TextView
+        android:id="@+id/tv_comment_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textColor="#999"
+        android:textSize="14sp"
+        tools:text="2017-08-14-12:30"/>
+
+    <LinearLayout
+        android:id="@+id/comment_touser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_comment_user_name"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="9dp"
+        android:lineSpacingExtra="3dp"
+        android:orientation="vertical"
+        android:background="#f5f5dc"
+        android:padding="5dp">
+
+        <!--<TextView-->
+            <!--android:id="@+id/tv_comment_touser_name"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="4dp"-->
+            <!--android:textColor="#aaa"-->
+            <!--android:textSize="14sp"-->
+            <!--tools:text="看不见蓝色的沙丁鱼："/>-->
+
+        <TextView
+            android:id="@+id/tv_comment_touser_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="2"
+            android:textColor="#aaa"
+            android:textSize="14sp"
+            tools:text="是梦，宝石的珠子是冷空气，感冒是睡觉踢被子的后果，只是把身体的感觉体现在了是觉得珠子上"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_comment_user_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/comment_touser"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="#000"
+        android:textSize="16sp"
+        tools:text="正在上高数课的我，一发不可收拾地看完了，惊了......"/>
+
+    <ImageView
+        android:id="@+id/iv_comment_comment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tv_comment_user_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="250dp"
+        android:src="@drawable/ic_comment"/>
+
+    <ImageView
+        android:id="@+id/iv_comment_praise"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tv_comment_user_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/iv_comment_comment"
+        android:src="@drawable/ic_praise"/>
+
+    <TextView
+        android:id="@+id/tv_comment_praise_num"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tv_comment_user_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="6dp"
+        android:layout_toRightOf="@+id/iv_comment_praise"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#aaa"
+        tools:text="7"/>
+
+</RelativeLayout>

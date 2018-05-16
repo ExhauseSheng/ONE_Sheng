@@ -21,8 +21,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.adapter.CommentListAdapter;
+import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Music;
+import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
@@ -34,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 import static com.sheng.one_sheng.MyApplication.getContext;
@@ -57,6 +62,7 @@ public class MusicDetailActivity extends BaseActivity {
     private TextView praiseNum;
     private TextView shareNum;
     private TextView commentNum;
+    private MyListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +103,7 @@ public class MusicDetailActivity extends BaseActivity {
         musicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestMusicDetail(itemId);
+        requestCommentList(itemId);
     }
 
     @Override
@@ -139,6 +146,35 @@ public class MusicDetailActivity extends BaseActivity {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
+            }
+        });
+    }
+
+    private void requestCommentList(String itemId){
+        Log.d("MusicDetailActivity", "传递之后详细内容的id为：" + itemId);
+        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
+                "/0?&platform=android";
+        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
+            @Override
+            public void onFinish(String response) {
+                final String responseText = response;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
+                        setAdapter(commentList);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
@@ -230,4 +266,11 @@ public class MusicDetailActivity extends BaseActivity {
         }
     }
 
+    private void setAdapter(List<Comment> commentList){
+        Log.d("MovieDetailActivity", "此步骤没有出错！");
+        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
+                R.layout.layout_item_comment, commentList);
+        listView = (MyListView) findViewById(R.id.lv_comment_list_view);
+        listView.setAdapter(adapter);
+    }
 }

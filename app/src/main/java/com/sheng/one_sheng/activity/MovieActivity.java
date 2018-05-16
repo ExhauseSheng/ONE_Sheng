@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
 import com.sheng.one_sheng.bean.Movie;
@@ -89,7 +90,7 @@ public class MovieActivity extends BaseActivity {
 
     private void setAdapter(final List<Movie> movieList){
         MovieListAdapter adapter = new MovieListAdapter
-                (MovieActivity.this, R.layout.layout_card_movie, movieList);
+                (MyApplication.getContext(), R.layout.layout_card_movie, movieList);
         ListView listView = (ListView) findViewById(R.id.movie_list_view);
         listView.setAdapter(adapter);
         //给ListView设置监听事件
@@ -97,7 +98,7 @@ public class MovieActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MovieActivity.this, MovieDetailActivity.class);
+                Intent intent = new Intent(MyApplication.getContext(), MovieDetailActivity.class);
                 intent.putExtra("item_id", movieList.get(position).getItemId());
                 startActivity(intent);
             }

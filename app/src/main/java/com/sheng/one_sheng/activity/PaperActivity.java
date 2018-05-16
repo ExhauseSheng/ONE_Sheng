@@ -91,8 +91,6 @@ public class PaperActivity extends BaseActivity {
 
     //向服务器发送请求并获取到返回的数据
     private void requestPaper(List<String> paperIdList) {
-''
-        List<Paper> paperList = new ArrayList<>();
 
         for (int i = 0; i < paperIdList.size(); i++){
             String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
@@ -103,11 +101,11 @@ public class PaperActivity extends BaseActivity {
                 public void onFinish(String response) {
                     //将服务器返回来的数据解析成Paper实体类
                     final String responseText = response;
+                    final List<Paper> paperList = new ArrayList<Paper>();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                            paperList = new ArrayList<Paper>();
                             paperList.add(paper);
                         }
                     });
