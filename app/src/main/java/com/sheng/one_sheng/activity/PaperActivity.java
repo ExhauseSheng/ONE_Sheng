@@ -2,6 +2,7 @@ package com.sheng.one_sheng.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -37,6 +38,9 @@ import java.util.List;
 public class PaperActivity extends BaseActivity {
 
     private ListView listView;
+    public static final int PAPER_ID = 1;
+    public static final int PAPER_LIST = 2;
+    private List<Paper> papers = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +76,19 @@ public class PaperActivity extends BaseActivity {
             public void onFinish(String response) {
                 //取出处理之后出来的Id集合
                 final String responseText = response;
-                final List<String> paperIdList = Utilty.handlePaperIdResponse(response);
-                requestPaper(paperIdList);
+                final List<String> paperIdList = Utilty.handlePaperIdResponse(responseText);
+                for (int i = 0; i < paperIdList.size(); i++){
+                    Log.d("PaperActivity", paperIdList.get(i));
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message message = new Message();
+                        message.what = PAPER_ID;
+                        message.obj = paperIdList;
+                        handler.sendMessage(message);   //将Message对象发送出去
+                    }
+                }).start();
             }
 
             @Override
@@ -90,26 +105,23 @@ public class PaperActivity extends BaseActivity {
     }
 
     //向服务器发送请求并获取到返回的数据
-    private void requestPaper(List<String> paperIdList) {
-
-        for (int i = 0; i < paperIdList.size(); i++){
-            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" + paperIdList.get(i) +
-                    "?version=3.5.0&platform=android";
-            //循环取出插画id列表中的数据
-            HttpUtil.sendHttpRequest(paperUrl, new HttpCallbackListener() {
+    private void requestPaper(String url) {
+            //取出对应插画id中的插画内容
+            HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
                 @Override
                 public void onFinish(String response) {
                     //将服务器返回来的数据解析成Paper实体类
                     final String responseText = response;
-                    final List<Paper> paperList = new ArrayList<Paper>();
-                    runOnUiThread(new Runnable() {
+                    final Paper paper = Utilty.handlePaperDetailResponse(responseText);
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                            paperList.add(paper);
+                            Message message = new Message();
+                            message.what = PAPER_LIST;
+                            message.obj = paper;
+                            handler.sendMessage(message);   //将Message对象发送出去
                         }
-                    });
-
+                    }).start();
                 }
 
                 @Override
@@ -123,9 +135,33 @@ public class PaperActivity extends BaseActivity {
                     });
                 }
             });
-        }
-
     }
+
+    private Handler handler = new Handler(){
+
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case PAPER_ID:
+                    List<String> paperIds = (List<String>) msg.obj;
+                    Log.d("PaperActivity", "第一个集合的大小为：" + paperIds.size() + "");
+                    for (int i = 0; i < paperIds.size(); i++) {
+                        String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" +
+                                paperIds.get(i) + "?version=3.5.0&platform=android";
+                        requestPaper(paperUrl);
+                    }
+                    break;
+                case PAPER_LIST:
+                    Paper paper = (Paper) msg.obj;
+                    papers.add(paper);
+                    Log.d("PaperActivity2", "第二个集合的大小为：" + papers.size() + "");
+                    if (papers.size() == 10){
+                        setAdapter(papers);
+                    }
+                default:
+                    break;
+            }
+        }
+    };
 
     private void setAdapter(List<Paper> paperList){
 
