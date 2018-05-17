@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.bean.Paper;
 
 public class StartActivity extends BaseActivity {
 
@@ -50,7 +51,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(MyApplication.getContext(), MainActivity.class);
+                Intent intent = new Intent(MyApplication.getContext(), PaperActivity.class);
                 startActivity(intent);
                 //用于呈现淡入淡出效果
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

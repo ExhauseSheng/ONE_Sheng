@@ -3,10 +3,6 @@
     <group android:checkableBehavior="single">
         <!--single表示所有的菜单只能够单选-->
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/nav_home"
-            android:title="首  页"/>
-        <item
             android:id="@+id/nav_paper"
             android:icon="@drawable/nav_paper"
             android:title="图  文"/>
