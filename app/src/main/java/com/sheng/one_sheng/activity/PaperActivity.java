@@ -69,6 +69,9 @@ public class PaperActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 发送网络请求获取装有插画id列表的集合
+     */
     private void requestPaperId(){
         String paperIdUrl = "http://v3.wufazhuce.com:8000/api/hp/idlist/0?version=3.5.0&platform=android";
         HttpUtil.sendHttpRequest(paperIdUrl, new HttpCallbackListener() {
@@ -104,7 +107,10 @@ public class PaperActivity extends BaseActivity {
         });
     }
 
-    //向服务器发送请求并获取到返回的数据
+    /**
+     * 根据传入的地址发送网络请求获取装有对应插画信息的对象，并发往信息处理器
+     * @param url
+     */
     private void requestPaper(String url) {
             //取出对应插画id中的插画内容
             HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
@@ -137,6 +143,9 @@ public class PaperActivity extends BaseActivity {
             });
     }
 
+    /**
+     * 消息处理器
+     */
     private Handler handler = new Handler(){
 
         public void handleMessage(Message msg){
@@ -163,6 +172,10 @@ public class PaperActivity extends BaseActivity {
         }
     };
 
+    /**
+     * 插画列表适配器的设置
+     * @param paperList
+     */
     private void setAdapter(List<Paper> paperList){
 
         PaperListAdapter adapter = new PaperListAdapter

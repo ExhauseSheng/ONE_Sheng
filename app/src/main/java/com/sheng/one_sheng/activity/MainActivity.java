@@ -104,6 +104,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setBottomIndicator();
     }
 
+    /**
+     * 添加图片
+     */
     private void addImageView(){
         ImageView view0 = new ImageView(this);
         view0.setImageResource(R.mipmap.pic0);
@@ -131,7 +134,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         return true;
     }
 
-    // 设置4个小点
+    /**
+     * 轮播图小点的设置
+     */
     private void setBottomIndicator(){
         //获取指示器（下面三个小点）
         mBottomLiner = (LinearLayout) findViewById(R.id.live_indicator);
@@ -176,9 +181,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         mThread.start();
     }
 
-    ////////////////////////
-    // ViewPager的监听事件
-    ///////////////////////
+    /**
+     * ViewPager的监听事件
+     * @param position
+     * @param positionOffset
+     * @param positionOffsetPixels
+     */
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }

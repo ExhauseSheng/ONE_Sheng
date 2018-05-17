@@ -26,6 +26,9 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
  * Created by 一个傻傻的小男孩 on 2018/5/8.
  */
 
+/**
+ * 影视列表的适配器
+ */
 public class MovieListAdapter extends ArrayAdapter<Movie> {
 
     private int resourceId;     //用来指定列表某子项的id
@@ -124,6 +127,9 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
         return mMemoryCache.get(key);
     }
 
+    /**
+     * 异步加载列表中所有图片
+     */
     class BitmapWorkerTask extends AsyncTask<String, Void, BitmapDrawable> {
 
         String imageUrl;

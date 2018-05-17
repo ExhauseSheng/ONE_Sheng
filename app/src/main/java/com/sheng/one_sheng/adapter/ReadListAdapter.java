@@ -26,6 +26,9 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
  * Created by 一个傻傻的小男孩 on 2018/5/8.
  */
 
+/**
+ * 阅读列表适配器
+ */
 public class ReadListAdapter extends ArrayAdapter<Read> {
 
     private int resourceId;     //用来指定列表某子项的id

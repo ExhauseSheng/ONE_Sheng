@@ -27,6 +27,9 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
  * Created by 一个傻傻的小男孩 on 2018/5/8.
  */
 
+/**
+ * 音乐列表适配器
+ */
 public class MusicListAdapter extends ArrayAdapter<Music> {
 
     private int resourceId;     //用来指定列表某子项的id

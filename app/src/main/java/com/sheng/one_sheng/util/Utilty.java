@@ -35,6 +35,8 @@ public class Utilty {
 
     /**
      * 将返回的JSON数据解析出一个插画id列表数组
+     * @param response
+     * @return
      */
     public static List<String> handlePaperIdResponse(String response){
         List<String> paperId = new ArrayList<>();
@@ -52,7 +54,9 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Paper实体类
+     * 将返回的JSON数据解析成Paper实体类用于临时装载详细内容数据
+     * @param response
+     * @return
      */
     public static Paper handlePaperDetailResponse(String response) {
         //判断response是否为空
@@ -87,7 +91,9 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Music实体类用于临时装载列表数据
+     * 将返回的JSON数据解析成Music实体类，并放置于一个集合，用于临时装载列表数据
+     * @param response
+     * @return
      */
     public static List<Music> handleMusicListResponse(String response) {
         if (response != null){
@@ -122,7 +128,9 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Movie实体类用于临时装载列表数据
+     * 将返回的JSON数据解析成Movie实体类，并放置于一个集合，用于临时装载列表数据
+     * @param response
+     * @return
      */
     public static List<Movie> handleMovieListResponse(String response){
         if (response != null){
@@ -158,7 +166,9 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Read实体类用于临时装载列表数据
+     * 将返回的JSON数据解析成Read实体类，并放置于一个集合，用于临时装载列表数据
+     * @param response
+     * @return
      */
     public static List<Read> handleReadListResponse(String response){
         if (response != null){
@@ -194,6 +204,8 @@ public class Utilty {
 
     /**
      * 将返回的JSON数据解析成Read实体类用于临时展示阅读详细内容
+     * @param response
+     * @return
      */
     public static Read handleReadDetailResponse(String response) {
         if (response != null) {
@@ -228,6 +240,8 @@ public class Utilty {
 
     /**
      * 将返回的JSON数据解析成Music实体类用于临时展示音乐详细内容
+     * @param response
+     * @return
      */
     public static Music handleMusicDetailResponse(String response){
         if (response != null){
@@ -267,6 +281,8 @@ public class Utilty {
 
     /**
      * 将返回的JSON数据解析成Movie实体类用于临时展示影视详细内容
+     * @param response
+     * @return
      */
     public static Movie handleMovieDetailResponse(String response){
         if (response != null){
@@ -296,7 +312,9 @@ public class Utilty {
     }
 
     /**
-     * 将返回的JSON数据解析成Comment实体类用于临时展示列表数据
+     * 将返回的JSON数据解析成Comment实体类，并放置于一个集合，用于临时展示列表数据
+     * @param response
+     * @return
      */
     public static List<Comment> handleCommentResponse(String response){
         if (response != null){
@@ -325,5 +343,4 @@ public class Utilty {
         }
         return null;
     }
-
 }

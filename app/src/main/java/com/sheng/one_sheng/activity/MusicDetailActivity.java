@@ -118,6 +118,10 @@ public class MusicDetailActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 根据itemId来发送网络请求获取装有音乐详细内容数据的对象
+     * @param itemId
+     */
     private void requestMusicDetail(String itemId){
         String url = "http://v3.wufazhuce.com:8000/api/music/detail/" + itemId + "?version=3.5.0&platform=android";
         Log.d("MusicDetailActivity", "传递之后详细内容的id为：" + itemId);
@@ -150,6 +154,10 @@ public class MusicDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 根据itemId来发送网络请求获取装有评论列表数据的对象
+     * @param itemId
+     */
     private void requestCommentList(String itemId){
         Log.d("MusicDetailActivity", "传递之后详细内容的id为：" + itemId);
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
@@ -179,6 +187,10 @@ public class MusicDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 向界面展示信息
+     * @param music
+     */
     private void showMusicInfo(Music music){
         if (music != null){
             musicImage.setImageResource(R.drawable.loading);
@@ -266,6 +278,10 @@ public class MusicDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 评论列表适配器的设置
+     * @param commentList
+     */
     private void setAdapter(List<Comment> commentList){
         Log.d("MovieDetailActivity", "此步骤没有出错！");
         CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),

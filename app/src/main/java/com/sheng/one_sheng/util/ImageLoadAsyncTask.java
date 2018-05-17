@@ -9,6 +9,9 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
  * Created by 一个傻傻的小男孩 on 2018/5/15.
  */
 
+/**
+ * 加载网络图片的工具
+ */
 public class ImageLoadAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageCallBack imageCallBack;

@@ -28,7 +28,7 @@ public class MusicActivity extends BaseActivity {
         setContentView(R.layout.activity_music);
         setToolbar();
         changeStatusBar();
-        initMusic();     //初始化Read（测试）
+        initMusic();     //初始化
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -49,6 +49,9 @@ public class MusicActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 发送网络请求获取音乐列表数据
+     */
     private void initMusic(){
         String url = "http://v3.wufazhuce.com:8000/api/channel/music/more/0?platform=android";
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
@@ -79,6 +82,10 @@ public class MusicActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 设置音乐列表的适配器
+     * @param musicList
+     */
     private void setAdapter(final List<Music> musicList){
 
         MusicListAdapter adapter = new MusicListAdapter

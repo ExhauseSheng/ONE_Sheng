@@ -43,7 +43,9 @@ public class BaseActivity extends AppCompatActivity     //作为所有活动的�
         ActivityCollector.removeActivity(this);
     }
 
-    //更改系统栏的属性
+    /**
+     * 更改系统状态栏的颜色
+     */
     protected void changeStatusBar(){
         //更改系统栏的颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -54,7 +56,9 @@ public class BaseActivity extends AppCompatActivity     //作为所有活动的�
         }
     }
 
-    //设置toolbar，代替AvtionBar，并添加返回按钮
+    /**
+     * 设置toolbar，代替AvtionBar，并添加返回按钮
+     */
     protected void setToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替

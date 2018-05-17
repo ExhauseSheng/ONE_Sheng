@@ -59,6 +59,9 @@ public class MovieActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 发送网络请求获取影视列表数据
+     */
     private void initMovie(){
         String url = "http://v3.wufazhuce.com:8000/api/channel/movie/more/0?platform=android";
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
@@ -88,6 +91,10 @@ public class MovieActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 影视列表适配器的设置
+     * @param movieList
+     */
     private void setAdapter(final List<Movie> movieList){
         MovieListAdapter adapter = new MovieListAdapter
                 (MyApplication.getContext(), R.layout.layout_card_movie, movieList);

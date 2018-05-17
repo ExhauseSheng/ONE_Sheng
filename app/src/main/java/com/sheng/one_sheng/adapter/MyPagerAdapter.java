@@ -15,6 +15,9 @@ import java.util.List;
  * Created by 一个傻傻的小男孩 on 2018/5/7.
  */
 
+/**
+ * 轮播图适配器
+ */
 public class MyPagerAdapter extends PagerAdapter {
 
     public static final int MAX_SCROLL_VALUE = 10000;   //展示10000张图片，不实际，让用户有一种以为是无限轮播的假象！

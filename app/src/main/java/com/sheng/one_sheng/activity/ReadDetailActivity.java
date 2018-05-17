@@ -93,6 +93,10 @@ public class ReadDetailActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 根据itemId获取装有文章详细内容数据的对象
+     * @param itemId
+     */
     private void requestReadDetail(final String itemId){
         Log.d("ReadDetailActivity", "传递之后详细内容id为：" + itemId);
         String url = "http://v3.wufazhuce.com:8000/api/essay/" + itemId + "?platform=android";
@@ -125,6 +129,10 @@ public class ReadDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 根据itemId获取装有评论列表数据的对象
+     * @param itemId
+     */
     private void requestCommentList(String itemId){
         Log.d("ReadDetailActivity", "传递之后详细内容的id为：" + itemId);
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
@@ -154,6 +162,10 @@ public class ReadDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 将数据展示在界面上
+     * @param read
+     */
     private void showReadInfo(Read read){
 
         title.setText(read.getTitle());
@@ -170,6 +182,10 @@ public class ReadDetailActivity extends BaseActivity {
         readLayout.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * 评论列表适配器的设置
+     * @param commentList
+     */
     private void setAdapter(List<Comment> commentList){
         Log.d("MovieDetailActivity", "此步骤没有出错！");
         CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),

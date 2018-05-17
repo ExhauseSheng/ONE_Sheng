@@ -38,10 +38,8 @@ public class HttpUtil {
                     URL url = new URL(address);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-//                    connection.setConnectTimeout(8000);
-//                    connection.setReadTimeout(8000);
-//                    connection.setDoInput(true);
-//                    connection.setDoOutput(true);
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
                     InputStream in = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
@@ -69,7 +67,7 @@ public class HttpUtil {
     }
 
     /**
-     * 发送网络请求将一个图片地址转换成BitMap对象
+     * 发送网络请求下载图片
      * @param url
      * @return
      */

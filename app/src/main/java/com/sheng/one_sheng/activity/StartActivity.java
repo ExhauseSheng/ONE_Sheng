@@ -28,6 +28,9 @@ public class StartActivity extends BaseActivity {
         initImage();
     }
 
+    /**
+     * 开场图片的设置
+     */
     private void initImage(){
         ImageView iv_start = (ImageView) findViewById(R.id.iv_start);
         iv_start.setImageResource(R.drawable.start);

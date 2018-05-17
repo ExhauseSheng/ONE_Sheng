@@ -94,6 +94,10 @@ public class MovieDetailActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 根据itemId发送网络请求获取装有影视详细内容的对象
+     * @param itemId
+     */
     private void requestMovieDetail(String itemId){
         String url = "http://v3.wufazhuce.com:8000/api/movie/" + itemId + "/story/1/0?platform=android";
         Log.d("MovieDetailActivity", "传递之后详细内容的id为：" + itemId);
@@ -126,6 +130,10 @@ public class MovieDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 根据itemId发送网络请求获取装有评论列表数据的对象
+     * @param itemId
+     */
     private void requestCommentList(String itemId){
         Log.d("MovieDetailActivity", "传递之后详细内容的id为：" + itemId);
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
@@ -155,6 +163,10 @@ public class MovieDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 将数据显示在界面上
+     * @param movie
+     */
     private void showMovieInfo(Movie movie){
         if (movie != null){
             title.setText(movie.getTitle());
@@ -172,6 +184,10 @@ public class MovieDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 评论列表适配器的设置
+     * @param commentList
+     */
     private void setAdapter(List<Comment> commentList){
         Log.d("MovieDetailActivity", "此步骤没有出错！");
         CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),

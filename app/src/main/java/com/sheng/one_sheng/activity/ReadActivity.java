@@ -61,6 +61,9 @@ public class ReadActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 发送网络请求获取阅读列表数据
+     */
     private void initRead(){
         String url = "http://v3.wufazhuce.com:8000/api/channel/reading/more/0?channel=wdj&version=4.0.2&platform=android";
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
@@ -91,6 +94,10 @@ public class ReadActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 阅读列表适配器的设置
+     * @param readList
+     */
     private void setAdapter(final List<Read> readList){
         ReadListAdapter adapter = new ReadListAdapter
                 (ReadActivity.this, R.layout.layout_card_read, readList);

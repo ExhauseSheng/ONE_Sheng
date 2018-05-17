@@ -17,6 +17,9 @@ import java.util.List;
  * Created by 一个傻傻的小男孩 on 2018/5/16.
  */
 
+/**
+ * 评论列表的适配器
+ */
 public class CommentListAdapter extends ArrayAdapter<Comment> {
 
     private int resourceId;     //用来指定列表某子项的id
@@ -39,14 +42,12 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         }
         TextView userName = (TextView) view.findViewById(R.id.tv_comment_user_name);
         TextView createTime = (TextView) view.findViewById(R.id.tv_comment_time);
-//         TextView touserName = (TextView) view.findViewById(R.id.tv_comment_touser_name);
         TextView touserContent = (TextView) view.findViewById(R.id.tv_comment_touser_content);
         TextView userContent = (TextView) view.findViewById(R.id.tv_comment_user_content);
         TextView praiseNum = (TextView) view.findViewById(R.id.tv_comment_praise_num);
 
         userName.setText(comment.getUserName());
         createTime.setText(comment.getCreateTime());
-//        touserName.setText(comment.getTouserName());
         touserContent.setText(comment.getQuote());
         userContent.setText(comment.getContent());
         praiseNum.setText(comment.getPraiseNum() + "");
