@@ -16,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
     private Thread mThread;     //线程
+    public SwipeRefreshLayout swipeRefresh;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +84,8 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示菜单按钮
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);               //显示菜单图片
         }
-        navView.setCheckedItem(R.id.nav_paper);  //首页菜单默认选中
+        //菜单默认选中图文选项，并对菜单项做监听
+        navView.setCheckedItem(R.id.nav_paper);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -116,7 +119,17 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         mViewPager.addOnPageChangeListener(this);
         isAutoPlay = true;
 
-
+        //添加刷新操作，并对刷新做监听
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //下拉刷新的时候会回调这个方法
+                papers.clear();     //先将装有插画对象的集合清空，重新获取数据
+                requestPaperId();
+            }
+        });
 
         requestPaperId();     //发送请求获取数据
     }
@@ -149,15 +162,10 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                 for (int i = 0; i < paperIdList.size(); i++){
                     Log.d("PaperActivity", paperIdList.get(i));
                 }
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-                        Message message = new Message();
-                        message.what = PAPER_ID;
-                        message.obj = paperIdList;
-                        handler.sendMessage(message);   //将Message对象发送出去
-//                    }
-//                }).start();
+                Message message = new Message();
+                message.what = PAPER_ID;
+                message.obj = paperIdList;
+                handler.sendMessage(message);   //将Message对象发送出去
             }
 
             @Override
@@ -167,6 +175,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     @Override
                     public void run() {
                         Toast.makeText(PaperActivity.this, "获取id信息失败", Toast.LENGTH_SHORT).show();
+                        swipeRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -185,20 +194,15 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     //将服务器返回来的数据解析成Paper实体类
                     final String responseText = response;
                     final Paper paper = Utilty.handlePaperDetailResponse(responseText);
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-                            Message message = new Message();
-                            message.what = PAPER_LIST;
-                            message.obj = paper;
-                            handler.sendMessage(message);   //将Message对象发送出去
+                    Message message = new Message();
+                    message.what = PAPER_LIST;
+                    message.obj = paper;
+                    handler.sendMessage(message);   //将Message对象发送出去
 
-                            Message message2 = new Message();
-                            message2.what = PAPER_IMAGE;
-                            message2.obj = paper.getImageUrl();
-                            handler.sendMessage(message2);   //将Message2对象发送出去
-//                        }
-//                    }).start();
+                    Message message2 = new Message();
+                    message2.what = PAPER_IMAGE;
+                    message2.obj = paper.getImageUrl();
+                    handler.sendMessage(message2);   //将Message2对象发送出去
                 }
 
                 @Override
@@ -208,6 +212,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                         @Override
                         public void run() {
                             Toast.makeText(PaperActivity.this, "获取详细信息失败", Toast.LENGTH_SHORT).show();
+                            swipeRefresh.setRefreshing(false);
                         }
                     });
                 }
@@ -236,6 +241,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     Log.d("PaperActivity2", "第二个集合的大小为：" + papers.size() + "");
                     if (papers.size() == 10){
                         setAdapter(papers);
+                        swipeRefresh.setRefreshing(false);
                     }
                     break;
                 case PAPER_IMAGE:
@@ -245,7 +251,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     if (imageUrls.size() == 10){
                         addImageView(imageUrls);
                     }
-                    Log.d("PaperActivity2", "第三个集合的大小为：" + papers.size() + "");
+                    Log.d("PaperActivity2", "第三个集合的大小为：" + imageUrls.size() + "");
                 default:
                     break;
             }
@@ -268,7 +274,9 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * 给轮播图添加图片
      */
     private void addImageView(List<String> imageUrls){
-        Log.d("PaperActivity", "传递之后的集合三大小为：" + imageUrls.size() + "");
+        if (mItems != null){    //判断此时mItems是不是空集合
+            mItems.clear();     //如果不是空集合就清空重新添加
+        }
         for (int i = 0; i < imageUrls.size(); i++) {
             final ImageView view = new ImageView(this);
             String imgUrl = imageUrls.get(i);
@@ -286,24 +294,11 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
             mItems.add(view);
         }
         Log.d("PaperActivity", "轮播图图片集合大小为：" + mItems.size() + "");
-//        ImageView view0 = new ImageView(this);
-//        view0.setImageResource(R.mipmap.pic0);
-//        ImageView view1 = new ImageView(this);
-//        view1.setImageResource(R.mipmap.pic1);
-//        ImageView view2 = new ImageView(this);
-//        view2.setImageResource(R.mipmap.pic2);
-//
-//        view0.setScaleType(ImageView.ScaleType.CENTER_CROP);    //设置缩进方式
-//        view1.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//        view2.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//
-//        mItems.add(view0);
-//        mItems.add(view1);
-//        mItems.add(view2);
-
+        //通知适配器更新数据
         mAdapter.notifyDataSetChanged();
         //设置底部4个小点
         setBottomIndicator();
+        swipeRefresh.setRefreshing(false);
     }
 
     /**

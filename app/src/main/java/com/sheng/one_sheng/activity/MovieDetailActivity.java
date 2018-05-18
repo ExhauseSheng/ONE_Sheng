@@ -24,6 +24,7 @@ import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class MovieDetailActivity extends BaseActivity {
     private TextView praiseNum;
     private TextView shareNum;
     private TextView commentNum;
-    private MyListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +80,9 @@ public class MovieDetailActivity extends BaseActivity {
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
         requestMovieDetail(itemId);     //请求详细内容
-        requestCommentList(itemId);     //请求评论列表
+        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
+               "/0?&platform=android";
+        requestCommentList(url, itemId);     //请求评论列表
     }
 
     @Override
@@ -110,10 +113,7 @@ public class MovieDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (movie != null){
-                            SharedPreferences.Editor editor = PreferenceManager.
-                                    getDefaultSharedPreferences(MyApplication.getContext()).edit();
-                            editor.putString("music_detail", responseText);
-                            editor.apply();
+                            SPUtil.setParam(MyApplication.getContext(), "movie_detail", responseText);
                             showMovieInfo(movie);   //内容显示
                         }
                         else {
@@ -126,39 +126,6 @@ public class MovieDetailActivity extends BaseActivity {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-            }
-        });
-    }
-
-    /**
-     * 根据itemId发送网络请求获取装有评论列表数据的对象
-     * @param itemId
-     */
-    private void requestCommentList(String itemId){
-        Log.d("MovieDetailActivity", "传递之后详细内容的id为：" + itemId);
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
-                "/0?&platform=android";
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
-            @Override
-            public void onFinish(String response) {
-                final String responseText = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
-                        setAdapter(commentList);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
     }
@@ -182,17 +149,5 @@ public class MovieDetailActivity extends BaseActivity {
             commentNum.setText("0");
             movieLayout.setVisibility(View.VISIBLE);
         }
-    }
-
-    /**
-     * 评论列表适配器的设置
-     * @param commentList
-     */
-    private void setAdapter(List<Comment> commentList){
-        Log.d("MovieDetailActivity", "此步骤没有出错！");
-        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
-                R.layout.layout_item_comment, commentList);
-        listView = (MyListView) findViewById(R.id.lv_comment_list_view);
-        listView.setAdapter(adapter);
     }
 }

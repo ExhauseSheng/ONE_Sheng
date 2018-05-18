@@ -78,7 +78,9 @@ public class ReadDetailActivity extends BaseActivity {
         readLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestReadDetail(itemId);
-        requestCommentList(itemId);
+        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
+                "/0?&platform=android";
+        requestCommentList(url, itemId);
     }
 
     @Override
@@ -130,39 +132,6 @@ public class ReadDetailActivity extends BaseActivity {
     }
 
     /**
-     * 根据itemId获取装有评论列表数据的对象
-     * @param itemId
-     */
-    private void requestCommentList(String itemId){
-        Log.d("ReadDetailActivity", "传递之后详细内容的id为：" + itemId);
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
-                "/0?&platform=android";
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
-            @Override
-            public void onFinish(String response) {
-                final String responseText = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
-                        setAdapter(commentList);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-    }
-
-    /**
      * 将数据展示在界面上
      * @param read
      */
@@ -180,17 +149,5 @@ public class ReadDetailActivity extends BaseActivity {
         shareNum.setText(read.getShareNum() + "");
         commentNum.setText(read.getCommentNum() + "");
         readLayout.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * 评论列表适配器的设置
-     * @param commentList
-     */
-    private void setAdapter(List<Comment> commentList){
-        Log.d("MovieDetailActivity", "此步骤没有出错！");
-        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
-                R.layout.layout_item_comment, commentList);
-        listView = (MyListView) findViewById(R.id.lv_comment_list_view);
-        listView.setAdapter(adapter);
     }
 }

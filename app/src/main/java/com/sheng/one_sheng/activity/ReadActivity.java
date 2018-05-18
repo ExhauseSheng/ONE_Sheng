@@ -1,8 +1,11 @@
 package com.sheng.one_sheng.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +26,10 @@ import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.bean.Read;
+import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
+import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
 
 import java.util.ArrayList;
@@ -32,7 +37,7 @@ import java.util.List;
 
 public class ReadActivity extends BaseActivity {
 
-    private List<Read> readList = new ArrayList<>();
+    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,30 @@ public class ReadActivity extends BaseActivity {
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+        }
+
+        //添加刷新操作，并对刷新做监听
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //下拉刷新的时候会回调这个方法
+                initRead();
+            }
+        });
+
+        //检测是否有缓存
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String readListString = prefs.getString("reads", null);
+        if (readListString != null){
+            //如果有缓存就直接解析
+            List<Read> readList = Utilty.handleReadListResponse(readListString);
+            Log.d("ReadActivity", "成功取出缓存：大小为：" + readList.size() + "");
+            setAdapter(readList);
+        } else {
+            //如果没有缓存就从服务器中获取数据
+            initRead();
         }
     }
 
@@ -73,9 +102,9 @@ public class ReadActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("ReadActivity", "**************************");
                         List<Read> readList = Utilty.handleReadListResponse(responseText);
                         Log.d("ReadActivity", "集合2的大小为：" + readList.size() + "");
+                        SPUtil.setParam(MyApplication.getContext(), "reads", responseText);
                         setAdapter(readList);
                     }
                 });
@@ -88,6 +117,7 @@ public class ReadActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Toast.makeText(MyApplication.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
+                        swipeRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -101,8 +131,9 @@ public class ReadActivity extends BaseActivity {
     private void setAdapter(final List<Read> readList){
         ReadListAdapter adapter = new ReadListAdapter
                 (ReadActivity.this, R.layout.layout_card_read, readList);
-        ListView listView = (ListView) findViewById(R.id.read_list_view);
+        MyListView listView = (MyListView) findViewById(R.id.read_list_view);
         listView.setAdapter(adapter);
+        swipeRefresh.setRefreshing(false);      //结束刷新事件
         //给listView的每一项做监听
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

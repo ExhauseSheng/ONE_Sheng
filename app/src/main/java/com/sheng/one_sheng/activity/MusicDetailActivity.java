@@ -62,7 +62,6 @@ public class MusicDetailActivity extends BaseActivity {
     private TextView praiseNum;
     private TextView shareNum;
     private TextView commentNum;
-    private MyListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +102,9 @@ public class MusicDetailActivity extends BaseActivity {
         musicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestMusicDetail(itemId);
-        requestCommentList(itemId);
+        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
+                "/0?&platform=android";
+        requestCommentList(url, itemId);
     }
 
     @Override
@@ -150,39 +151,6 @@ public class MusicDetailActivity extends BaseActivity {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-            }
-        });
-    }
-
-    /**
-     * 根据itemId来发送网络请求获取装有评论列表数据的对象
-     * @param itemId
-     */
-    private void requestCommentList(String itemId){
-        Log.d("MusicDetailActivity", "传递之后详细内容的id为：" + itemId);
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
-                "/0?&platform=android";
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
-            @Override
-            public void onFinish(String response) {
-                final String responseText = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
-                        setAdapter(commentList);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
     }
@@ -276,17 +244,5 @@ public class MusicDetailActivity extends BaseActivity {
                 essayContent.setText(charSequence);
             }
         }
-    }
-
-    /**
-     * 评论列表适配器的设置
-     * @param commentList
-     */
-    private void setAdapter(List<Comment> commentList){
-        Log.d("MovieDetailActivity", "此步骤没有出错！");
-        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
-                R.layout.layout_item_comment, commentList);
-        listView = (MyListView) findViewById(R.id.lv_comment_list_view);
-        listView.setAdapter(adapter);
     }
 }
