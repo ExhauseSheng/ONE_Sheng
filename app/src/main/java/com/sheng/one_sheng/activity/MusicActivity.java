@@ -17,6 +17,7 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MusicListAdapter;
 import com.sheng.one_sheng.bean.Music;
+import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -29,6 +30,7 @@ import java.util.List;
 public class MusicActivity extends BaseActivity {
 
     private SwipeRefreshLayout swipeRefresh;
+    private MyDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class MusicActivity extends BaseActivity {
         setContentView(R.layout.activity_music);
         setToolbar();
         changeStatusBar();
+        dialog = MyDialog.showDialog(MusicActivity.this);
+        dialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -52,6 +56,7 @@ public class MusicActivity extends BaseActivity {
                 //下拉刷新的时候会回调这个方法
                 //重新从服务器获取数据
                 initMusic();
+                dialog.show();
             }
         });
 
@@ -127,6 +132,7 @@ public class MusicActivity extends BaseActivity {
         MyListView listView = (MyListView) findViewById(R.id.music_list_view);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);
+        dialog.dismiss();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

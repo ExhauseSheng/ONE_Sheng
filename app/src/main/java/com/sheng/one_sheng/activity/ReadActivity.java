@@ -26,6 +26,7 @@ import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.bean.Read;
+import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -38,6 +39,7 @@ import java.util.List;
 public class ReadActivity extends BaseActivity {
 
     private SwipeRefreshLayout swipeRefresh;
+    private MyDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class ReadActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
         initRead();     //初始化Read（测试）
+        dialog = MyDialog.showDialog(ReadActivity.this);
+        dialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -61,6 +65,7 @@ public class ReadActivity extends BaseActivity {
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
                 initRead();
+                dialog.show();
             }
         });
 
@@ -134,6 +139,7 @@ public class ReadActivity extends BaseActivity {
         MyListView listView = (MyListView) findViewById(R.id.read_list_view);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);      //结束刷新事件
+        dialog.dismiss();
         //给listView的每一项做监听
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

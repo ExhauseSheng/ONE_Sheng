@@ -38,6 +38,7 @@ import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
 import com.sheng.one_sheng.bean.Paper;
+import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -70,12 +71,16 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     private MyHandler mHandler;     //自定义Handler
     private Thread mThread;     //线程
     public SwipeRefreshLayout swipeRefresh;
+    private MyDialog dialog;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
         setToolbar();
         changeStatusBar();
+        dialog = MyDialog.showDialog(PaperActivity.this);
+        dialog.show();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
@@ -128,6 +133,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                 //下拉刷新的时候会回调这个方法
                 papers.clear();     //先将装有插画对象的集合清空，重新获取数据
                 requestPaperId();
+                dialog.show();
             }
         });
 
@@ -242,6 +248,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     if (papers.size() == 10){
                         setAdapter(papers);
                         swipeRefresh.setRefreshing(false);
+                        dialog.dismiss();
                     }
                     break;
                 case PAPER_IMAGE:
@@ -298,7 +305,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         mAdapter.notifyDataSetChanged();
         //设置底部4个小点
         setBottomIndicator();
-        swipeRefresh.setRefreshing(false);
     }
 
     /**

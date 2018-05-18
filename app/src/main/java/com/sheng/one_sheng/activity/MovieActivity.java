@@ -24,6 +24,7 @@ import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.bean.Music;
+import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -38,6 +39,7 @@ import static com.sheng.one_sheng.R.id.toolbar;
 public class MovieActivity extends BaseActivity {
 
     private SwipeRefreshLayout swipeRefresh;
+    private MyDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class MovieActivity extends BaseActivity {
         setContentView(R.layout.activity_movie);
         setToolbar();
         changeStatusBar();
+        dialog = MyDialog.showDialog(MovieActivity.this);
+        dialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -60,6 +64,7 @@ public class MovieActivity extends BaseActivity {
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
                 initMovie();
+                dialog.show();
             }
         });
 
@@ -74,6 +79,7 @@ public class MovieActivity extends BaseActivity {
         } else {
             //如果没有缓存就从服务器中获取数据
             initMovie();
+            dialog.show();
         }
     }
 
@@ -133,8 +139,9 @@ public class MovieActivity extends BaseActivity {
         MyListView listView = (MyListView) findViewById(R.id.movie_list_view);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);  //结束刷新事件
-        //给ListView设置监听事件
+        dialog.dismiss();
 
+        //给ListView设置监听事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

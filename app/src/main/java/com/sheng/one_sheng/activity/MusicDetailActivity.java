@@ -26,6 +26,7 @@ import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.CommentListAdapter;
 import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Music;
+import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -62,6 +63,7 @@ public class MusicDetailActivity extends BaseActivity {
     private TextView praiseNum;
     private TextView shareNum;
     private TextView commentNum;
+    private MyDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,8 @@ public class MusicDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_music_detail);
         setToolbar();
         changeStatusBar();
+        dialog = MyDialog.showDialog(MusicDetailActivity.this);
+        dialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -193,6 +197,7 @@ public class MusicDetailActivity extends BaseActivity {
             shareNum.setText(music.getShareNum() + "");
             commentNum.setText(music.getCommentNum() + "");
             musicLayout.setVisibility(View.VISIBLE);
+            dialog.dismiss();
         }
     }
 
