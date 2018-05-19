@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,6 +58,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     public static final int PAPER_ID = 1;
     public static final int PAPER_LIST = 2;
     public static final int PAPER_IMAGE = 3;
+    public static final int FINISH_DELAY = 4;
     private List<Paper> papers = new ArrayList<>();
     private List<String> imageUrls = new ArrayList<>();
     private DrawerLayout mDrawerLayout;     //滑动菜单布局
@@ -72,6 +74,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     private Thread mThread;     //线程
     public SwipeRefreshLayout swipeRefresh;
     private MyDialog dialog;
+    private boolean isExit;     //用来判断是否退出的一个布尔值，用于按两次返回键退出程序
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,6 +262,9 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                         addImageView(imageUrls);
                     }
                     Log.d("PaperActivity2", "第三个集合的大小为：" + imageUrls.size() + "");
+                case FINISH_DELAY:
+                    isExit = false;
+                    break;
                 default:
                     break;
             }
@@ -398,6 +404,26 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                 break;
         }
         return false;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){  //如果按下的是返回键
+            if (!isExit){       //如果isExit是false的话
+                isExit = true;      //变成true
+                Toast.makeText(MyApplication.getContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                handler.sendEmptyMessageDelayed(FINISH_DELAY, 2000);  //延迟两秒发送一条消息，在处理器里面再次将isExit变成false，重复此操作
+            } else {
+                //如果在两秒内再次按下返回键，这时isExit就是true了，就会直接退出程序
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+                System.exit(0);
+            }
+            return false;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 
     /**
