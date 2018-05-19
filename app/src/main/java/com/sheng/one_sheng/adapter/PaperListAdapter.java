@@ -4,10 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -15,9 +17,12 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
+import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.util.imageLoader;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
@@ -29,30 +34,34 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 /**
  * 插画列表适配器
  */
-public class PaperListAdapter extends ArrayAdapter<Paper> {
+public class PaperListAdapter extends ArrayAdapter<Paper> implements AbsListView.OnScrollListener {
 
     private int resourceId;     //用来指定列表某子项的id
-    private LruCache<String, BitmapDrawable> mMemoryCache;
-    private ListView mListView;
+    private MyListView mListView;
+    private List<String> imageUrls = new ArrayList<>();
+    private boolean isFirst;//是否是第一次进入
+    private imageLoader mImageLoader;
+    private int mSart;
+    private int mEnd;
+    private List<Paper> paperList;
+    private Context mContext;
 
-    public PaperListAdapter (Context context, int textViewResoureId, List<Paper> objects){
+    public PaperListAdapter (Context context, int textViewResoureId, List<Paper> objects, MyListView listView){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 8;
-        mMemoryCache = new LruCache<String, BitmapDrawable>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable drawable) {
-                return drawable.getBitmap().getByteCount();
-            }
-        };
+        this.paperList = objects;
+        this.mContext = context;
+        this.mListView = listView;
+
+        mImageLoader = new imageLoader(mListView);
+        for (int i = 0; i < this.paperList.size(); i++){
+            imageUrls.add(this.paperList.get(i).getImageUrl());
+        }
+        Log.d("PaperListAdapter", "图片url集合大小为：" + imageUrls.size() + "");
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mListView == null){
-            mListView = (ListView) parent;      //parent就是一个ListView实例
-        }
         Paper paper = getItem(position);    //获取当前项的Paper实例
         View view;
         PaperViewHolder viewHolder;
@@ -84,60 +93,42 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         String url = paper.getImageUrl();
         viewHolder.paperImage.setImageResource(R.drawable.loading);
         viewHolder.paperImage.setTag(url);
-        BitmapDrawable drawable = getBitmapFromMemoryCache(url);
-        if (drawable != null) {
-            viewHolder.paperImage.setImageDrawable(drawable);
-        } else {
-            BitmapWorkerTask task = new BitmapWorkerTask();
-            task.execute(url);
-        }
+
+        mImageLoader.loadingByAsyncTask(viewHolder.paperImage, url);
         return view;
     }
 
     /**
-     * 将一张图片存储到LruCache中
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @param drawable
-     *            LruCache的值，这里传入从网络上下载的BitmapDrawable对象。
+     * ListView在滑动的过程调用
+     * @param view
+     * @param firstVisibleItem
+     * @param visibleItemCount
+     * @param totalItemCount
      */
-    public void addBitmapToMemoryCache(String key, BitmapDrawable drawable) {
-        if (getBitmapFromMemoryCache(key) == null) {
-            mMemoryCache.put(key, drawable);
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mSart = firstVisibleItem;   //可见第一个item
+        mEnd = firstVisibleItem + visibleItemCount;     //可见的最后一个item
+        if (isFirst && visibleItemCount > 0){
+            //第一次载入的时候数据处理
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+            isFirst = false;
         }
     }
 
     /**
-     * 从LruCache中获取一张图片，如果不存在就返回null。
-     *
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @return 对应传入键的BitmapDrawable对象，或者null。
+     * ListView在流动状态变化时调用
+     * @param view
+     * @param scrollState
      */
-    public BitmapDrawable getBitmapFromMemoryCache(String key) {
-        return mMemoryCache.get(key);
-    }
-
-    class BitmapWorkerTask extends AsyncTask<String, Void, BitmapDrawable> {
-
-        String imageUrl;
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params) {
-            imageUrl = params[0];
-            // 在后台开始下载图片
-            Bitmap bitmap = downloadBitmap(imageUrl);
-            BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
-            addBitmapToMemoryCache(imageUrl, drawable);
-            return drawable;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable drawable) {
-            ImageView imageView = (ImageView) mListView.findViewWithTag(imageUrl);
-            if (imageView != null && drawable != null) {
-                imageView.setImageDrawable(drawable);
-            }
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollState == SCROLL_STATE_IDLE){
+            //流动停止，此时载入可见项数据
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+        } else {
+            //停止载入数据
+            mImageLoader.stopAllTask();
         }
     }
 

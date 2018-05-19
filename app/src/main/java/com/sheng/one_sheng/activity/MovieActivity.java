@@ -134,9 +134,9 @@ public class MovieActivity extends BaseActivity {
      * @param movieList
      */
     private void setAdapter(final List<Movie> movieList){
-        MovieListAdapter adapter = new MovieListAdapter
-                (MyApplication.getContext(), R.layout.layout_card_movie, movieList);
         MyListView listView = (MyListView) findViewById(R.id.movie_list_view);
+        MovieListAdapter adapter = new MovieListAdapter
+                (MyApplication.getContext(), R.layout.layout_card_movie, movieList, listView);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);  //结束刷新事件
         dialog.dismiss();

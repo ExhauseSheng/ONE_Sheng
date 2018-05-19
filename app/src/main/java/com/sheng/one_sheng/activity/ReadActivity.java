@@ -134,9 +134,9 @@ public class ReadActivity extends BaseActivity {
      * @param readList
      */
     private void setAdapter(final List<Read> readList){
-        ReadListAdapter adapter = new ReadListAdapter
-                (ReadActivity.this, R.layout.layout_card_read, readList);
         MyListView listView = (MyListView) findViewById(R.id.read_list_view);
+        ReadListAdapter adapter = new ReadListAdapter
+                (ReadActivity.this, R.layout.layout_card_read, readList, listView);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);      //结束刷新事件
         dialog.dismiss();

@@ -5,10 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,8 +18,12 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
+import com.sheng.one_sheng.bean.Music;
+import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpUtil;
+import com.sheng.one_sheng.util.imageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
@@ -29,31 +35,35 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 /**
  * 影视列表的适配器
  */
-public class MovieListAdapter extends ArrayAdapter<Movie> {
+public class MovieListAdapter extends ArrayAdapter<Movie> implements AbsListView.OnScrollListener {
 
     private int resourceId;     //用来指定列表某子项的id
-    private LruCache<String, BitmapDrawable> mMemoryCache;
-    private ListView mListView;
+    private MyListView mListView;
+    private List<String> imageUrls = new ArrayList<>();
+    private boolean isFirst;//是否是第一次进入
+    private imageLoader mImageLoader;
+    private int mSart;
+    private int mEnd;
+    private List<Movie> movieList;
+    private Context mContext;
 
-    public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects){
+    public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects, MyListView listView){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 8;
-        mMemoryCache = new LruCache<String, BitmapDrawable>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable drawable) {
-                return drawable.getBitmap().getByteCount();
-            }
-        };
+        this.movieList = objects;
+        this.mContext = context;
+        this.mListView = listView;
+
+        mImageLoader = new imageLoader(mListView);
+        for (int i = 0; i < this.movieList.size(); i++){
+            imageUrls.add(this.movieList.get(i).getImageUrl());
+        }
+        Log.d("MovieListtAdapter", "图片url集合大小为：" + imageUrls.size() + "");
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mListView == null){
-            mListView = (ListView) parent;      //parent就是一个ListView实例
-        }
         Movie movie = getItem(position);
         View view;
         MovieViewHolder viewHolder;
@@ -83,14 +93,43 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
         String url = movie.getImageUrl();
         viewHolder.movieImage.setImageResource(R.drawable.loading);
         viewHolder.movieImage.setTag(url);
-        BitmapDrawable drawable = getBitmapFromMemoryCache(url);
-        if (drawable != null) {
-            viewHolder.movieImage.setImageDrawable(drawable);
-        } else {
-            BitmapWorkerTask task = new MovieListAdapter.BitmapWorkerTask();
-            task.execute(url);
-        }
+
+        mImageLoader.loadingByAsyncTask(viewHolder.movieImage, url);
         return view;
+    }
+
+    /**
+     * ListView在滑动的过程调用
+     * @param view
+     * @param firstVisibleItem
+     * @param visibleItemCount
+     * @param totalItemCount
+     */
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mSart = firstVisibleItem;   //可见第一个item
+        mEnd = firstVisibleItem + visibleItemCount;     //可见的最后一个item
+        if (isFirst && visibleItemCount > 0){
+            //第一次载入的时候数据处理
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+            isFirst = false;
+        }
+    }
+
+    /**
+     * ListView在流动状态变化时调用
+     * @param view
+     * @param scrollState
+     */
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollState == SCROLL_STATE_IDLE){
+            //流动停止，此时载入可见项数据
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+        } else {
+            //停止载入数据
+            mImageLoader.stopAllTask();
+        }
     }
 
     class MovieViewHolder{
@@ -101,55 +140,5 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
         ImageView movieImage;
         TextView movieForward;
         TextView likeNum;
-    }
-
-    /**
-     * 将一张图片存储到LruCache中
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @param drawable
-     *            LruCache的值，这里传入从网络上下载的BitmapDrawable对象。
-     */
-    public void addBitmapToMemoryCache(String key, BitmapDrawable drawable) {
-        if (getBitmapFromMemoryCache(key) == null) {
-            mMemoryCache.put(key, drawable);
-        }
-    }
-
-    /**
-     * 从LruCache中获取一张图片，如果不存在就返回null。
-     *
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @return 对应传入键的BitmapDrawable对象，或者null。
-     */
-    public BitmapDrawable getBitmapFromMemoryCache(String key) {
-        return mMemoryCache.get(key);
-    }
-
-    /**
-     * 异步加载列表中所有图片
-     */
-    class BitmapWorkerTask extends AsyncTask<String, Void, BitmapDrawable> {
-
-        String imageUrl;
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params) {
-            imageUrl = params[0];
-            // 在后台开始下载图片
-            Bitmap bitmap = downloadBitmap(imageUrl);
-            BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
-            addBitmapToMemoryCache(imageUrl, drawable);
-            return drawable;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable drawable) {
-            ImageView imageView = (ImageView) mListView.findViewWithTag(imageUrl);
-            if (imageView != null && drawable != null) {
-                imageView.setImageDrawable(drawable);
-            }
-        }
     }
 }

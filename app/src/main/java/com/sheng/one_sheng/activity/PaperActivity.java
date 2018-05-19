@@ -276,10 +276,9 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * @param paperList
      */
     private void setAdapter(List<Paper> paperList){
-
-        PaperListAdapter adapter = new PaperListAdapter
-                (PaperActivity.this, R.layout.layout_card_paper, paperList);
         listView = (MyListView) findViewById(R.id.paper_list_view);
+        PaperListAdapter adapter = new PaperListAdapter
+                (PaperActivity.this, R.layout.layout_card_paper, paperList, listView);
         listView.setAdapter(adapter);
     }
 

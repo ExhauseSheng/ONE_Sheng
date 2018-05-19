@@ -5,20 +5,28 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
+import com.sheng.one_sheng.activity.ReadActivity;
 import com.sheng.one_sheng.bean.Read;
+import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.util.imageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.inAnimation;
 import static android.R.attr.key;
 import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 
@@ -29,108 +37,107 @@ import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 /**
  * 阅读列表适配器
  */
-public class ReadListAdapter extends ArrayAdapter<Read> {
+public class ReadListAdapter extends ArrayAdapter<Read> implements AbsListView.OnScrollListener {
 
     private int resourceId;     //用来指定列表某子项的id
-    private LruCache<String, BitmapDrawable> mMemoryCache;
-    private ListView mListView;
+    private MyListView mListView;
+    private List<String> imageUrls = new ArrayList<>();
+    private boolean isFirst;//是否是第一次进入
+    private imageLoader mImageLoader;
+    private int mSart;
+    private int mEnd;
+    private List<Read> readList;
+    private Context mContext;
 
-    public ReadListAdapter (Context context, int textViewResoureId, List<Read> objects){
+    public ReadListAdapter (Context context, int textViewResoureId, List<Read> objects, MyListView listView){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 8;
-        mMemoryCache = new LruCache<String, BitmapDrawable>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable drawable) {
-                return drawable.getBitmap().getByteCount();
-            }
-        };
+        this.readList = objects;
+        this.mContext = context;
+        this.mListView = listView;
+        mImageLoader = new imageLoader(mListView);
+
+        for (int i = 0; i < this.readList.size(); i++){
+            imageUrls.add(this.readList.get(i).getImageUrl());
+        }
+        Log.d("ReadListAdapter", "图片url集合大小为：" + imageUrls.size() + "");
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mListView == null){
-            mListView = (ListView) parent;      //parent就是一个ListView实例
-        }
+        Read read = getItem(position);    //获取当前项的Paper实例
         View view;
+        ReadViewHolder viewHolder;
         if (convertView == null){
             view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
+            viewHolder = new ReadViewHolder();
+            viewHolder.readTitle = (TextView) view.findViewById(R.id.tv_title);
+            viewHolder.storyImage = (ImageView) view.findViewById(R.id.iv_story_image);
+            viewHolder.readAuthor = (TextView) view.findViewById(R.id.tv_author);
+            viewHolder.updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
+            viewHolder.storyDesc = (TextView) view.findViewById(R.id.tv_story_desc);
+            viewHolder.likeNum = (TextView) view.findViewById(R.id.tv_like_num);
+            view.setTag(viewHolder);        //将viewHolder储存在View中
         } else {
             view = convertView;
+            viewHolder = (ReadViewHolder) view.getTag();        //重新获取viewHolder
         }
-        Read read = getItem(position);    //获取当前项的Paper实例
         //优化ListView的运行效率
-        TextView readTitle = (TextView) view.findViewById(R.id.tv_title);
-        ImageView storyImage = (ImageView) view.findViewById(R.id.iv_story_image);
-        TextView readAuthor = (TextView) view.findViewById(R.id.tv_author);
-        TextView updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
-        TextView storyDesc = (TextView) view.findViewById(R.id.tv_story_desc);
-        TextView likeNum = (TextView) view.findViewById(R.id.tv_like_num);
-        readTitle.setText(read.getTitle());
-        readAuthor.setText(" 文 / " + read.getUserName());
-        updateDate.setText(read.getUpdateDate());
-        storyDesc.setText(read.getForward());
-        likeNum.setText(read.getLikeCount() + "");
+        viewHolder.readTitle.setText(read.getTitle());
+        viewHolder.readAuthor.setText(" 文 / " + read.getUserName());
+        viewHolder.updateDate.setText(read.getUpdateDate());
+        viewHolder.storyDesc.setText(read.getForward());
+        viewHolder.likeNum.setText(read.getLikeCount() + "");
 
         String url = read.getImageUrl();
-        storyImage.setImageResource(R.drawable.loading);
-        storyImage.setTag(url);
-        BitmapDrawable drawable = getBitmapFromMemoryCache(url);
-        if (drawable != null) {
-            storyImage.setImageDrawable(drawable);
-        } else {
-            BitmapWorkerTask task = new BitmapWorkerTask();
-            task.execute(url);
-        }
+        viewHolder.storyImage.setImageResource(R.drawable.loading);
+        viewHolder.storyImage.setTag(url);
+
+        mImageLoader.loadingByAsyncTask(viewHolder.storyImage, url);
         return view;
     }
 
     /**
-     * 将一张图片存储到LruCache中
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @param drawable
-     *            LruCache的值，这里传入从网络上下载的BitmapDrawable对象。
+     * ListView在滑动的过程调用
+     * @param view
+     * @param firstVisibleItem
+     * @param visibleItemCount
+     * @param totalItemCount
      */
-    public void addBitmapToMemoryCache(String key, BitmapDrawable drawable) {
-        if (getBitmapFromMemoryCache(key) == null) {
-            mMemoryCache.put(key, drawable);
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mSart = firstVisibleItem;   //可见第一个item
+        mEnd = firstVisibleItem + visibleItemCount;     //可见的最后一个item
+        if (isFirst && visibleItemCount > 0){
+            //第一次载入的时候数据处理
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+            isFirst = false;
         }
     }
 
     /**
-     * 从LruCache中获取一张图片，如果不存在就返回null。
-     *
-     * @param key
-     *            LruCache的键，这里传入图片的URL地址。
-     * @return 对应传入键的BitmapDrawable对象，或者null。
+     * ListView在流动状态变化时调用
+     * @param view
+     * @param scrollState
      */
-    public BitmapDrawable getBitmapFromMemoryCache(String key) {
-        return mMemoryCache.get(key);
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollState == SCROLL_STATE_IDLE){
+            //流动停止，此时载入可见项数据
+            mImageLoader.setImageView(mSart, mEnd, imageUrls);
+        } else {
+            //停止载入数据
+            mImageLoader.stopAllTask();
+        }
     }
 
-    class BitmapWorkerTask extends AsyncTask<String, Void, BitmapDrawable> {
-
-        String imageUrl;
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params) {
-            imageUrl = params[0];
-            // 在后台开始下载图片
-            Bitmap bitmap = downloadBitmap(imageUrl);
-            BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
-            addBitmapToMemoryCache(imageUrl, drawable);
-            return drawable;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable drawable) {
-            ImageView imageView = (ImageView) mListView.findViewWithTag(imageUrl);
-            if (imageView != null && drawable != null) {
-                imageView.setImageDrawable(drawable);
-            }
-        }
+    class ReadViewHolder {
+        TextView readTitle;
+        ImageView storyImage;
+        TextView readAuthor;
+        TextView updateDate;
+        TextView storyDesc;
+        TextView likeNum;
     }
 }

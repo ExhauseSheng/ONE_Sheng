@@ -127,9 +127,9 @@ public class MusicActivity extends BaseActivity {
      */
     private void setAdapter(final List<Music> musicList){
 
-        MusicListAdapter adapter = new MusicListAdapter
-                (MusicActivity.this, R.layout.layout_card_music, musicList);
         MyListView listView = (MyListView) findViewById(R.id.music_list_view);
+        MusicListAdapter adapter = new MusicListAdapter
+                (MusicActivity.this, R.layout.layout_card_music, musicList, listView);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);
         dialog.dismiss();
