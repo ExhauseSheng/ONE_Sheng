@@ -1,37 +1,23 @@
 package com.sheng.one_sheng.activity;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.app.VoiceInteractor;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sheng.one_sheng.MyApplication;
@@ -48,7 +34,6 @@ import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
 
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,6 +278,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
             final ImageView view = new ImageView(this);
             String imgUrl = imageUrls.get(i);
             view.setImageResource(R.drawable.loading);
+            //加载网络图片
             ImageLoadAsyncTask imageLoadAsyncTask = new ImageLoadAsyncTask(new ImageCallBack() {
                 @Override
                 public void callBitmap(Bitmap bitmap) {
@@ -301,14 +287,16 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     }
                 }
             });
+            //设置缩放方式
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageLoadAsyncTask.execute(imgUrl);
+            //将新建的view添加进Imageview集合里面
             mItems.add(view);
         }
         Log.d("PaperActivity", "轮播图图片集合大小为：" + mItems.size() + "");
         //通知适配器更新数据
         mAdapter.notifyDataSetChanged();
-        //设置底部4个小点
+        //设置轮播图底部的小点
         setBottomIndicator();
     }
 
@@ -316,18 +304,19 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * 设置轮播图小点的设置
      */
     private void setBottomIndicator(){
-        //获取指示器（下面三个小点）
+        //获取指示器（下面的小点）
         mBottomLiner = (LinearLayout) findViewById(R.id.live_indicator);
         //右下方小圆点
         mBottomImages = new ImageView[mItems.size()];
         for (int i = 0; i < mBottomImages.length; i++){
             ImageView imageView = new ImageView(this);
+            //创建具有指定宽度、高度的一组新布局参数。
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20);
             params.setMargins(5, 0, 5, 0);  //设置点的左上右下间隔
             imageView.setLayoutParams(params);
             //如果当前是第一个，设置为选中状态
             if (i == 0){
-                imageView.setImageResource(R.drawable.indicator_no_select);
+                imageView.setImageResource(R.drawable.indicator_select);
             } else {
                 imageView.setImageResource(R.drawable.indicator_no_select);
             }
@@ -349,7 +338,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                 while (true){
                     mHandler.sendEmptyMessage(0);
                     try {
-                        Thread.sleep(PaperActivity.VIEW_PAGER_DELAY);
+                        Thread.sleep(PaperActivity.VIEW_PAGER_DELAY);   //睡眠
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
@@ -373,9 +362,11 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     public void onPageSelected(int position) {
         currentViewPageItem = position;
         if (mItems != null){
+            //给当前页数取整
             position %= mBottomImages.length;
+            //总页数
             int total = mBottomImages.length;
-
+            //循环赋点
             for (int i = 0; i < total; i++){
                 if (i == position){
                     mBottomImages[i].setImageResource(R.drawable.indicator_select);

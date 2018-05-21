@@ -2,7 +2,6 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.bean.Paper;
 
 public class StartActivity extends BaseActivity {
 
@@ -39,7 +37,7 @@ public class StartActivity extends BaseActivity {
         ScaleAnimation scaleAnimation = new ScaleAnimation(1.4f, 1f, 1.4f, 1f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
-        scaleAnimation.setDuration(4000);       //总共缩放时间为4秒钟
+        scaleAnimation.setDuration(3500);       //总共缩放时间为4秒钟
         //动画播放完成后保持形状
         scaleAnimation.setFillAfter(true);
         //监听事件

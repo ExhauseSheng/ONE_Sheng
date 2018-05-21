@@ -1,30 +1,20 @@
 package com.sheng.one_sheng.activity;
 
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.adapter.CommentListAdapter;
-import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.util.ImageCallBack;
-import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
 
 import java.util.List;
@@ -84,7 +74,7 @@ public class ReadDetailActivity extends BaseActivity {
         requestReadDetail(itemId);
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
                 "/0?&platform=android";
-        requestCommentList(url, itemId);
+        requestCommentList(url);
     }
 
     @Override
@@ -110,15 +100,11 @@ public class ReadDetailActivity extends BaseActivity {
             @Override
             public void onFinish(String response) {
                 final String responseText = response;
-                final Read read = Utilty.handleReadDetailResponse(response);
+                final Read read = Utilty.handleReadDetailResponse(responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (read != null){
-                            SharedPreferences.Editor editor = PreferenceManager.
-                                    getDefaultSharedPreferences(ReadDetailActivity.this).edit();
-                            editor.putString("read_detail", responseText);
-                            editor.apply();
                             showReadInfo(read);   //内容显示
                         }
                         else {

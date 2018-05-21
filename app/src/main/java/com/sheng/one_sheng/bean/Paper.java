@@ -7,7 +7,7 @@ package com.sheng.one_sheng.bean;
 public class Paper {
 
     private int[] data;           //含有十个插画id的字符串数组
-    private int id;                  //插画id
+    private String id;                  //插画id
     private String title;               //插画标题
     private String imageUrl;         //插画url地址
     private String imgUrlOriginal;   //插画原图地址
@@ -20,11 +20,11 @@ public class Paper {
     private int shareNum;            //分享数量
     private int commentNum;          //评论数量
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

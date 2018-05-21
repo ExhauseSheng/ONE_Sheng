@@ -4,15 +4,8 @@ package com.sheng.one_sheng.util;
  * Created by 一个傻傻的小男孩 on 2018/5/9.
  */
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
-import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.bean.Music;
@@ -22,9 +15,6 @@ import com.sheng.one_sheng.bean.Read;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +58,7 @@ public class Utilty {
                     JSONObject paperContent = jsonObject.getJSONObject("data");
                     //将数据组装到paper对象中
                     Paper paper = new Paper();
-//                  paper.setId(paperContent.getString("hpcontent_id"));
-                    paper.setId(R.drawable.nav_icon_another);
+                    paper.setId(paperContent.getString("hpcontent_id"));
                     paper.setTitle(paperContent.getString("hp_title"));
                     paper.setImageUrl(paperContent.getString("hp_img_url"));
                     paper.setImgUrlOriginal(paperContent.getString("hp_img_original_url"));
@@ -332,7 +321,6 @@ public class Utilty {
                         comment.setPraiseNum(commentList.getJSONObject(i).getInt("praisenum"));
                         comment.setCreateTime(commentList.getJSONObject(i).getString("created_at"));
                         comment.setUserName(commentList.getJSONObject(i).getJSONObject("user").getString("user_name"));
-//                        comment.setTouserName(commentList.getJSONObject(i).getJSONObject("touser").getString("user_name"));
                         comments.add(comment);
                     }
                     return comments;

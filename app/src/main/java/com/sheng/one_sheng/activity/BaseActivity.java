@@ -4,11 +4,8 @@ package com.sheng.one_sheng.activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -28,7 +25,10 @@ import java.util.List;
  * Created by 一个傻傻的小男孩 on 2018/5/9.
  */
 
-public class BaseActivity extends AppCompatActivity     //作为所有活动的父类
+/**
+ * 作为所有活动的父类，多个活动的共用方法都在这里
+ */
+public class BaseActivity extends AppCompatActivity
 {
     protected Toolbar toolbar;    //定制toolbar
 
@@ -78,9 +78,8 @@ public class BaseActivity extends AppCompatActivity     //作为所有活动的�
 
     /**
      * 根据itemId发送网络请求获取装有评论列表数据的对象
-     * @param itemId
      */
-    protected void requestCommentList(String url,String itemId){
+    protected void requestCommentList(final String url){
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {

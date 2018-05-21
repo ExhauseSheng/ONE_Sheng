@@ -1,18 +1,13 @@
 package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
@@ -20,12 +15,8 @@ import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.imageLoader;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
 
 /**
  * Created by 一个傻傻的小男孩 on 2018/5/8.

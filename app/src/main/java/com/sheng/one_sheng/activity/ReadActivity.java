@@ -2,29 +2,19 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.adapter.PaperListAdapter;
 import com.sheng.one_sheng.adapter.ReadListAdapter;
-import com.sheng.one_sheng.bean.Music;
-import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
@@ -33,7 +23,7 @@ import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class ReadActivity extends BaseActivity {

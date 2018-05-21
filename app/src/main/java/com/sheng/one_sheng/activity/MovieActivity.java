@@ -2,28 +2,20 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
 import com.sheng.one_sheng.bean.Movie;
-import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.ui.MyDialog;
 import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
@@ -31,15 +23,14 @@ import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.sheng.one_sheng.R.id.toolbar;
 
 public class MovieActivity extends BaseActivity {
 
-    private SwipeRefreshLayout swipeRefresh;
-    private MyDialog dialog;
+    private SwipeRefreshLayout swipeRefresh;    //刷新控件
+    private MyDialog dialog;        //对话窗口
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +55,7 @@ public class MovieActivity extends BaseActivity {
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
                 initMovie();
-                dialog.show();
+                dialog.show();  //显示加载框
             }
         });
 
@@ -79,10 +70,15 @@ public class MovieActivity extends BaseActivity {
         } else {
             //如果没有缓存就从服务器中获取数据
             initMovie();
-            dialog.show();
+            dialog.show();   //显示加载框
         }
     }
 
+    /**
+     * 对返回键做监听
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -107,6 +103,7 @@ public class MovieActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //切换到主线程进行ui操作
                         List<Movie> movieList = Utilty.handleMovieListResponse(responseText);
                         Log.d("MovieActivity", "集合2的大小为：" + movieList.size() + "");
                         //将服务器返回的数据缓存下来
@@ -122,7 +119,7 @@ public class MovieActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Toast.makeText(MovieActivity.this, "获取视频列表失败", Toast.LENGTH_SHORT).show();
-                        swipeRefresh.setRefreshing(false);
+                        swipeRefresh.setRefreshing(false);      //结束刷新事件
                     }
                 });
             }
@@ -139,7 +136,7 @@ public class MovieActivity extends BaseActivity {
                 (MyApplication.getContext(), R.layout.layout_card_movie, movieList, listView);
         listView.setAdapter(adapter);
         swipeRefresh.setRefreshing(false);  //结束刷新事件
-        dialog.dismiss();
+        dialog.dismiss();   //关闭加载框
 
         //给ListView设置监听事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

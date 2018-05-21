@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sheng.one_sheng.MyApplication;
@@ -44,7 +43,7 @@ public class MusicActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);     //显示返回图片
         }
 
         //添加刷新操作，并对刷新做监听
@@ -139,7 +138,6 @@ public class MusicActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MusicActivity.this, MusicDetailActivity.class);
                 intent.putExtra("item_id", musicList.get(position).getItemId());
-                Log.d("MusicActivity", "传递之前为：" + musicList.get(position).getItemId());
                 startActivity(intent);
             }
         });

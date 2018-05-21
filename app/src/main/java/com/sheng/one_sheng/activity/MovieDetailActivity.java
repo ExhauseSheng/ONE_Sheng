@@ -1,34 +1,23 @@
 package com.sheng.one_sheng.activity;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.adapter.CommentListAdapter;
-import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
-
-import java.util.List;
 
 public class MovieDetailActivity extends BaseActivity {
 
@@ -58,7 +47,7 @@ public class MovieDetailActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示返回按钮
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);     //显示返回图片
         }
 
         //初始化各控件
@@ -82,10 +71,11 @@ public class MovieDetailActivity extends BaseActivity {
         movieLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
-        requestMovieDetail(itemId);     //请求详细内容
+        requestMovieDetail(itemId);     //请求影视内容
+
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
                "/0?&platform=android";
-        requestCommentList(url, itemId);     //请求评论列表
+        requestCommentList(url);     //请求评论列表
     }
 
     @Override
@@ -104,7 +94,7 @@ public class MovieDetailActivity extends BaseActivity {
      * 根据itemId发送网络请求获取装有影视详细内容的对象
      * @param itemId
      */
-    private void requestMovieDetail(String itemId){
+    private void requestMovieDetail(final String itemId){
         String url = "http://v3.wufazhuce.com:8000/api/movie/" + itemId + "/story/1/0?platform=android";
         Log.d("MovieDetailActivity", "传递之后详细内容的id为：" + itemId);
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
@@ -116,7 +106,7 @@ public class MovieDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (movie != null){
-                            SPUtil.setParam(MyApplication.getContext(), "movie_detail", responseText);
+                            SPUtil.setParam(MyApplication.getContext(), "movie_detail" + itemId, responseText);
                             showMovieInfo(movie);   //内容显示
                         }
                         else {

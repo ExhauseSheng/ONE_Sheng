@@ -36,19 +36,19 @@ public class MyDialog extends Dialog {
     //显示dialog的方法
     public static MyDialog showDialog(Context context){
         dialog = new MyDialog(context, R.style.MyDialog);//dialog样式
-        dialog.setContentView(R.layout.loading_dialog);//dialog布局文件
+        dialog.setContentView(R.layout.loading_dialog);//dialog的布局文件
         dialog.setCanceledOnTouchOutside(false);//点击外部不允许关闭dialog
-        dialog.setCancelable(false);
+        dialog.setCancelable(false);//按返回键不能够取消dialog
         return dialog;
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
+    public void onWindowFocusChanged(boolean hasFocus) {    //屏幕的焦点状态改变
         super.onWindowFocusChanged(hasFocus);
         if(hasFocus && dialog != null){
-            ivProgress = (ImageView) dialog.findViewById(R.id.ivProgress);
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.dialog_progress_anim);
-            ivProgress.startAnimation(animation);
+            ivProgress = (ImageView) dialog.findViewById(R.id.ivProgress);  //加载的图片
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.dialog_progress_anim);   //动画设置
+            ivProgress.startAnimation(animation);   //开启动画
         }
     }
 }

@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,13 +20,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.adapter.CommentListAdapter;
-import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
@@ -39,10 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
-import static com.sheng.one_sheng.util.HttpUtil.downloadBitmap;
-import static com.sheng.one_sheng.MyApplication.getContext;
 
 public class MusicDetailActivity extends BaseActivity {
 
@@ -105,10 +96,12 @@ public class MusicDetailActivity extends BaseActivity {
         Log.d("MusicDetailActivity", "此时详细内容id为：" + itemId);
         musicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
-        requestMusicDetail(itemId);
+
+        requestMusicDetail(itemId); //请求音乐详细内容
+
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
                 "/0?&platform=android";
-        requestCommentList(url, itemId);
+        requestCommentList(url);    //请求评论列表
     }
 
     @Override
@@ -187,6 +180,7 @@ public class MusicDetailActivity extends BaseActivity {
             forward.setText(music.getForward());
 
             NetWorkImageGetter imageGetter = new NetWorkImageGetter();
+//            这是文本的接口，它将标记对象附加到它的范围。
             Spanned spanned = Html.fromHtml(music.getStory(), imageGetter, null);
             essayContent.setText(spanned);
 
@@ -202,10 +196,15 @@ public class MusicDetailActivity extends BaseActivity {
     }
 
     /**
-     * 图片收集器：收集Html文本中的图片
+     * 图片收集器：检索Html文本中的img标签图像
      */
     private final class NetWorkImageGetter implements Html.ImageGetter {
 
+        /**
+         * 当HTML解析器遇到<img>标签时调用此方法。
+         * @param source
+         * @return
+         */
         @Override
         public Drawable getDrawable(String source) {
             LevelListDrawable drawable = new LevelListDrawable();
@@ -218,7 +217,7 @@ public class MusicDetailActivity extends BaseActivity {
      * 异步加载Html中的图片
      */
     private final class LoadImage extends AsyncTask<Object, Void, Bitmap> {
-        private LevelListDrawable mDrawable;
+        private LevelListDrawable mDrawable;    //一组Drawable
 
         @Override
         protected Bitmap doInBackground(Object... params) {
@@ -242,8 +241,8 @@ public class MusicDetailActivity extends BaseActivity {
         protected void onPostExecute(Bitmap bitmap) {
             if (bitmap != null){
                 BitmapDrawable drawable = new BitmapDrawable(bitmap);
-                mDrawable.addLevel(1, 1, drawable);
-                mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                mDrawable.addLevel(1, 1, drawable);     //给drawable设置level
+                mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());   //给drawable设置边界大小
                 mDrawable.setLevel(1);
                 CharSequence charSequence = essayContent.getText();
                 essayContent.setText(charSequence);

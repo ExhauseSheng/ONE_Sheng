@@ -1,12 +1,10 @@
 package com.sheng.one_sheng.util;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.ui.MyListView;
@@ -19,14 +17,16 @@ import java.util.Set;
  * Created by 一个傻傻的小男孩 on 2018/5/19.
  */
 
+/**
+ * 异步ListView列表图片加载工具
+ */
 public class imageLoader {
     private LruCache<String, Bitmap> mCaches;   //创建对象
     private ImageView imageView;
     private MyListView listView;
     private Set<ImageAsyncTask> mTask;
 
-    @SuppressLint("NewApi")
-    public imageLoader(MyListView listView){
+    public imageLoader(MyListView listView){    //构造方法重载
         this.listView = listView;
         mTask = new HashSet<ImageAsyncTask>();
         int maxMemory = (int) Runtime.getRuntime().maxMemory(); //获取最大可用内存
@@ -39,13 +39,14 @@ public class imageLoader {
         };
     }
 
-    @SuppressLint("NewApi")
     public Bitmap getLruCaches(String url) {
+        if (mCaches.get(url) != null){
+            Log.d("imageLoader", "成功从缓存中取出图片");
+        }
         return mCaches.get(url);
         //通过url从缓存中相应的bitmap
     }
 
-    @SuppressLint("NewApi")
     /**
      * 添加缓存数据，添加前推断数据是否存在
      */
@@ -53,6 +54,7 @@ public class imageLoader {
         if (getLruCaches(url) == null){
             //假设缓存中不存在url相应的Bitmap，则把bitmap增加进去mCaches
             mCaches.put(url, bitmap);
+            Log.d("imageLoader", "成功放进缓存区");
         }
     }
 
@@ -88,11 +90,13 @@ public class imageLoader {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            ImageView img = (ImageView) listView.findViewWithTag(mUrl);
-            if (img != null && bitmap != null){
-                img.setImageBitmap(bitmap);
+            if (listView != null){
+                ImageView img = (ImageView) listView.findViewWithTag(mUrl);
+                if (img != null && bitmap != null){
+                    img.setImageBitmap(bitmap);
+                }
+                mTask.remove(this);
             }
-            mTask.remove(this);
         }
     }
 
@@ -107,6 +111,7 @@ public class imageLoader {
                 mTask.add(task);
             } else {
                 //缓存中有此图片，则直接显示出来
+                Log.d("imageLoader", "成功从缓存区取出图片");
                 ImageView img = (ImageView) listView.findViewWithTag(url);
                 img.setImageBitmap(bitmap);
             }

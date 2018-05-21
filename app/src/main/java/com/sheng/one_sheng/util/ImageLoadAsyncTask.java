@@ -33,7 +33,7 @@ public class ImageLoadAsyncTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
         String path = params[0];
-        Bitmap bitmap = downloadBitmap(path);
+        Bitmap bitmap = downloadBitmap(path);   //下载网络图片
         return bitmap;
     }
 }
