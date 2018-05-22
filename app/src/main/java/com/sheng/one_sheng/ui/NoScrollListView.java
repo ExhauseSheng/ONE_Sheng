@@ -7,10 +7,10 @@ import android.widget.ListView;
  */
 
 /**
- * 重写ListView，设置为不滚动，用于评价列表
+ * 重写ListView，设置为不滚动
  */
-public class MyListView extends ListView {
-    public MyListView(android.content.Context context,android.util.AttributeSet attrs){
+public class NoScrollListView extends ListView {
+    public NoScrollListView(android.content.Context context, android.util.AttributeSet attrs){
         super(context, attrs);
     }
     /**

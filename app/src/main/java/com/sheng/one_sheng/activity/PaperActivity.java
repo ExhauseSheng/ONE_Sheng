@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -24,9 +25,10 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
+import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.bean.Paper;
-import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.LoadDialog;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
@@ -37,29 +39,39 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sheng.one_sheng.Contents.FINISH_DELAY;
+import static com.sheng.one_sheng.Contents.PAPER_ID;
+import static com.sheng.one_sheng.Contents.PAPER_IMAGE;
+import static com.sheng.one_sheng.Contents.PAPER_LIST;
+import static com.sheng.one_sheng.Contents.PAPER_LIST_URL;
+import static com.sheng.one_sheng.Contents.VIEW_PAGER_DELAY;
+
 public class PaperActivity extends BaseActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener {
 
-    private MyListView listView;
-    public static final int PAPER_ID = 1;
-    public static final int PAPER_LIST = 2;
-    public static final int PAPER_IMAGE = 3;
-    public static final int FINISH_DELAY = 4;
-    private List<Paper> papers = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private NoScrollListView mListView;
+    private List<Paper> mPapers = new ArrayList<>();
+    private List<String> mImageUrls = new ArrayList<>();
     private DrawerLayout mDrawerLayout;     //滑动菜单布局
-    public static final int VIEW_PAGER_DELAY = 3500;       //睡眠3.5s
     private MyPagerAdapter mAdapter;
     private List<ImageView> mItems;         //轮播图片的集合
-    private ImageView[] mBottomImages;      //底下小白点图片的集合
-    private LinearLayout mBottomLiner;      //底下小白点图片的布局
+    private ImageView[] mIvBottomImages;      //底下小白点图片的集合
+    private LinearLayout mLlBottomLiner;      //底下小白点图片的布局
     private ViewPager mViewPager;
     private int currentViewPageItem;    //当前页数
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
-    private Thread mThread;     //线程
-    public SwipeRefreshLayout swipeRefresh;
-    private MyDialog dialog;
+    public SwipeRefreshLayout mSlRefresh;
+    private LoadDialog mDialog;
     private boolean isExit;     //用来判断是否退出的一个布尔值，用于按两次返回键退出程序
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context){
+        Intent intent = new Intent(context, PaperActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +79,8 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         setContentView(R.layout.activity_paper);
         setToolbar();
         changeStatusBar();
-        dialog = MyDialog.showDialog(PaperActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(PaperActivity.this);
+        mDialog.show();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
@@ -84,16 +96,13 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.nav_read:
-                        Intent intentRead = new Intent(MyApplication.getContext(), ReadActivity.class);
-                        startActivity(intentRead);
+                        ReadActivity.actionStart(MyApplication.getContext());
                         break;
                     case R.id.nav_music:
-                        Intent intentMusic = new Intent(MyApplication.getContext(), MusicActivity.class);
-                        startActivity(intentMusic);
+                        MusicActivity.actionStart(MyApplication.getContext());
                         break;
                     case R.id.nav_movie:
-                        Intent intentMovie = new Intent(MyApplication.getContext(), MovieActivity.class);
-                        startActivity(intentMovie);
+                        MovieActivity.actionStart(MyApplication.getContext());
                         break;
                     default:
                         break;
@@ -113,15 +122,15 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         isAutoPlay = true;
 
         //添加刷新操作，并对刷新做监听
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSlRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        mSlRefresh.setColorSchemeResources(R.color.colorPrimary);
+        mSlRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
-                papers.clear();     //先将装有插画对象的集合清空，重新获取数据
+                mPapers.clear();     //先将装有插画对象的集合清空，重新获取数据
                 requestPaperId();
-                dialog.show();
+                mDialog.show();
             }
         });
 
@@ -146,8 +155,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * 发送网络请求获取装有插画id列表的集合
      */
     private void requestPaperId(){
-        String paperIdUrl = "http://v3.wufazhuce.com:8000/api/hp/idlist/0?version=3.5.0&platform=android";
-        HttpUtil.sendHttpRequest(paperIdUrl, new HttpCallbackListener() {
+        HttpUtil.sendHttpRequest(PAPER_LIST_URL, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 //取出处理之后出来的Id集合
@@ -169,7 +177,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     @Override
                     public void run() {
                         Toast.makeText(PaperActivity.this, "获取id信息失败", Toast.LENGTH_SHORT).show();
-                        swipeRefresh.setRefreshing(false);
+                        mSlRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -206,7 +214,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                         @Override
                         public void run() {
                             Toast.makeText(PaperActivity.this, "获取详细信息失败", Toast.LENGTH_SHORT).show();
-                            swipeRefresh.setRefreshing(false);
+                            mSlRefresh.setRefreshing(false);
                         }
                     });
                 }
@@ -231,22 +239,22 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     break;
                 case PAPER_LIST:
                     Paper paper = (Paper) msg.obj;
-                    papers.add(paper);
-                    Log.d("PaperActivity2", "第二个集合的大小为：" + papers.size() + "");
-                    if (papers.size() == 10){
-                        setAdapter(papers);
-                        swipeRefresh.setRefreshing(false);
-                        dialog.dismiss();
+                    mPapers.add(paper);
+                    Log.d("PaperActivity2", "第二个集合的大小为：" + mPapers.size() + "");
+                    if (mPapers.size() == 10){
+                        setAdapter(mPapers);
+                        mSlRefresh.setRefreshing(false);
+                        mDialog.dismiss();
                     }
                     break;
                 case PAPER_IMAGE:
                     String imageUrl = (String) msg.obj;
                     Log.d("PaperActivity", imageUrl);
-                    imageUrls.add(imageUrl);
-                    if (imageUrls.size() == 10){
-                        addImageView(imageUrls);
+                    mImageUrls.add(imageUrl);
+                    if (mImageUrls.size() == 10){
+                        addImageView(mImageUrls);
                     }
-                    Log.d("PaperActivity2", "第三个集合的大小为：" + imageUrls.size() + "");
+                    Log.d("PaperActivity2", "第三个集合的大小为：" + mImageUrls.size() + "");
                 case FINISH_DELAY:
                     isExit = false;
                     break;
@@ -261,10 +269,10 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * @param paperList
      */
     private void setAdapter(List<Paper> paperList){
-        listView = (MyListView) findViewById(R.id.paper_list_view);
+        mListView = (NoScrollListView) findViewById(R.id.paper_list_view);
         PaperListAdapter adapter = new PaperListAdapter
-                (PaperActivity.this, R.layout.layout_card_paper, paperList, listView);
-        listView.setAdapter(adapter);
+                (PaperActivity.this, R.layout.layout_card_paper, paperList);
+        mListView.setAdapter(adapter);
     }
 
     /**
@@ -305,10 +313,10 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      */
     private void setBottomIndicator(){
         //获取指示器（下面的小点）
-        mBottomLiner = (LinearLayout) findViewById(R.id.live_indicator);
+        mLlBottomLiner = (LinearLayout) findViewById(R.id.live_indicator);
         //右下方小圆点
-        mBottomImages = new ImageView[mItems.size()];
-        for (int i = 0; i < mBottomImages.length; i++){
+        mIvBottomImages = new ImageView[mItems.size()];
+        for (int i = 0; i < mIvBottomImages.length; i++){
             ImageView imageView = new ImageView(this);
             //创建具有指定宽度、高度的一组新布局参数。
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20);
@@ -320,9 +328,9 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
             } else {
                 imageView.setImageResource(R.drawable.indicator_no_select);
             }
-            mBottomImages[i] = imageView;
+            mIvBottomImages[i] = imageView;
             //添加到父容器
-            mBottomLiner.addView(imageView);
+            mLlBottomLiner.addView(imageView);
         }
 
         //让其在最大值的中间开始滑动，一定要在mBottomImages初始化之前完成
@@ -331,21 +339,20 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         currentViewPageItem = mid;
 
         //定时发送消息
-        mThread = new Thread(){
+        new Thread(){
             @Override
             public void run() {
                 super.run();
                 while (true){
                     mHandler.sendEmptyMessage(0);
                     try {
-                        Thread.sleep(PaperActivity.VIEW_PAGER_DELAY);   //睡眠
+                        Thread.sleep(VIEW_PAGER_DELAY);   //睡眠
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
                 }
             }
-        };
-        mThread.start();
+        }.start();
     }
 
     /**
@@ -363,15 +370,15 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         currentViewPageItem = position;
         if (mItems != null){
             //给当前页数取整
-            position %= mBottomImages.length;
+            position %= mIvBottomImages.length;
             //总页数
-            int total = mBottomImages.length;
+            int total = mIvBottomImages.length;
             //循环赋点
             for (int i = 0; i < total; i++){
                 if (i == position){
-                    mBottomImages[i].setImageResource(R.drawable.indicator_select);
+                    mIvBottomImages[i].setImageResource(R.drawable.indicator_select);
                 } else {
-                    mBottomImages[i].setImageResource(R.drawable.indicator_no_select);
+                    mIvBottomImages[i].setImageResource(R.drawable.indicator_no_select);
                 }
             }
         }

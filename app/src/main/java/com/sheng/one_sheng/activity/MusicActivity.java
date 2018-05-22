@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,8 +17,8 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MusicListAdapter;
 import com.sheng.one_sheng.bean.Music;
-import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.LoadDialog;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.SPUtil;
@@ -26,10 +27,21 @@ import com.sheng.one_sheng.util.Utilty;
 
 import java.util.List;
 
+import static com.sheng.one_sheng.Contents.MUSIC_LIST_URL;
+
 public class MusicActivity extends BaseActivity {
 
-    private SwipeRefreshLayout swipeRefresh;
-    private MyDialog dialog;
+    private SwipeRefreshLayout mSlRefresh;
+    private LoadDialog mDialog;
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context){
+        Intent intent = new Intent(context, MusicActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +49,8 @@ public class MusicActivity extends BaseActivity {
         setContentView(R.layout.activity_music);
         setToolbar();
         changeStatusBar();
-        dialog = MyDialog.showDialog(MusicActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(MusicActivity.this);
+        mDialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -47,15 +59,15 @@ public class MusicActivity extends BaseActivity {
         }
 
         //添加刷新操作，并对刷新做监听
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSlRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        mSlRefresh.setColorSchemeResources(R.color.colorPrimary);
+        mSlRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
                 //重新从服务器获取数据
                 initMusic();
-                dialog.show();
+                mDialog.show();
             }
         });
 
@@ -89,16 +101,15 @@ public class MusicActivity extends BaseActivity {
      * 发送网络请求获取音乐列表数据
      */
     private void initMusic(){
-        String url = "http://v3.wufazhuce.com:8000/api/channel/music/more/0?platform=android";
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
+        HttpUtil.sendHttpRequest(MUSIC_LIST_URL, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 final String responseText = response;
+                final List<Music> musicList = Utilty.handleMusicListResponse(responseText);
+                Log.d("MusicActivity", "集合2的大小为：" + musicList.size() + "");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<Music> musicList = Utilty.handleMusicListResponse(responseText);
-                        Log.d("MusicActivity", "集合2的大小为：" + musicList.size() + "");
                         //将服务器返回的数据缓存下来
                         SPUtil.setParam(MyApplication.getContext(), "musics", responseText);
                         setAdapter(musicList);
@@ -113,7 +124,7 @@ public class MusicActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Toast.makeText(MusicActivity.this, "获取音乐列表失败", Toast.LENGTH_SHORT).show();
-                        swipeRefresh.setRefreshing(false);
+                        mSlRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -126,19 +137,17 @@ public class MusicActivity extends BaseActivity {
      */
     private void setAdapter(final List<Music> musicList){
 
-        MyListView listView = (MyListView) findViewById(R.id.music_list_view);
+        NoScrollListView listView = (NoScrollListView) findViewById(R.id.music_list_view);
         MusicListAdapter adapter = new MusicListAdapter
-                (MusicActivity.this, R.layout.layout_card_music, musicList, listView);
+                (MusicActivity.this, R.layout.layout_card_music, musicList);
         listView.setAdapter(adapter);
-        swipeRefresh.setRefreshing(false);
-        dialog.dismiss();
+        mSlRefresh.setRefreshing(false);
+        mDialog.dismiss();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MusicActivity.this, MusicDetailActivity.class);
-                intent.putExtra("item_id", musicList.get(position).getItemId());
-                startActivity(intent);
+                MusicDetailActivity.actionStart(MyApplication.getContext(), musicList.get(position).getItemId());
             }
         });
     }

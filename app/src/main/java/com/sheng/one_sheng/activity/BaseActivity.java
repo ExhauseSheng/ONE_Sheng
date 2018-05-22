@@ -14,7 +14,7 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.CommentListAdapter;
 import com.sheng.one_sheng.bean.Comment;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.Utilty;
@@ -28,9 +28,9 @@ import java.util.List;
 /**
  * 作为所有活动的父类，多个活动的共用方法都在这里
  */
-public class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity
 {
-    protected Toolbar toolbar;    //定制toolbar
+    protected Toolbar mToolbar;    //定制toolbar
 
     @Override
     protected void onCreate( Bundle savedInstanceState) {
@@ -71,9 +71,9 @@ public class BaseActivity extends AppCompatActivity
      * 设置toolbar，代替AvtionBar，并添加返回按钮
      */
     protected void setToolbar(){
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
+        setSupportActionBar(mToolbar);
     }
 
     /**
@@ -112,7 +112,7 @@ public class BaseActivity extends AppCompatActivity
     protected void setCommentAdapter(List<Comment> commentList){
         CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
                 R.layout.layout_item_comment, commentList);
-        MyListView listView = (MyListView) findViewById(R.id.lv_comment_list_view);
+        NoScrollListView listView = (NoScrollListView) findViewById(R.id.lv_comment_list_view);
         listView.setAdapter(adapter);
     }
 }

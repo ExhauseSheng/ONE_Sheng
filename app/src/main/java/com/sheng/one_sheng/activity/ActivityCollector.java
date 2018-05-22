@@ -14,21 +14,21 @@ import java.util.List;
  */
 public class ActivityCollector
 {
-    public static List<Activity> activities = new ArrayList<>();
+    public static List<Activity> mActivities = new ArrayList<>();
 
     public static void addActivity(Activity activity)
     {
-        activities.add(activity);   //添加活动
+        mActivities.add(activity);   //添加活动
     }
 
     public static void removeActivity(Activity activity)
     {
-        activities.remove(activity);    //删除活动
+        mActivities.remove(activity);    //删除活动
     }
 
     public static void finishAll()      //销毁全部活动
     {
-        for (Activity activity : activities)
+        for (Activity activity : mActivities)
         {
             if (!activity.isFinishing())    //如果活动没有被销毁的就立即销毁
             {

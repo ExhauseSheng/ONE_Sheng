@@ -11,9 +11,11 @@ import android.widget.ImageView;
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 
+import static com.sheng.one_sheng.Contents.VIEW_START_DELAY;
+
 public class StartActivity extends BaseActivity {
 
-    private ImageView iv_start;
+    private ImageView mIvStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +33,13 @@ public class StartActivity extends BaseActivity {
      * 开场图片的设置
      */
     private void initImage(){
-        ImageView iv_start = (ImageView) findViewById(R.id.iv_start);
-        iv_start.setImageResource(R.drawable.start);
+        mIvStart = (ImageView) findViewById(R.id.iv_start);
+        mIvStart.setImageResource(R.drawable.start);
         //进行缩放动画
         ScaleAnimation scaleAnimation = new ScaleAnimation(1.4f, 1f, 1.4f, 1f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
-        scaleAnimation.setDuration(3500);       //总共缩放时间为4秒钟
+        scaleAnimation.setDuration(VIEW_START_DELAY);       //总共缩放时间为4秒钟
         //动画播放完成后保持形状
         scaleAnimation.setFillAfter(true);
         //监听事件
@@ -49,8 +51,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(MyApplication.getContext(), PaperActivity.class);
-                startActivity(intent);
+                PaperActivity.actionStart(MyApplication.getContext());
                 //用于呈现淡入淡出效果
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
@@ -62,6 +63,6 @@ public class StartActivity extends BaseActivity {
             }
         });
         //开始动画
-        iv_start.startAnimation(scaleAnimation);
+        mIvStart.startAnimation(scaleAnimation);
     }
 }

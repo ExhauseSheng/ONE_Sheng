@@ -40,17 +40,17 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         } else {
             view = convertView;
         }
-        TextView userName = (TextView) view.findViewById(R.id.tv_comment_user_name);
-        TextView createTime = (TextView) view.findViewById(R.id.tv_comment_time);
-        TextView touserContent = (TextView) view.findViewById(R.id.tv_comment_touser_content);
-        TextView userContent = (TextView) view.findViewById(R.id.tv_comment_user_content);
-        TextView praiseNum = (TextView) view.findViewById(R.id.tv_comment_praise_num);
+        TextView mTvUserName = (TextView) view.findViewById(R.id.tv_comment_user_name);
+        TextView mTvCreateTime = (TextView) view.findViewById(R.id.tv_comment_time);
+        TextView mTvTouserContent = (TextView) view.findViewById(R.id.tv_comment_touser_content);
+        TextView mTvUserContent = (TextView) view.findViewById(R.id.tv_comment_user_content);
+        TextView mTvPraiseNum = (TextView) view.findViewById(R.id.tv_comment_praise_num);
 
-        userName.setText(comment.getUserName());
-        createTime.setText(comment.getCreateTime());
-        touserContent.setText(comment.getQuote());
-        userContent.setText(comment.getContent());
-        praiseNum.setText(comment.getPraiseNum() + "");
+        mTvUserName.setText(comment.getUserName());
+        mTvCreateTime.setText(comment.getCreateTime());
+        mTvTouserContent.setText(comment.getQuote());
+        mTvUserContent.setText(comment.getContent());
+        mTvPraiseNum.setText(comment.getPraiseNum() + "");
         return view;
     }
 }

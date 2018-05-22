@@ -1,5 +1,7 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +24,7 @@ import android.widget.Toast;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Music;
-import com.sheng.one_sheng.ui.MyDialog;
+import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
@@ -37,24 +39,34 @@ import java.net.URL;
 
 public class MusicDetailActivity extends BaseActivity {
 
-    private ScrollView musicLayout;
-    private ImageView musicImage;
-    private TextView songName;
-    private TextView songAlbum;
-    private TextView songInfo;
-    private TextView songLyricDetail;
-    private TextView title;
-    private TextView author;
-    private TextView updateDate;
-    private TextView forward;
-    private TextView essayContent;
-    private TextView authorName;
-    private TextView authorDesc;
-    private TextView authorFans;
-    private TextView praiseNum;
-    private TextView shareNum;
-    private TextView commentNum;
-    private MyDialog dialog;
+    private ScrollView mSlMusicLayout;
+    private ImageView mIvMusicImage;
+    private TextView mTvSongName;
+    private TextView mTvSongAlbum;
+    private TextView mTvSongInfo;
+    private TextView mTvSongLyricDetail;
+    private TextView mTvTitle;
+    private TextView mTvAuthor;
+    private TextView mTvUpdateDate;
+    private TextView mTvForward;
+    private TextView mTvEssayContent;
+    private TextView mTvAuthorName;
+    private TextView mTvAuthorDesc;
+    private TextView mTvAuthorFans;
+    private TextView mTvPraiseNum;
+    private TextView mTvShareNum;
+    private TextView mTvCommentNum;
+    private LoadDialog mDialog;
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context, String itemId){
+        Intent intent = new Intent(context, MusicDetailActivity.class);
+        intent.putExtra("item_id", itemId);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +74,8 @@ public class MusicDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_music_detail);
         setToolbar();
         changeStatusBar();
-        dialog = MyDialog.showDialog(MusicDetailActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(MusicDetailActivity.this);
+        mDialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -72,29 +84,29 @@ public class MusicDetailActivity extends BaseActivity {
         }
 
         //初始化各控件
-        musicLayout = (ScrollView) findViewById(R.id.music_detail_layout);
-        musicImage = (ImageView) findViewById(R.id.music_image);
-        songName = (TextView) findViewById(R.id.tv_song_name);
-        songAlbum = (TextView) findViewById(R.id.tv_song_album);
-        songInfo = (TextView) findViewById(R.id.tv_song_info);
-        songLyricDetail = (TextView) findViewById(R.id.tv_song_lyric_detail);
-        title = (TextView) findViewById(R.id.tv_title);
-        author = (TextView) findViewById(R.id.tv_author);
-        updateDate = (TextView) findViewById(R.id.tv_update_date);
-        forward = (TextView) findViewById(R.id.tv_forward);
-        essayContent = (TextView) findViewById(R.id.tv_essay_content);
-        authorName = (TextView) findViewById(R.id.tv_author_name);
-        authorDesc = (TextView) findViewById(R.id.tv_author_desc);
-        authorFans = (TextView) findViewById(R.id.tv_fans_num);
-        praiseNum = (TextView) findViewById(R.id.tv_praise_num);
-        shareNum = (TextView) findViewById(R.id.tv_share_num);
-        commentNum = (TextView) findViewById(R.id.tv_comment_num);
+        mSlMusicLayout = (ScrollView) findViewById(R.id.music_detail_layout);
+        mIvMusicImage = (ImageView) findViewById(R.id.music_image);
+        mTvSongName = (TextView) findViewById(R.id.tv_song_name);
+        mTvSongAlbum = (TextView) findViewById(R.id.tv_song_album);
+        mTvSongInfo = (TextView) findViewById(R.id.tv_song_info);
+        mTvSongLyricDetail = (TextView) findViewById(R.id.tv_song_lyric_detail);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mTvAuthor = (TextView) findViewById(R.id.tv_author);
+        mTvUpdateDate = (TextView) findViewById(R.id.tv_update_date);
+        mTvForward = (TextView) findViewById(R.id.tv_forward);
+        mTvEssayContent = (TextView) findViewById(R.id.tv_essay_content);
+        mTvAuthorName = (TextView) findViewById(R.id.tv_author_name);
+        mTvAuthorDesc = (TextView) findViewById(R.id.tv_author_desc);
+        mTvAuthorFans = (TextView) findViewById(R.id.tv_fans_num);
+        mTvPraiseNum = (TextView) findViewById(R.id.tv_praise_num);
+        mTvShareNum = (TextView) findViewById(R.id.tv_share_num);
+        mTvCommentNum = (TextView) findViewById(R.id.tv_comment_num);
 
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
         Log.d("MusicDetailActivity", "此时详细内容id为：" + itemId);
-        musicLayout.setVisibility(View.INVISIBLE);
+        mSlMusicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
         requestMusicDetail(itemId); //请求音乐详细内容
@@ -132,10 +144,6 @@ public class MusicDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (music != null){
-                            SharedPreferences.Editor editor = PreferenceManager.
-                                    getDefaultSharedPreferences(MusicDetailActivity.this).edit();
-                            editor.putString("music_detail", responseText);
-                            editor.apply();
                             showMusicInfo(music);   //内容显示
                         }
                         else {
@@ -158,40 +166,40 @@ public class MusicDetailActivity extends BaseActivity {
      */
     private void showMusicInfo(Music music){
         if (music != null){
-            musicImage.setImageResource(R.drawable.loading);
+            mIvMusicImage.setImageResource(R.drawable.loading);
             String url = music.getCover();
             ImageLoadAsyncTask imageLoadAsyncTask = new ImageLoadAsyncTask(new ImageCallBack() {
                 @Override
                 public void callBitmap(Bitmap bitmap) {
                     if (bitmap != null){
-                        musicImage.setImageBitmap(bitmap);
+                        mIvMusicImage.setImageBitmap(bitmap);
                     }
                 }
             });
             imageLoadAsyncTask.execute(url);
 
-            songName.setText(" 歌曲： 《 " + music.getSongTitle() + " 》");
-            songAlbum.setText("专辑： 《 " + music.getAlbum() + " 》");
-            songInfo.setText(music.getInfo());
-            songLyricDetail.setText(music.getLyric());
-            title.setText(music.getStoryTitle());
-            author.setText("文 / " + music.getUserName());
-            updateDate.setText(music.getUpdateDate());
-            forward.setText(music.getForward());
+            mTvSongName.setText(" 歌曲： 《 " + music.getSongTitle() + " 》");
+            mTvSongAlbum.setText("专辑： 《 " + music.getAlbum() + " 》");
+            mTvSongInfo.setText(music.getInfo());
+            mTvSongLyricDetail.setText(music.getLyric());
+            mTvTitle.setText(music.getStoryTitle());
+            mTvAuthor.setText("文 / " + music.getUserName());
+            mTvUpdateDate.setText(music.getUpdateDate());
+            mTvForward.setText(music.getForward());
 
             NetWorkImageGetter imageGetter = new NetWorkImageGetter();
 //            这是文本的接口，它将标记对象附加到它的范围。
             Spanned spanned = Html.fromHtml(music.getStory(), imageGetter, null);
-            essayContent.setText(spanned);
+            mTvEssayContent.setText(spanned);
 
-            authorName.setText(music.getUserName());
-            authorDesc.setText(music.getDes());
-            authorFans.setText(music.getFansTotal() + "关注");
-            praiseNum.setText(music.getPraiseNum() + "");
-            shareNum.setText(music.getShareNum() + "");
-            commentNum.setText(music.getCommentNum() + "");
-            musicLayout.setVisibility(View.VISIBLE);
-            dialog.dismiss();
+            mTvAuthorName.setText(music.getUserName());
+            mTvAuthorDesc.setText(music.getDes());
+            mTvAuthorFans.setText(music.getFansTotal() + "关注");
+            mTvPraiseNum.setText(music.getPraiseNum() + "");
+            mTvShareNum.setText(music.getShareNum() + "");
+            mTvCommentNum.setText(music.getCommentNum() + "");
+            mSlMusicLayout.setVisibility(View.VISIBLE);
+            mDialog.dismiss();
         }
     }
 
@@ -244,8 +252,8 @@ public class MusicDetailActivity extends BaseActivity {
                 mDrawable.addLevel(1, 1, drawable);     //给drawable设置level
                 mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());   //给drawable设置边界大小
                 mDrawable.setLevel(1);
-                CharSequence charSequence = essayContent.getText();
-                essayContent.setText(charSequence);
+                CharSequence charSequence = mTvEssayContent.getText();
+                mTvEssayContent.setText(charSequence);
             }
         }
     }

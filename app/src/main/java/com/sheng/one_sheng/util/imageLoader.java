@@ -7,7 +7,7 @@ import android.util.LruCache;
 import android.widget.ImageView;
 
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.NoScrollListView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +22,11 @@ import java.util.Set;
  */
 public class imageLoader {
     private LruCache<String, Bitmap> mCaches;   //创建对象
-    private ImageView imageView;
-    private MyListView listView;
+    private NoScrollListView mListView;
     private Set<ImageAsyncTask> mTask;
 
-    public imageLoader(MyListView listView){    //构造方法重载
-        this.listView = listView;
+    public imageLoader(NoScrollListView listView){    //构造方法重载
+        this.mListView = listView;
         mTask = new HashSet<ImageAsyncTask>();
         int maxMemory = (int) Runtime.getRuntime().maxMemory(); //获取最大可用内存
         int cacheSize = maxMemory / 8;  //设置缓存数据的最大占用内存为最大值的1/8
@@ -39,7 +38,7 @@ public class imageLoader {
         };
     }
 
-    public Bitmap getLruCaches(String url) {
+    private Bitmap getLruCaches(String url) {
         if (mCaches.get(url) != null){
             Log.d("imageLoader", "成功从缓存中取出图片");
         }
@@ -50,7 +49,7 @@ public class imageLoader {
     /**
      * 添加缓存数据，添加前推断数据是否存在
      */
-    public void setLruCaches(String url, Bitmap bitmap) {
+    private void setLruCaches(String url, Bitmap bitmap) {
         if (getLruCaches(url) == null){
             //假设缓存中不存在url相应的Bitmap，则把bitmap增加进去mCaches
             mCaches.put(url, bitmap);
@@ -59,15 +58,14 @@ public class imageLoader {
     }
 
     public void loadingByAsyncTask(ImageView img, String url){
-        imageView = img;
         //从缓存中取出图片
         Bitmap bitmap = getLruCaches(url);
         if (bitmap == null){
             //假设在缓存中没有这个图片，则从网络上下载
-            imageView.setImageResource(R.drawable.loading);
+            img.setImageResource(R.drawable.loading);
             new ImageAsyncTask(url).execute(url);
         } else {
-            imageView.setImageBitmap(bitmap);
+            img.setImageBitmap(bitmap);
         }
     }
 
@@ -90,8 +88,8 @@ public class imageLoader {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (listView != null){
-                ImageView img = (ImageView) listView.findViewWithTag(mUrl);
+            if (mListView != null){
+                ImageView img = (ImageView) mListView.findViewWithTag(mUrl);
                 if (img != null && bitmap != null){
                     img.setImageBitmap(bitmap);
                 }
@@ -112,7 +110,7 @@ public class imageLoader {
             } else {
                 //缓存中有此图片，则直接显示出来
                 Log.d("imageLoader", "成功从缓存区取出图片");
-                ImageView img = (ImageView) listView.findViewWithTag(url);
+                ImageView img = (ImageView) mListView.findViewWithTag(url);
                 img.setImageBitmap(bitmap);
             }
         }

@@ -1,5 +1,7 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
@@ -12,7 +14,7 @@ import android.widget.Toast;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
-import com.sheng.one_sheng.ui.MyDialog;
+import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.MyApplication;
@@ -21,19 +23,29 @@ import com.sheng.one_sheng.util.Utilty;
 
 public class MovieDetailActivity extends BaseActivity {
 
-    private ScrollView movieLayout;
-    private TextView title;
-    private TextView author;
-    private TextView updateDate;
-    private TextView essayContent;
-    private TextView summary;
-    private TextView authorName;
-    private TextView authorDesc;
-    private TextView authorFans;
-    private TextView praiseNum;
-    private TextView shareNum;
-    private TextView commentNum;
-    private MyDialog dialog;
+    private ScrollView mSvMovieLayout;
+    private TextView mTvTitle;
+    private TextView mTvAuthor;
+    private TextView mTvUpdateDate;
+    private TextView mTvEssayContent;
+    private TextView mTvSummary;
+    private TextView mTvAuthorName;
+    private TextView mTvAuthorDesc;
+    private TextView mTvAuthorFans;
+    private TextView mTvPraiseNum;
+    private TextView mTvShareNum;
+    private TextView mTvCommentNum;
+    private LoadDialog mDialog;
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context, String itemId){
+        Intent intent = new Intent(context, MovieDetailActivity.class);
+        intent.putExtra("item_id", itemId);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +53,8 @@ public class MovieDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_movie_detail);
         setToolbar();
         changeStatusBar();
-        dialog = MyDialog.showDialog(MovieDetailActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(MovieDetailActivity.this);
+        mDialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -51,24 +63,24 @@ public class MovieDetailActivity extends BaseActivity {
         }
 
         //初始化各控件
-        movieLayout = (ScrollView) findViewById(R.id.movie_detail_layout);
-        title = (TextView) findViewById(R.id.tv_title);
-        author = (TextView) findViewById(R.id.tv_author);
-        updateDate = (TextView) findViewById(R.id.tv_update_date);
-        essayContent = (TextView) findViewById(R.id.tv_essay_content);
-        summary = (TextView) findViewById(R.id.movie_summary);
-        authorName = (TextView) findViewById(R.id.tv_author_name);
-        authorDesc = (TextView) findViewById(R.id.tv_author_desc);
-        authorFans = (TextView) findViewById(R.id.tv_fans_num);
-        praiseNum = (TextView) findViewById(R.id.tv_praise_num);
-        shareNum = (TextView) findViewById(R.id.tv_share_num);
-        commentNum = (TextView) findViewById(R.id.tv_comment_num);
+        mSvMovieLayout = (ScrollView) findViewById(R.id.movie_detail_layout);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mTvAuthor = (TextView) findViewById(R.id.tv_author);
+        mTvUpdateDate = (TextView) findViewById(R.id.tv_update_date);
+        mTvEssayContent = (TextView) findViewById(R.id.tv_essay_content);
+        mTvSummary = (TextView) findViewById(R.id.movie_summary);
+        mTvAuthorName = (TextView) findViewById(R.id.tv_author_name);
+        mTvAuthorDesc = (TextView) findViewById(R.id.tv_author_desc);
+        mTvAuthorFans = (TextView) findViewById(R.id.tv_fans_num);
+        mTvPraiseNum = (TextView) findViewById(R.id.tv_praise_num);
+        mTvShareNum = (TextView) findViewById(R.id.tv_share_num);
+        mTvCommentNum = (TextView) findViewById(R.id.tv_comment_num);
 
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
         Log.d("MusicDetailActivity", "此时详细内容id为：" + itemId);
-        movieLayout.setVisibility(View.INVISIBLE);
+        mSvMovieLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
         requestMovieDetail(itemId);     //请求影视内容
@@ -100,13 +112,11 @@ public class MovieDetailActivity extends BaseActivity {
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
-                final String responseText = response;
-                final Movie movie = Utilty.handleMovieDetailResponse(responseText);
+                final Movie movie = Utilty.handleMovieDetailResponse(response);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (movie != null){
-                            SPUtil.setParam(MyApplication.getContext(), "movie_detail" + itemId, responseText);
                             showMovieInfo(movie);   //内容显示
                         }
                         else {
@@ -129,19 +139,19 @@ public class MovieDetailActivity extends BaseActivity {
      */
     private void showMovieInfo(Movie movie){
         if (movie != null){
-            title.setText(movie.getTitle());
-            author.setText("文 / " + movie.getUserName());
-            updateDate.setText(movie.getUpdateDate());
-            essayContent.setText(Html.fromHtml(movie.getContent()));
-            summary.setText(movie.getSummary());
-            authorName.setText(movie.getUserName());
-            authorDesc.setText(movie.getDes());
-            authorFans.setText(movie.getFansTotal() + "关注");
-            praiseNum.setText(movie.getPraiseNum() + "");
-            shareNum.setText("0");
-            commentNum.setText("0");
-            movieLayout.setVisibility(View.VISIBLE);
-            dialog.dismiss();
+            mTvTitle.setText(movie.getTitle());
+            mTvAuthor.setText("文 / " + movie.getUserName());
+            mTvUpdateDate.setText(movie.getUpdateDate());
+            mTvEssayContent.setText(Html.fromHtml(movie.getContent()));
+            mTvSummary.setText(movie.getSummary());
+            mTvAuthorName.setText(movie.getUserName());
+            mTvAuthorDesc.setText(movie.getDes());
+            mTvAuthorFans.setText(movie.getFansTotal() + "关注");
+            mTvPraiseNum.setText(movie.getPraiseNum() + "");
+            mTvShareNum.setText("0");
+            mTvCommentNum.setText("0");
+            mSvMovieLayout.setVisibility(View.VISIBLE);
+            mDialog.dismiss();
         }
     }
 }

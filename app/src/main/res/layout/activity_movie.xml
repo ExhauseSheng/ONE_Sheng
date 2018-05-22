@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.sheng.one_sheng.ui.MyListView
+            <com.sheng.one_sheng.ui.NoScrollListView
                 android:id="@+id/movie_list_view"
                 android:layout_below="@id/toolbar"
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:divider="@android:color/transparent"
                 android:dividerHeight="10dp">
 
-            </com.sheng.one_sheng.ui.MyListView>
+            </com.sheng.one_sheng.ui.NoScrollListView>
 
         </android.support.v4.widget.NestedScrollView>
 

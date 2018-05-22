@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.imageLoader;
 
 import java.util.ArrayList;
@@ -26,35 +26,37 @@ import java.util.List;
 /**
  * 影视列表的适配器
  */
-public class MovieListAdapter extends ArrayAdapter<Movie> implements AbsListView.OnScrollListener {
+public class MovieListAdapter extends ArrayAdapter<Movie> {
 
     private int resourceId;     //用来指定列表某子项的id
-    private MyListView mListView;
-    private List<String> imageUrls = new ArrayList<>();
+    private NoScrollListView mListView;
+    private List<String> mImageUrls = new ArrayList<>();
     private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
     private int mSart;
     private int mEnd;
-    private List<Movie> movieList;
+    private List<Movie> mMovieList;
     private Context mContext;
 
-    public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects, MyListView listView){
+    public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.movieList = objects;
+        this.mMovieList = objects;
         this.mContext = context;
-        this.mListView = listView;
 
-        mImageLoader = new imageLoader(mListView);
-        for (int i = 0; i < this.movieList.size(); i++){
-            imageUrls.add(this.movieList.get(i).getImageUrl());
+        for (int i = 0; i < this.mMovieList.size(); i++){
+            mImageUrls.add(this.mMovieList.get(i).getImageUrl());
         }
-        Log.d("MovieListtAdapter", "图片url集合大小为：" + imageUrls.size() + "");
+        Log.d("MovieListtAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (parent != null){
+            this.mListView = (NoScrollListView) parent;
+        }
+        mImageLoader = new imageLoader(mListView);
         Movie movie = getItem(position);
         View view;
         MovieViewHolder viewHolder;
@@ -62,74 +64,40 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements AbsListView
         if (convertView == null) {
             view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
             viewHolder = new MovieViewHolder();
-            viewHolder.movieTitle = (TextView) view.findViewById(R.id.tv_title);
-            viewHolder.movieImage = (ImageView) view.findViewById(R.id.movie_image);
-            viewHolder.movieAuthor = (TextView) view.findViewById(R.id.tv_author);
-            viewHolder.movieName = (TextView) view.findViewById(R.id.movie_title);
-            viewHolder.updateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
-            viewHolder.movieForward = (TextView) view.findViewById(R.id.tv_movie_desc);
-            viewHolder.likeNum = (TextView) view.findViewById(R.id.tv_like_num);
+            viewHolder.mTvMovieTitle = (TextView) view.findViewById(R.id.tv_title);
+            viewHolder.mIvMovieImage = (ImageView) view.findViewById(R.id.movie_image);
+            viewHolder.mTvMovieAuthor = (TextView) view.findViewById(R.id.tv_author);
+            viewHolder.mTvMovieName = (TextView) view.findViewById(R.id.movie_title);
+            viewHolder.mTvUpdateDate = (TextView) view.findViewById(R.id.tv_card_update_date);
+            viewHolder.mTvMovieForward = (TextView) view.findViewById(R.id.tv_movie_desc);
+            viewHolder.mTvLikeNum = (TextView) view.findViewById(R.id.tv_like_num);
             view.setTag(viewHolder);        //将viewHolder储存在View中
         } else {
             view = convertView;
             viewHolder = (MovieViewHolder) view.getTag();
         }
-        viewHolder.movieTitle.setText(movie.getTitle());
-        viewHolder.movieAuthor.setText(" 文 / " + movie.getUserName());
-        viewHolder.movieName.setText(movie.getSubTitle());
-        viewHolder.updateDate.setText(movie.getUpdateDate());
-        viewHolder.movieForward.setText(movie.getForward());
-        viewHolder.likeNum.setText(movie.getLikeCount() + "");
+        viewHolder.mTvMovieTitle.setText(movie.getTitle());
+        viewHolder.mTvMovieAuthor.setText(" 文 / " + movie.getUserName());
+        viewHolder.mTvMovieName.setText(movie.getSubTitle());
+        viewHolder.mTvUpdateDate.setText(movie.getUpdateDate());
+        viewHolder.mTvMovieForward.setText(movie.getForward());
+        viewHolder.mTvLikeNum.setText(movie.getLikeCount() + "");
 
         String url = movie.getImageUrl();
-        viewHolder.movieImage.setImageResource(R.drawable.loading);
-        viewHolder.movieImage.setTag(url);
+        viewHolder.mIvMovieImage.setImageResource(R.drawable.loading);
+        viewHolder.mIvMovieImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.movieImage, url);
+        mImageLoader.loadingByAsyncTask(viewHolder.mIvMovieImage, url);
         return view;
     }
 
-    /**
-     * ListView在滑动的过程调用
-     * @param view
-     * @param firstVisibleItem
-     * @param visibleItemCount
-     * @param totalItemCount
-     */
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        mSart = firstVisibleItem;   //可见第一个item
-        mEnd = firstVisibleItem + visibleItemCount;     //可见的最后一个item
-        if (isFirst && visibleItemCount > 0){
-            //第一次载入的时候数据处理
-            mImageLoader.setImageView(mSart, mEnd, imageUrls);
-            isFirst = false;
-        }
-    }
-
-    /**
-     * ListView在流动状态变化时调用
-     * @param view
-     * @param scrollState
-     */
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == SCROLL_STATE_IDLE){
-            //流动停止，此时载入可见项数据
-            mImageLoader.setImageView(mSart, mEnd, imageUrls);
-        } else {
-            //停止载入数据
-            mImageLoader.stopAllTask();
-        }
-    }
-
     class MovieViewHolder{
-        TextView movieTitle;
-        TextView movieAuthor;
-        TextView movieName;
-        TextView updateDate;
-        ImageView movieImage;
-        TextView movieForward;
-        TextView likeNum;
+        TextView mTvMovieTitle;
+        TextView mTvMovieAuthor;
+        TextView mTvMovieName;
+        TextView mTvUpdateDate;
+        ImageView mIvMovieImage;
+        TextView mTvMovieForward;
+        TextView mTvLikeNum;
     }
 }

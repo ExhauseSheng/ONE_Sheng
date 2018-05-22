@@ -51,7 +51,7 @@
 
                     <include layout="@layout/shuffling_pic"/>
 
-                    <com.sheng.one_sheng.ui.MyListView
+                    <com.sheng.one_sheng.ui.NoScrollListView
                         android:id="@+id/paper_list_view"
                         android:layout_marginTop="10dp"
                         android:layout_below="@id/toolbar"
@@ -60,7 +60,7 @@
                         android:divider="@android:color/transparent"
                         android:dividerHeight="10dp">
 
-                    </com.sheng.one_sheng.ui.MyListView>
+                    </com.sheng.one_sheng.ui.NoScrollListView>
 
                 </LinearLayout>
 

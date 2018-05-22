@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.imageLoader;
 
 import java.util.ArrayList;
@@ -25,34 +25,36 @@ import java.util.List;
 /**
  * 插画列表适配器
  */
-public class PaperListAdapter extends ArrayAdapter<Paper> implements AbsListView.OnScrollListener {
+public class PaperListAdapter extends ArrayAdapter<Paper> {
 
     private int resourceId;     //用来指定列表某子项的id
-    private MyListView mListView;
-    private List<String> imageUrls = new ArrayList<>();
+    private NoScrollListView mListView;
+    private List<String> mImageUrls = new ArrayList<>();
     private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
     private int mSart;
     private int mEnd;
-    private List<Paper> paperList;
+    private List<Paper> mPaperList;
     private Context mContext;
 
-    public PaperListAdapter (Context context, int textViewResoureId, List<Paper> objects, MyListView listView){
+    public PaperListAdapter (Context context, int textViewResoureId, List<Paper> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.paperList = objects;
+        this.mPaperList = objects;
         this.mContext = context;
-        this.mListView = listView;
 
-        mImageLoader = new imageLoader(mListView);
-        for (int i = 0; i < this.paperList.size(); i++){
-            imageUrls.add(this.paperList.get(i).getImageUrl());
+        for (int i = 0; i < this.mPaperList.size(); i++){
+            mImageUrls.add(this.mPaperList.get(i).getImageUrl());
         }
-        Log.d("PaperListAdapter", "图片url集合大小为：" + imageUrls.size() + "");
+        Log.d("PaperListAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (parent != null){
+            this.mListView = (NoScrollListView) parent;
+        }
+        mImageLoader = new imageLoader(mListView);
         Paper paper = getItem(position);    //获取当前项的Paper实例
         View view;
         PaperViewHolder viewHolder;
@@ -60,77 +62,43 @@ public class PaperListAdapter extends ArrayAdapter<Paper> implements AbsListView
         if (convertView == null){
             view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
             viewHolder = new PaperViewHolder();
-            viewHolder.paperTitle = (TextView) view.findViewById(R.id.paper_title);
-            viewHolder.paperImage = (ImageView) view.findViewById(R.id.paper_image);
-            viewHolder.paperAuthor = (TextView) view.findViewById(R.id.paper_author);
-            viewHolder.paperEssayContent = (TextView) view.findViewById(R.id.paper_essay_content);
-            viewHolder.paperEssayAuthor = (TextView) view.findViewById(R.id.paper_essay_author);
-            viewHolder.praiseNum = (TextView) view.findViewById(R.id.tv_praise_num);
-            viewHolder.shareNum = (TextView) view.findViewById(R.id.tv_share_num);
-            viewHolder.commentNum = (TextView) view.findViewById(R.id.tv_comment_num);
+            viewHolder.mTvPaperTitle = (TextView) view.findViewById(R.id.paper_title);
+            viewHolder.mIvPaperImage = (ImageView) view.findViewById(R.id.paper_image);
+            viewHolder.mTvPaperAuthor = (TextView) view.findViewById(R.id.paper_author);
+            viewHolder.mTvPaperEssayContent = (TextView) view.findViewById(R.id.paper_essay_content);
+            viewHolder.mTvPaperEssayAuthor = (TextView) view.findViewById(R.id.paper_essay_author);
+            viewHolder.mTvPraiseNum = (TextView) view.findViewById(R.id.tv_praise_num);
+            viewHolder.mTvShareNum = (TextView) view.findViewById(R.id.tv_share_num);
+            viewHolder.mTvCommentNum = (TextView) view.findViewById(R.id.tv_comment_num);
             view.setTag(viewHolder);        //将viewHolder储存在View中
         } else {
             view = convertView;
             viewHolder = (PaperViewHolder) view.getTag();        //重新获取viewHolder
         }
-        viewHolder.paperTitle.setText(paper.getTitle());
-        viewHolder.paperAuthor.setText(paper.getTextAuthor());
-        viewHolder.paperEssayContent.setText(paper.getContent());
-        viewHolder.paperEssayAuthor.setText(paper.getAuthorInfo());
-        viewHolder.praiseNum.setText(paper.getPraiseNum() + "");
-        viewHolder.shareNum.setText(paper.getShareNum() + "");
-        viewHolder.commentNum.setText(paper.getCommentNum() + "");
+        viewHolder.mTvPaperTitle.setText(paper.getTitle());
+        viewHolder.mTvPaperAuthor.setText(paper.getTextAuthor());
+        viewHolder.mTvPaperEssayContent.setText(paper.getContent());
+        viewHolder.mTvPaperEssayAuthor.setText(paper.getAuthorInfo());
+        viewHolder.mTvPraiseNum.setText(paper.getPraiseNum() + "");
+        viewHolder.mTvShareNum.setText(paper.getShareNum() + "");
+        viewHolder.mTvCommentNum.setText(paper.getCommentNum() + "");
 
         String url = paper.getImageUrl();
-        viewHolder.paperImage.setImageResource(R.drawable.loading);
-        viewHolder.paperImage.setTag(url);
+        viewHolder.mIvPaperImage.setImageResource(R.drawable.loading);
+        viewHolder.mIvPaperImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.paperImage, url);
+        mImageLoader.loadingByAsyncTask(viewHolder.mIvPaperImage, url);
         return view;
     }
 
-    /**
-     * ListView在滑动的过程调用
-     * @param view
-     * @param firstVisibleItem
-     * @param visibleItemCount
-     * @param totalItemCount
-     */
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        mSart = firstVisibleItem;   //可见第一个item
-        mEnd = firstVisibleItem + visibleItemCount;     //可见的最后一个item
-        if (isFirst && visibleItemCount > 0){
-            //第一次载入的时候数据处理
-            mImageLoader.setImageView(mSart, mEnd, imageUrls);
-            isFirst = false;
-        }
-    }
-
-    /**
-     * ListView在流动状态变化时调用
-     * @param view
-     * @param scrollState
-     */
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == SCROLL_STATE_IDLE){
-            //流动停止，此时载入可见项数据
-            mImageLoader.setImageView(mSart, mEnd, imageUrls);
-        } else {
-            //停止载入数据
-            mImageLoader.stopAllTask();
-        }
-    }
-
     class PaperViewHolder {
-        TextView paperTitle;
-        ImageView paperImage;
-        TextView paperAuthor;
-        TextView paperEssayContent;
-        TextView paperEssayAuthor;
-        TextView praiseNum;
-        TextView shareNum;
-        TextView commentNum;
+        TextView mTvPaperTitle;
+        ImageView mIvPaperImage;
+        TextView mTvPaperAuthor;
+        TextView mTvPaperEssayContent;
+        TextView mTvPaperEssayAuthor;
+        TextView mTvPraiseNum;
+        TextView mTvShareNum;
+        TextView mTvCommentNum;
     }
 }

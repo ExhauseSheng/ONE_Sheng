@@ -1,5 +1,7 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
@@ -12,28 +14,36 @@ import android.widget.Toast;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Read;
-import com.sheng.one_sheng.ui.MyDialog;
+import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.Utilty;
 
-import java.util.List;
-
 public class ReadDetailActivity extends BaseActivity {
 
-    private ScrollView readLayout;
-    private TextView title;
-    private TextView author;
-    private TextView updateDate;
-    private TextView forward;
-    private TextView essayContent;
-    private TextView authorName;
-    private TextView authorDesc;
-    private TextView authorFans;
-    private TextView praiseNum;
-    private TextView shareNum;
-    private TextView commentNum;
-    private MyDialog dialog;
+    private ScrollView mSlreadLayout;
+    private TextView mTvTitle;
+    private TextView mTvAuthor;
+    private TextView mTvUpdateDate;
+    private TextView mTvForward;
+    private TextView mTvEssayContent;
+    private TextView mTvAuthorName;
+    private TextView mTvAuthorDesc;
+    private TextView mTvAuthorFans;
+    private TextView mTvPraiseNum;
+    private TextView mTvShareNum;
+    private TextView mTvCommentNum;
+    private LoadDialog mDialog;
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context, String itemId){
+        Intent intent = new Intent(context, MovieActivity.class);
+        intent.putExtra("item_id", itemId);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +52,8 @@ public class ReadDetailActivity extends BaseActivity {
         setToolbar();
         changeStatusBar();
 
-        dialog = MyDialog.showDialog(ReadDetailActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(ReadDetailActivity.this);
+        mDialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -52,24 +62,24 @@ public class ReadDetailActivity extends BaseActivity {
         }
 
         //初始化各控件
-        readLayout = (ScrollView) findViewById(R.id.read_detail_layout);
-        title = (TextView) findViewById(R.id.tv_title);
-        author = (TextView) findViewById(R.id.tv_author);
-        updateDate = (TextView) findViewById(R.id.tv_update_date);
-        forward = (TextView) findViewById(R.id.tv_forward);
-        essayContent = (TextView) findViewById(R.id.tv_essay_content);
-        authorName = (TextView) findViewById(R.id.tv_author_name);
-        authorDesc = (TextView) findViewById(R.id.tv_author_desc);
-        authorFans = (TextView) findViewById(R.id.tv_fans_num);
-        praiseNum = (TextView) findViewById(R.id.tv_praise_num);
-        shareNum = (TextView) findViewById(R.id.tv_share_num);
-        commentNum = (TextView) findViewById(R.id.tv_comment_num);
+        mSlreadLayout = (ScrollView) findViewById(R.id.read_detail_layout);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mTvAuthor = (TextView) findViewById(R.id.tv_author);
+        mTvUpdateDate = (TextView) findViewById(R.id.tv_update_date);
+        mTvForward = (TextView) findViewById(R.id.tv_forward);
+        mTvEssayContent = (TextView) findViewById(R.id.tv_essay_content);
+        mTvAuthorName = (TextView) findViewById(R.id.tv_author_name);
+        mTvAuthorDesc = (TextView) findViewById(R.id.tv_author_desc);
+        mTvAuthorFans = (TextView) findViewById(R.id.tv_fans_num);
+        mTvPraiseNum = (TextView) findViewById(R.id.tv_praise_num);
+        mTvShareNum = (TextView) findViewById(R.id.tv_share_num);
+        mTvCommentNum = (TextView) findViewById(R.id.tv_comment_num);
 
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
         Log.d("ReadDetailActivity", "此时详细内容id为：" + itemId);
-        readLayout.setVisibility(View.INVISIBLE);
+        mSlreadLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestReadDetail(itemId);
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
@@ -127,18 +137,18 @@ public class ReadDetailActivity extends BaseActivity {
      */
     private void showReadInfo(Read read){
 
-        title.setText(read.getTitle());
-        author.setText("文 / " + read.getUserName());
-        updateDate.setText(read.getUpdateDate());
-        forward.setText(read.getGuideWord());
-        essayContent.setText(Html.fromHtml(read.getContent()));
-        authorName.setText(read.getUserName());
-        authorDesc.setText(read.getDes());
-        authorFans.setText(read.getFansTotal() + "关注");
-        praiseNum.setText(read.getPraiseNum() + "");
-        shareNum.setText(read.getShareNum() + "");
-        commentNum.setText(read.getCommentNum() + "");
-        readLayout.setVisibility(View.VISIBLE);
-        dialog.dismiss();
+        mTvTitle.setText(read.getTitle());
+        mTvAuthor.setText("文 / " + read.getUserName());
+        mTvUpdateDate.setText(read.getUpdateDate());
+        mTvForward.setText(read.getGuideWord());
+        mTvEssayContent.setText(Html.fromHtml(read.getContent()));
+        mTvAuthorName.setText(read.getUserName());
+        mTvAuthorDesc.setText(read.getDes());
+        mTvAuthorFans.setText(read.getFansTotal() + "关注");
+        mTvPraiseNum.setText(read.getPraiseNum() + "");
+        mTvShareNum.setText(read.getShareNum() + "");
+        mTvCommentNum.setText(read.getCommentNum() + "");
+        mSlreadLayout.setVisibility(View.VISIBLE);
+        mDialog.dismiss();
     }
 }

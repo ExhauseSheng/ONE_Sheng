@@ -1,5 +1,6 @@
 package com.sheng.one_sheng.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,8 +17,8 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
 import com.sheng.one_sheng.bean.Movie;
-import com.sheng.one_sheng.ui.MyDialog;
-import com.sheng.one_sheng.ui.MyListView;
+import com.sheng.one_sheng.ui.LoadDialog;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.SPUtil;
@@ -25,12 +26,21 @@ import com.sheng.one_sheng.util.Utilty;
 
 import java.util.List;
 
-import static com.sheng.one_sheng.R.id.toolbar;
+import static com.sheng.one_sheng.Contents.MOVIE_LIST_URL;
 
 public class MovieActivity extends BaseActivity {
 
-    private SwipeRefreshLayout swipeRefresh;    //刷新控件
-    private MyDialog dialog;        //对话窗口
+    private SwipeRefreshLayout mSlRefresh;    //刷新控件
+    private LoadDialog mDialog;        //对话窗口
+
+    /**
+     * 用于启动这个活动的方法
+     * @param context
+     */
+    public static void actionStart(Context context){
+        Intent intent = new Intent(context, MovieActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +48,8 @@ public class MovieActivity extends BaseActivity {
         setContentView(R.layout.activity_movie);
         setToolbar();
         changeStatusBar();
-        dialog = MyDialog.showDialog(MovieActivity.this);
-        dialog.show();
+        mDialog = LoadDialog.showDialog(MovieActivity.this);
+        mDialog.show();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -48,14 +58,14 @@ public class MovieActivity extends BaseActivity {
         }
 
         //添加刷新操作，并对刷新做监听
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSlRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        mSlRefresh.setColorSchemeResources(R.color.colorPrimary);
+        mSlRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //下拉刷新的时候会回调这个方法
                 initMovie();
-                dialog.show();  //显示加载框
+                mDialog.show();  //显示加载框
             }
         });
 
@@ -70,7 +80,7 @@ public class MovieActivity extends BaseActivity {
         } else {
             //如果没有缓存就从服务器中获取数据
             initMovie();
-            dialog.show();   //显示加载框
+            mDialog.show();   //显示加载框
         }
     }
 
@@ -95,17 +105,15 @@ public class MovieActivity extends BaseActivity {
      * 发送网络请求获取影视列表数据
      */
     private void initMovie(){
-        String url = "http://v3.wufazhuce.com:8000/api/channel/movie/more/0?platform=android";
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
+        HttpUtil.sendHttpRequest(MOVIE_LIST_URL, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 final String responseText = response;
-                runOnUiThread(new Runnable() {
+                final List<Movie> movieList = Utilty.handleMovieListResponse(responseText);
+                Log.d("MovieActivity", "集合2的大小为：" + movieList.size() + "");
+                runOnUiThread(new Runnable() {  //切换到主线程进行ui操作
                     @Override
                     public void run() {
-                        //切换到主线程进行ui操作
-                        List<Movie> movieList = Utilty.handleMovieListResponse(responseText);
-                        Log.d("MovieActivity", "集合2的大小为：" + movieList.size() + "");
                         //将服务器返回的数据缓存下来
                         SPUtil.setParam(MyApplication.getContext(), "movies", responseText);
                         setAdapter(movieList);
@@ -119,7 +127,7 @@ public class MovieActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Toast.makeText(MovieActivity.this, "获取视频列表失败", Toast.LENGTH_SHORT).show();
-                        swipeRefresh.setRefreshing(false);      //结束刷新事件
+                        mSlRefresh.setRefreshing(false);      //结束刷新事件
                     }
                 });
             }
@@ -131,20 +139,18 @@ public class MovieActivity extends BaseActivity {
      * @param movieList
      */
     private void setAdapter(final List<Movie> movieList){
-        MyListView listView = (MyListView) findViewById(R.id.movie_list_view);
+        NoScrollListView listView = (NoScrollListView) findViewById(R.id.movie_list_view);
         MovieListAdapter adapter = new MovieListAdapter
-                (MyApplication.getContext(), R.layout.layout_card_movie, movieList, listView);
+                (MyApplication.getContext(), R.layout.layout_card_movie, movieList);
         listView.setAdapter(adapter);
-        swipeRefresh.setRefreshing(false);  //结束刷新事件
-        dialog.dismiss();   //关闭加载框
+        mSlRefresh.setRefreshing(false);  //结束刷新事件
+        mDialog.dismiss();   //关闭加载框
 
         //给ListView设置监听事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MyApplication.getContext(), MovieDetailActivity.class);
-                intent.putExtra("item_id", movieList.get(position).getItemId());
-                startActivity(intent);
+               MovieDetailActivity.actionStart(MyApplication.getContext(), movieList.get(position).getItemId());
             }
         });
     }
