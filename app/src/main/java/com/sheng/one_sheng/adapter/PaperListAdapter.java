@@ -5,14 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
-import com.sheng.one_sheng.ui.NoScrollListView;
+import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.imageLoader;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import java.util.List;
 public class PaperListAdapter extends ArrayAdapter<Paper> {
 
     private int resourceId;     //用来指定列表某子项的id
-    private NoScrollListView mListView;
+    private RefreshListView mListView;
     private List<String> mImageUrls = new ArrayList<>();
     private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
@@ -52,7 +51,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (parent != null){
-            this.mListView = (NoScrollListView) parent;
+            this.mListView = (RefreshListView) parent;
         }
         mImageLoader = new imageLoader(mListView);
         Paper paper = getItem(position);    //获取当前项的Paper实例

@@ -9,7 +9,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,10 +24,9 @@ import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
-import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.ui.LoadDialog;
-import com.sheng.one_sheng.ui.NoScrollListView;
+import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.ImageCallBack;
@@ -48,7 +46,7 @@ import static com.sheng.one_sheng.Contents.VIEW_PAGER_DELAY;
 
 public class PaperActivity extends BaseActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener {
 
-    private NoScrollListView mListView;
+    private RefreshListView mListView;
     private List<Paper> mPapers = new ArrayList<>();
     private List<String> mImageUrls = new ArrayList<>();
     private DrawerLayout mDrawerLayout;     //滑动菜单布局
@@ -60,7 +58,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
     private int currentViewPageItem;    //当前页数
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
-    public SwipeRefreshLayout mSlRefresh;
     private LoadDialog mDialog;
     private boolean isExit;     //用来判断是否退出的一个布尔值，用于按两次返回键退出程序
 
@@ -121,19 +118,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
         mViewPager.addOnPageChangeListener(this);
         isAutoPlay = true;
 
-        //添加刷新操作，并对刷新做监听
-        mSlRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        mSlRefresh.setColorSchemeResources(R.color.colorPrimary);
-        mSlRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //下拉刷新的时候会回调这个方法
-                mPapers.clear();     //先将装有插画对象的集合清空，重新获取数据
-                requestPaperId();
-                mDialog.show();
-            }
-        });
-
         requestPaperId();     //发送请求获取数据
     }
 
@@ -177,7 +161,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     @Override
                     public void run() {
                         Toast.makeText(PaperActivity.this, "获取id信息失败", Toast.LENGTH_SHORT).show();
-                        mSlRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -214,7 +197,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                         @Override
                         public void run() {
                             Toast.makeText(PaperActivity.this, "获取详细信息失败", Toast.LENGTH_SHORT).show();
-                            mSlRefresh.setRefreshing(false);
                         }
                     });
                 }
@@ -243,7 +225,6 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
                     Log.d("PaperActivity2", "第二个集合的大小为：" + mPapers.size() + "");
                     if (mPapers.size() == 10){
                         setAdapter(mPapers);
-                        mSlRefresh.setRefreshing(false);
                         mDialog.dismiss();
                     }
                     break;
@@ -269,7 +250,7 @@ public class PaperActivity extends BaseActivity implements ViewPager.OnPageChang
      * @param paperList
      */
     private void setAdapter(List<Paper> paperList){
-        mListView = (NoScrollListView) findViewById(R.id.paper_list_view);
+        mListView = (RefreshListView) findViewById(R.id.paper_list_view);
         PaperListAdapter adapter = new PaperListAdapter
                 (PaperActivity.this, R.layout.layout_card_paper, paperList);
         mListView.setAdapter(adapter);

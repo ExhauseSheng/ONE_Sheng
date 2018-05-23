@@ -40,7 +40,7 @@ public class ReadDetailActivity extends BaseActivity {
      * @param context
      */
     public static void actionStart(Context context, String itemId){
-        Intent intent = new Intent(context, MovieActivity.class);
+        Intent intent = new Intent(context, ReadDetailActivity.class);
         intent.putExtra("item_id", itemId);
         context.startActivity(intent);
     }

@@ -25,12 +25,12 @@
         android:layout_marginTop="5dp"
         android:background="#000"/>
 
-    <com.sheng.one_sheng.ui.NoScrollListView
+    <com.sheng.one_sheng.ui.RefreshListView
         android:id="@+id/lv_comment_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:dividerHeight="10dp">
 
-    </com.sheng.one_sheng.ui.NoScrollListView>
+    </com.sheng.one_sheng.ui.RefreshListView>
 
 </LinearLayout>

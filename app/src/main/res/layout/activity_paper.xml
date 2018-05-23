@@ -6,11 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -39,10 +34,10 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/toolbar">
+            <!--<ScrollView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_below="@+id/toolbar">-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -51,7 +46,7 @@
 
                     <include layout="@layout/shuffling_pic"/>
 
-                    <com.sheng.one_sheng.ui.NoScrollListView
+                    <com.sheng.one_sheng.ui.RefreshListView
                         android:id="@+id/paper_list_view"
                         android:layout_marginTop="10dp"
                         android:layout_below="@id/toolbar"
@@ -60,15 +55,13 @@
                         android:divider="@android:color/transparent"
                         android:dividerHeight="10dp">
 
-                    </com.sheng.one_sheng.ui.NoScrollListView>
+                    </com.sheng.one_sheng.ui.RefreshListView>
 
                 </LinearLayout>
 
-            </android.support.v4.widget.NestedScrollView>
+            <!--</ScrollView>-->
 
         </LinearLayout>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

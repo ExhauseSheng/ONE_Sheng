@@ -12,17 +12,15 @@ import com.sheng.one_sheng.R;
  * Created by 一个傻傻的小男孩 on 2018/5/18.
  */
 
+/**
+ * 自定义Dialog：加载时弹出
+ */
 public class LoadDialog extends Dialog {
 
     private Context mContext;
     private static LoadDialog mDialog;
     private ImageView mIvProgress;
 
-
-    public LoadDialog(Context context) {
-        super(context);
-        this.mContext = context;
-    }
 
     public LoadDialog(Context context, int themeResId) {
         super(context, themeResId);
@@ -43,7 +41,7 @@ public class LoadDialog extends Dialog {
         super.onWindowFocusChanged(hasFocus);
         if(hasFocus && mDialog != null){
             mIvProgress = (ImageView) mDialog.findViewById(R.id.ivProgress);  //加载的图片
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.dialog_progress_anim);   //动画设置
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.progress_anim);   //动画设置
             mIvProgress.startAnimation(animation);   //开启动画
         }
     }

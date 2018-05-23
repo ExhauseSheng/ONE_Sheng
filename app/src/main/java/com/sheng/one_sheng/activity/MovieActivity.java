@@ -3,8 +3,11 @@ package com.sheng.one_sheng.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,22 +19,32 @@ import android.widget.Toast;
 import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
+import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Movie;
+import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.LoadDialog;
-import com.sheng.one_sheng.ui.NoScrollListView;
+import com.sheng.one_sheng.ui.OnRefreshListener;
+import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.SPUtil;
 import com.sheng.one_sheng.util.Utilty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sheng.one_sheng.Contents.MOVIE_LIST_URL;
+import static com.sheng.one_sheng.Contents.MOVIE_MORE_URL;
+import static com.sheng.one_sheng.Contents.READ_LIST_URL;
+import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
-public class MovieActivity extends BaseActivity {
+public class MovieActivity extends BaseActivity implements OnRefreshListener {
 
-    private SwipeRefreshLayout mSlRefresh;    //刷新控件
     private LoadDialog mDialog;        //对话窗口
+    private List<Movie> mMovieList;
+    private RefreshListView mListView;
+    private MovieListAdapter mAdapter;
+    private boolean isFirstLoadingMore = true;  //判断是不是第一次上拉加载更多
 
     /**
      * 用于启动这个活动的方法
@@ -50,6 +63,9 @@ public class MovieActivity extends BaseActivity {
         changeStatusBar();
         mDialog = LoadDialog.showDialog(MovieActivity.this);
         mDialog.show();
+        mListView = (RefreshListView) findViewById(R.id.movie_list_view);
+        mListView.setOnRefreshListener(this);
+        mMovieList = new ArrayList<>();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -57,31 +73,18 @@ public class MovieActivity extends BaseActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
         }
 
-        //添加刷新操作，并对刷新做监听
-        mSlRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        mSlRefresh.setColorSchemeResources(R.color.colorPrimary);
-        mSlRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //下拉刷新的时候会回调这个方法
-                initMovie();
-                mDialog.show();  //显示加载框
-            }
-        });
-
-        //取出缓存
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String movieListString = prefs.getString("movies", null);
-        if (movieListString != null){
-            //如果有缓存就直接解析
-            List<Movie> moviesList = Utilty.handleMovieListResponse(movieListString);
-            Log.d("MovieActivity", "成功取出缓存：大小为：" + moviesList.size() + "");
-            setAdapter(moviesList);
-        } else {
-            //如果没有缓存就从服务器中获取数据
-            initMovie();
-            mDialog.show();   //显示加载框
-        }
+//        //取出缓存
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//        String movieListString = prefs.getString("movies", null);
+//        if (movieListString != null){
+//            //如果有缓存就直接解析
+//            List<Movie> moviesList = Utilty.handleMovieListResponse(movieListString);
+//            Log.d("MovieActivity", "成功取出缓存：大小为：" + moviesList.size() + "");
+//            setAdapter(moviesList);
+//        } else {
+//            //如果没有缓存就从服务器中获取数据
+            initMovie(MOVIE_LIST_URL);
+//        }
     }
 
     /**
@@ -104,21 +107,40 @@ public class MovieActivity extends BaseActivity {
     /**
      * 发送网络请求获取影视列表数据
      */
-    private void initMovie(){
-        HttpUtil.sendHttpRequest(MOVIE_LIST_URL, new HttpCallbackListener() {
+    private void initMovie(final String url){
+        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 final String responseText = response;
-                final List<Movie> movieList = Utilty.handleMovieListResponse(responseText);
-                Log.d("MovieActivity", "集合2的大小为：" + movieList.size() + "");
+                final List<Movie> movies = Utilty.handleMovieListResponse(responseText);
+                Log.d("MovieActivity", "集合2的大小为：" + movies.size() + "");
                 runOnUiThread(new Runnable() {  //切换到主线程进行ui操作
                     @Override
                     public void run() {
                         //将服务器返回的数据缓存下来
                         SPUtil.setParam(MyApplication.getContext(), "movies", responseText);
-                        setAdapter(movieList);
                     }
                 });
+                if (url.equals(MOVIE_LIST_URL)){
+                    Log.d("MovieActivity", "发出集合1");
+                    Message message = new Message();
+                    message.what = 0;
+                    message.obj = movies;
+                    handler.sendMessage(message);   //将Message对象发送出去
+                } else if (url.equals(MOVIE_MORE_URL)){  //如果加载更多
+                    for (int i =0; i < movies.size(); i++){
+                        for (int j = 0; j < mMovieList.size(); j++){
+                            if (movies.get(i).getId().equals(mMovieList.get(j).getId())){     //根据id来判断有没有重复的内容
+                                movies.remove(i);    //如果有重复的内容就删除掉
+                            }
+                        }
+                    }
+                    Log.d("MovieActivity", "发出集合1.5（加载更多）大小为：" + movies.size());
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = movies;            //将删除之后新的集合发送出去
+                    handler.sendMessage(message);   //将Message对象发送出去
+                }
             }
 
             @Override
@@ -127,31 +149,94 @@ public class MovieActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Toast.makeText(MovieActivity.this, "获取视频列表失败", Toast.LENGTH_SHORT).show();
-                        mSlRefresh.setRefreshing(false);      //结束刷新事件
                     }
                 });
             }
         });
     }
 
+    private Handler handler = new Handler() {
+
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    mMovieList = (List<Movie>)msg.obj;
+                    setAdapter();
+                    break;
+                case 1:
+                    List<Movie> movieList = (List<Movie>) msg.obj;
+                    for (int i = 0; i < movieList.size(); i++){
+                        mMovieList.add(movieList.get(i));
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     /**
      * 影视列表适配器的设置
-     * @param movieList
      */
-    private void setAdapter(final List<Movie> movieList){
-        NoScrollListView listView = (NoScrollListView) findViewById(R.id.movie_list_view);
-        MovieListAdapter adapter = new MovieListAdapter
-                (MyApplication.getContext(), R.layout.layout_card_movie, movieList);
-        listView.setAdapter(adapter);
-        mSlRefresh.setRefreshing(false);  //结束刷新事件
+    private void setAdapter(){
+        mAdapter = new MovieListAdapter(MyApplication.getContext(), R.layout.layout_card_movie, mMovieList);
+        mListView.setAdapter(mAdapter);
         mDialog.dismiss();   //关闭加载框
 
         //给ListView设置监听事件
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               MovieDetailActivity.actionStart(MyApplication.getContext(), movieList.get(position).getItemId());
+               MovieDetailActivity.actionStart(MyApplication.getContext(), mMovieList.get(position - 1).getItemId());
             }
         });
+    }
+
+    @Override
+    public void onDownPullRefresh() {
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                SystemClock.sleep(2000);
+                mMovieList.clear();           //先将集合里面的内容清空重新收集一遍
+                initMovie(MOVIE_LIST_URL);     //重新初始化阅读列表
+                isFirstLoadingMore = true;   //重新变成第一次加载更多数据
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                mListView.hideHeaderView();         //同时隐藏头布局
+            }
+        }.execute(new Void[]{});
+    }
+
+    @Override
+    public void onLoadingMore() {
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                SystemClock.sleep(4000);
+                if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
+                    initMovie(MOVIE_MORE_URL);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                if (isFirstLoadingMore){            //如果这是第一次加载更多数据
+                    mAdapter.notifyDataSetChanged();
+                    isFirstLoadingMore = false;     //不再是第一次
+                }else {
+                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                }
+                // 控制脚布局隐藏
+                mListView.hideFooterView();
+            }
+        }.execute(new Void[]{});
     }
 }

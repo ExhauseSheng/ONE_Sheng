@@ -18,6 +18,16 @@ public class Contents {
     //PaperId最新的列表的url地址
     public static final String PAPER_LIST_URL = "http://v3.wufazhuce.com:8000/api/hp/idlist/0?version=3.5.0&platform=android";
 
+
+    //Movie更多内容的url地址
+    public static final String MOVIE_MORE_URL = "http://v3.wufazhuce.com:8000/api/channel/movie/more/13758?platform=android";
+    //Music更多内容的url地址
+    public static final String MUSIC_MORE_URL = "http://v3.wufazhuce.com:8000/api/channel/music/more/13046?platform=android";
+    //Read更多内容的url地址
+    public static final String READ_MORE_URL = "http://v3.wufazhuce.com:8000/api/channel/reading/more/12808?channel=wdj&version=4.0.2&platform=android";
+    //PaperId更多内容的url地址
+    public static final String PAPER_MORE_URL = "http://v3.wufazhuce.com:8000/api/hp/idlist/2065?version=3.5.0&platform=android";
+
     //插画的三个属性：插画id，插画列表，插画图片
     public static final int PAPER_ID = 1;
     public static final int PAPER_LIST = 2;

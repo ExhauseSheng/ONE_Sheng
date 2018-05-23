@@ -7,7 +7,7 @@ import android.util.LruCache;
 import android.widget.ImageView;
 
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.ui.NoScrollListView;
+import com.sheng.one_sheng.ui.RefreshListView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,10 +22,10 @@ import java.util.Set;
  */
 public class imageLoader {
     private LruCache<String, Bitmap> mCaches;   //创建对象
-    private NoScrollListView mListView;
+    private RefreshListView mListView;
     private Set<ImageAsyncTask> mTask;
 
-    public imageLoader(NoScrollListView listView){    //构造方法重载
+    public imageLoader(RefreshListView listView){    //构造方法重载
         this.mListView = listView;
         mTask = new HashSet<ImageAsyncTask>();
         int maxMemory = (int) Runtime.getRuntime().maxMemory(); //获取最大可用内存

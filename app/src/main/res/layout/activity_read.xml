@@ -7,16 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -39,24 +29,14 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <com.sheng.one_sheng.ui.RefreshListView
+        android:id="@+id/read_list_view"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp">
 
-                <com.sheng.one_sheng.ui.NoScrollListView
-                    android:id="@+id/read_list_view"
-                    android:layout_below="@id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="10dp">
-
-                </com.sheng.one_sheng.ui.NoScrollListView>
-
-            </android.support.v4.widget.NestedScrollView>
-
-        </LinearLayout>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.sheng.one_sheng.ui.RefreshListView>
 
 </RelativeLayout>
