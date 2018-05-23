@@ -29,25 +29,11 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
 
     private int resourceId;     //用来指定列表某子项的id
     private RefreshListView mListView;
-    private List<String> mImageUrls = new ArrayList<>();
-    private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
-    private int mSart;
-    private int mEnd;
-    private List<Music> mMusicList;
-    private Context mContext;
 
     public MusicListAdapter (Context context, int textViewResoureId, List<Music> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.mMusicList = objects;
-        this.mContext = context;
-
-        mImageLoader = new imageLoader(mListView);
-        for (int i = 0; i < this.mMusicList.size(); i++){
-            mImageUrls.add(this.mMusicList.get(i).getImageUrl());
-        }
-        Log.d("MusicListAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @NonNull

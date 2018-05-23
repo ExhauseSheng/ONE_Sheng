@@ -29,24 +29,12 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
 
     private int resourceId;     //用来指定列表某子项的id
     private RefreshListView mListView;
-    private List<String> mImageUrls = new ArrayList<>();
-    private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
-    private int mSart;
-    private int mEnd;
-    private List<Movie> mMovieList;
-    private Context mContext;
+
 
     public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.mMovieList = objects;
-        this.mContext = context;
-
-        for (int i = 0; i < this.mMovieList.size(); i++){
-            mImageUrls.add(this.mMovieList.get(i).getImageUrl());
-        }
-        Log.d("MovieListtAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @NonNull

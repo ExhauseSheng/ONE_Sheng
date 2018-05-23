@@ -29,24 +29,11 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
 
     private int resourceId;     //用来指定列表某子项的id
     private RefreshListView mListView;
-    private List<String> mImageUrls = new ArrayList<>();
-    private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
-    private int mSart;
-    private int mEnd;
-    private List<Read> mReadList;
-    private Context mContext;
 
     public ReadListAdapter (Context context, int textViewResoureId, List<Read> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.mReadList = objects;
-        this.mContext = context;
-
-        for (int i = 0; i < this.mReadList.size(); i++){
-            mImageUrls.add(this.mReadList.get(i).getImageUrl());
-        }
-        Log.d("ReadListAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @NonNull

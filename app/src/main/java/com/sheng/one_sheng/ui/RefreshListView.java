@@ -225,7 +225,6 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     /**
      * 当滚动时调用
-     *
      * @param firstVisibleItem
      *            当前屏幕显示在顶部的item的position
      * @param visibleItemCount

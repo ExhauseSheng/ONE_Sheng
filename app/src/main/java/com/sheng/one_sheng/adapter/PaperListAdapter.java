@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.imageLoader;
 
@@ -28,24 +29,12 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
 
     private int resourceId;     //用来指定列表某子项的id
     private RefreshListView mListView;
-    private List<String> mImageUrls = new ArrayList<>();
-    private boolean isFirst;//是否是第一次进入
     private imageLoader mImageLoader;
-    private int mSart;
-    private int mEnd;
-    private List<Paper> mPaperList;
-    private Context mContext;
+
 
     public PaperListAdapter (Context context, int textViewResoureId, List<Paper> objects){
         super(context, textViewResoureId, objects);
         resourceId = textViewResoureId;
-        this.mPaperList = objects;
-        this.mContext = context;
-
-        for (int i = 0; i < this.mPaperList.size(); i++){
-            mImageUrls.add(this.mPaperList.get(i).getImageUrl());
-        }
-        Log.d("PaperListAdapter", "图片url集合大小为：" + mImageUrls.size() + "");
     }
 
     @Override

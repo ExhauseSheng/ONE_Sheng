@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -22,10 +23,10 @@ import java.util.Set;
  */
 public class imageLoader {
     private LruCache<String, Bitmap> mCaches;   //创建对象
-    private RefreshListView mListView;
+    private ListView mListView;
     private Set<ImageAsyncTask> mTask;
 
-    public imageLoader(RefreshListView listView){    //构造方法重载
+    public imageLoader(ListView listView){    //构造方法重载
         this.mListView = listView;
         mTask = new HashSet<ImageAsyncTask>();
         int maxMemory = (int) Runtime.getRuntime().maxMemory(); //获取最大可用内存

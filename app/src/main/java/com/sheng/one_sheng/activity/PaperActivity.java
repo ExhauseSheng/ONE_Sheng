@@ -26,6 +26,7 @@ import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
 import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.ui.LoadDialog;
+import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
