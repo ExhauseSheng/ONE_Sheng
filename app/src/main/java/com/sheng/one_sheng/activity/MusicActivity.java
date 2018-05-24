@@ -30,6 +30,8 @@ import com.sheng.one_sheng.util.Utilty;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
+import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
 import static com.sheng.one_sheng.Contents.MUSIC_LIST_URL;
 import static com.sheng.one_sheng.Contents.MUSIC_MORE_URL;
 
@@ -103,17 +105,14 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             public void onFinish(String response) {
                 final String responseText = response;
                 final List<Music> musics = Utilty.handleMusicListResponse(responseText);
-                Log.d("MusicActivity", "集合2的大小为：" + musics.size() + "");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //将服务器返回的数据缓存下来
                         SPUtil.setParam(GlobalContext.getContext(), "musics", responseText);
-
                     }
                 });
                 if (url.equals(MUSIC_LIST_URL)){
-                    Log.d("MusicActivity", "发出集合1");
                     Message message = new Message();
                     message.what = 0;
                     message.obj = musics;
@@ -121,12 +120,11 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                 } else if (url.equals(MUSIC_MORE_URL)){  //如果加载更多
                     for (int i =0; i < musics.size(); i++){
                         for (int j = 0; j < mMusicList.size(); j++){
-                            if (musics.get(i).getId().equals(mMusicList.get(j).getId())){     //根据id来判断有没有重复的内容
+                            if (musics.get(i).getId().equals(mMusicList.get(j).getId())){//根据id来判断有没有重复的内容
                                 musics.remove(i);    //如果有重复的内容就删除掉
                             }
                         }
                     }
-                    Log.d("MusicActivity", "发出集合1.5（加载更多）大小为：" + musics.size());
                     Message message = new Message();
                     message.what = 1;
                     message.obj = musics;            //将删除之后新的集合发送出去
@@ -182,13 +180,16 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         });
     }
 
+    /**
+     * 下拉刷新回调方法
+     */
     @Override
     public void onDownPullRefresh() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(2000);
+                SystemClock.sleep(LIST_REFRESH_TIME);
                 mMusicList.clear();           //先将集合里面的内容清空重新收集一遍
                 initMusic(MUSIC_LIST_URL);     //重新初始化阅读列表
                 isFirstLoadingMore = true;   //重新变成第一次加载更多数据
@@ -202,13 +203,16 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         }.execute(new Void[]{});
     }
 
+    /**
+     * 上拉加载更多回调方法
+     */
     @Override
     public void onLoadingMore() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(4000);
+                SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
                     initMusic(MUSIC_MORE_URL);
                 }

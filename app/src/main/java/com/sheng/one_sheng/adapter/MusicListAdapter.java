@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -42,7 +43,7 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
         if (parent != null){
             this.mListView = (RefreshListView) parent;
         }
-        mImageLoader = new imageLoader(mListView);
+        mImageLoader = new imageLoader(GlobalContext.getContext(), mListView);
         Music music = getItem(position);
         View view;
         MusicViewHolder viewHolder;
@@ -71,7 +72,7 @@ public class MusicListAdapter extends ArrayAdapter<Music> {
         viewHolder.mIvMusicImage.setImageResource(R.drawable.loading);
         viewHolder.mIvMusicImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.mIvMusicImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvMusicImage, url);
         return view;
     }
 

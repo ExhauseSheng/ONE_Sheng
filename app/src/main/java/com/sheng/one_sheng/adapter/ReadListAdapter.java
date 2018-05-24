@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -42,7 +43,7 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         if (parent != null){
             this.mListView = (RefreshListView) parent;
         }
-        mImageLoader = new imageLoader(mListView);
+        mImageLoader = new imageLoader(GlobalContext.getContext(), mListView);
         Read read = getItem(position);    //获取当前项的Paper实例
         View view;
         ReadViewHolder viewHolder;
@@ -71,7 +72,7 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         viewHolder.mIvStoryImage.setImageResource(R.drawable.loading);
         viewHolder.mIvStoryImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.mIvStoryImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvStoryImage, url);
         return view;
     }
 

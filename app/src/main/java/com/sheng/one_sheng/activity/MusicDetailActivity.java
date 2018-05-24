@@ -2,14 +2,12 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
@@ -22,14 +20,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.util.ImageCallBack;
-import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
+import com.sheng.one_sheng.util.imageLoader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -168,15 +166,8 @@ public class MusicDetailActivity extends BaseActivity {
         if (music != null){
             mIvMusicImage.setImageResource(R.drawable.loading);
             String url = music.getCover();
-            ImageLoadAsyncTask imageLoadAsyncTask = new ImageLoadAsyncTask(new ImageCallBack() {
-                @Override
-                public void callBitmap(Bitmap bitmap) {
-                    if (bitmap != null){
-                        mIvMusicImage.setImageBitmap(bitmap);
-                    }
-                }
-            });
-            imageLoadAsyncTask.execute(url);
+            imageLoader mLoader = new imageLoader(GlobalContext.getContext());
+            mLoader.loadingImage(mIvMusicImage, url);
 
             mTvSongName.setText(" 歌曲： 《 " + music.getSongTitle() + " 》");
             mTvSongAlbum.setText("专辑： 《 " + music.getAlbum() + " 》");

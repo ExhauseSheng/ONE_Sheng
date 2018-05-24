@@ -2,7 +2,6 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -32,15 +31,16 @@ import com.sheng.one_sheng.ui.OnRefreshListener;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.util.ImageCallBack;
-import com.sheng.one_sheng.util.ImageLoadAsyncTask;
 import com.sheng.one_sheng.util.Utilty;
+import com.sheng.one_sheng.util.imageLoader;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sheng.one_sheng.Contents.FINISH_DELAY;
+import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
+import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
 import static com.sheng.one_sheng.Contents.PAPER_ID;
 import static com.sheng.one_sheng.Contents.PAPER_IMAGE;
 import static com.sheng.one_sheng.Contents.PAPER_LIST;
@@ -60,8 +60,6 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
     private boolean isFirstLoadingMore = true;  //判断是不是第一次上拉加载更多
 
     private MyPagerAdapter mPaperAdapter;    //轮播图适配器
-//    private LayoutInflater shufflingLayout;
-//    private View view;
     private List<ImageView> mItems;         //轮播图片的集合
     private ImageView[] mIvBottomImages;      //底下小白点图片的集合
     private LinearLayout mLlBottomLiner;      //底下小白点图片的布局
@@ -239,7 +237,6 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
             switch (msg.what){
                 case PAPER_ID:
                     List<String> paperIds = (List<String>) msg.obj;
-                    Log.d("PaperActivity", "id集合的大小为：" + paperIds.size() + "");
                     if (paperIds.size() > 0){
                         for (int i = 0; i < paperIds.size(); i++) {
                             String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" +
@@ -251,19 +248,16 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                 case PAPER_LIST:
                     Paper paper = (Paper) msg.obj;
                     mPapers.add(paper);
-                    Log.d("PaperActivity2", "插画详细内容集合的大小为：" + mPapers.size() + "");
                     if (mPapers.size() == 10){
                         setAdapter();
                     }
                     break;
                 case PAPER_IMAGE:
                     String imageUrl = (String) msg.obj;
-                    Log.d("PaperActivity", imageUrl);
                     mImageUrls.add(imageUrl);
                     if (mImageUrls.size() == 10){
                         addImageView(mImageUrls);
                     }
-                    Log.d("PaperActivity2", "图片集合的大小为：" + mImageUrls.size() + "");
                 case FINISH_DELAY:
                     isExit = false;
                     break;
@@ -282,13 +276,16 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         mDialog.dismiss();
     }
 
+    /**
+     * 下拉刷新回调方法
+     */
     @Override
     public void onDownPullRefresh() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(2000);
+                SystemClock.sleep(LIST_REFRESH_TIME);
                 mPapers.clear();           //先将集合里面的内容清空重新收集一遍
                 requestPaperId(PAPER_LIST_URL);     //重新初始化阅读列表
                 isFirstLoadingMore = true;   //重新变成第一次加载更多数据
@@ -302,13 +299,16 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         }.execute(new Void[]{});
     }
 
+    /**
+     * 上拉加载更多回调方法
+     */
     @Override
     public void onLoadingMore() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(4000);
+                SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
                     requestPaperId(PAPER_MORE_URL);
                 }
@@ -337,26 +337,15 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
             mItems.clear();     //如果不是空集合就清空重新添加
         }
         for (int i = 0; i < imageUrls.size(); i++) {
-            final ImageView view = new ImageView(this);
-            String imgUrl = imageUrls.get(i);
-            view.setImageResource(R.drawable.loading);
-            //加载网络图片
-            ImageLoadAsyncTask imageLoadAsyncTask = new ImageLoadAsyncTask(new ImageCallBack() {
-                @Override
-                public void callBitmap(Bitmap bitmap) {
-                    if (bitmap != null){
-                        view.setImageBitmap(bitmap);
-                    }
-                }
-            });
-            //设置缩放方式
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageLoadAsyncTask.execute(imgUrl);
-            //将新建的view添加进Imageview集合里面
-            mItems.add(view);
+            ImageView view = new ImageView(this);       //定义一个imageView来放图片
+            String imgUrl = imageUrls.get(i);           //取出每一张图片的url地址
+            view.setImageResource(R.drawable.loading);  //默认图片
+            imageLoader mLoader = new imageLoader(GlobalContext.getContext());    //定义图片加载器
+            mLoader.loadingImage(view, imgUrl);   //加载网络图片
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);  //设置缩放方式
+            mItems.add(view);       //将新建的view添加进Imageview集合里面
         }
-        mPaperAdapter.notifyDataSetChanged();
-        Log.d("PaperActivity", "轮播图图片集合大小为：" + mItems.size() + "");
+        mPaperAdapter.notifyDataSetChanged();   //通知轮播图适配器更新数据
         //设置轮播图底部的小点
         setBottomIndicator();
     }

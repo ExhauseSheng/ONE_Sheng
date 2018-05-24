@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -29,8 +30,6 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
 
     private int resourceId;     //用来指定列表某子项的id
     private RefreshListView mListView;
-    private imageLoader mImageLoader;
-
 
     public MovieListAdapter(Context context, int textViewResoureId, List<Movie> objects){
         super(context, textViewResoureId, objects);
@@ -41,9 +40,9 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (parent != null){
-            this.mListView = (RefreshListView) parent;
+            mListView = (RefreshListView) parent;
         }
-        mImageLoader = new imageLoader(mListView);
+        imageLoader mImageLoader = new imageLoader(GlobalContext.getContext(),mListView);
         Movie movie = getItem(position);
         View view;
         MovieViewHolder viewHolder;
@@ -74,7 +73,7 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
         viewHolder.mIvMovieImage.setImageResource(R.drawable.loading);
         viewHolder.mIvMovieImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.mIvMovieImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvMovieImage, url);
         return view;
     }
 

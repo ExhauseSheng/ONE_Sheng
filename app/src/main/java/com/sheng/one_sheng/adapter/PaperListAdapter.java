@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
 import com.sheng.one_sheng.ui.NoScrollListView;
@@ -42,7 +43,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         if (parent != null){
             this.mListView = (RefreshListView) parent;
         }
-        mImageLoader = new imageLoader(mListView);
+        mImageLoader = new imageLoader(GlobalContext.getContext(), mListView);
         Paper paper = getItem(position);    //获取当前项的Paper实例
         View view;
         PaperViewHolder viewHolder;
@@ -75,7 +76,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         viewHolder.mIvPaperImage.setImageResource(R.drawable.loading);
         viewHolder.mIvPaperImage.setTag(url);
 
-        mImageLoader.loadingByAsyncTask(viewHolder.mIvPaperImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvPaperImage, url);
         return view;
     }
 

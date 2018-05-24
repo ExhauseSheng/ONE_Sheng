@@ -30,6 +30,8 @@ import com.sheng.one_sheng.util.Utilty;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
+import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
 import static com.sheng.one_sheng.Contents.READ_LIST_URL;
 import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
@@ -188,7 +190,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(2000);
+                SystemClock.sleep(LIST_REFRESH_TIME);
                 mReadList.clear();           //先将集合里面的内容清空重新收集一遍
                 initRead(READ_LIST_URL);     //重新初始化阅读列表
                 isFirstLoadingMore = true;   //重新变成第一次加载更多数据
@@ -208,7 +210,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(4000);
+                SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
                     initRead(READ_MORE_URL);
                 }

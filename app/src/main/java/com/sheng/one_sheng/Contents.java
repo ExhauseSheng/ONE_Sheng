@@ -41,6 +41,10 @@ public class Contents {
     //开场动画缩放时间
     public static final int VIEW_START_DELAY = 4000;        //缩放4s
 
+    //列表下拉刷新加载时间
+    public static final int LIST_REFRESH_TIME = 2000;       //加载2s
 
+    //列表上拉更多加载时间
+    public static final int LIST_MORE_TIME = 3000;          //加载3s
 
 }
