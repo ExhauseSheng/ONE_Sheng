@@ -2,12 +2,10 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Read;
@@ -32,7 +30,6 @@ import com.sheng.one_sheng.util.Utilty;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sheng.one_sheng.Contents.PAPER_ID;
 import static com.sheng.one_sheng.Contents.READ_LIST_URL;
 import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
@@ -111,7 +108,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        SPUtil.setParam(MyApplication.getContext(), "reads", responseText);
+                        SPUtil.setParam(GlobalContext.getContext(), "reads", responseText);
                     }
                 });
                 if (url.equals(READ_LIST_URL)){
@@ -141,7 +138,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MyApplication.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GlobalContext.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -161,7 +158,6 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                     for (int i = 0; i < readList.size(); i++){
                         mReadList.add(readList.get(i));
                     }
-
                     break;
                 default:
                     break;
@@ -181,7 +177,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ReadDetailActivity.actionStart(MyApplication.getContext(), mReadList.get(position - 1).getItemId());
+                ReadDetailActivity.actionStart(GlobalContext.getContext(), mReadList.get(position - 1).getItemId());
             }
         });
     }
@@ -225,7 +221,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                     mAdapter.notifyDataSetChanged();
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
-                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();

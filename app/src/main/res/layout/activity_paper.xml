@@ -7,9 +7,10 @@
     android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/paper_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <!--用ToolBar代替了ActionBar-->
             <android.support.v7.widget.Toolbar

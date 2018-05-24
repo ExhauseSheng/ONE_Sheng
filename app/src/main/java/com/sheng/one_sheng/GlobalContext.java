@@ -10,7 +10,7 @@ import android.content.Context;
 /**
  * 全局获取Context对象
  */
-public class MyApplication extends Application {
+public class GlobalContext extends Application {
 
     private static Context context;
 

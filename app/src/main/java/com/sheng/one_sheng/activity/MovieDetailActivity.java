@@ -17,8 +17,7 @@ import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.MyApplication;
-import com.sheng.one_sheng.util.SPUtil;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.util.Utilty;
 
 public class MovieDetailActivity extends BaseActivity {
@@ -120,7 +119,7 @@ public class MovieDetailActivity extends BaseActivity {
                             showMovieInfo(movie);   //内容显示
                         }
                         else {
-                            Toast.makeText(MyApplication.getContext(), "请求失败，请检查网络是否可用", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(GlobalContext.getContext(), "请求失败，请检查网络是否可用", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

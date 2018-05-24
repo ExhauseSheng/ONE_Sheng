@@ -2,12 +2,10 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MusicListAdapter;
-import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Music;
-import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.ui.OnRefreshListener;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -36,8 +32,6 @@ import java.util.List;
 
 import static com.sheng.one_sheng.Contents.MUSIC_LIST_URL;
 import static com.sheng.one_sheng.Contents.MUSIC_MORE_URL;
-import static com.sheng.one_sheng.Contents.READ_LIST_URL;
-import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
 public class MusicActivity extends BaseActivity implements OnRefreshListener {
 
@@ -114,7 +108,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                     @Override
                     public void run() {
                         //将服务器返回的数据缓存下来
-                        SPUtil.setParam(MyApplication.getContext(), "musics", responseText);
+                        SPUtil.setParam(GlobalContext.getContext(), "musics", responseText);
 
                     }
                 });
@@ -165,7 +159,6 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                     for (int i = 0; i < musicList.size(); i++){
                         mMusicList.add(musicList.get(i));
                     }
-
                     break;
                 default:
                     break;
@@ -177,14 +170,14 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
      * 设置音乐列表的适配器
      */
     private void setAdapter(){
-        mAdapter = new MusicListAdapter(MyApplication.getContext(), R.layout.layout_card_music, mMusicList);
+        mAdapter = new MusicListAdapter(GlobalContext.getContext(), R.layout.layout_card_music, mMusicList);
         mListView.setAdapter(mAdapter);
         mDialog.dismiss();
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MusicDetailActivity.actionStart(MyApplication.getContext(), mMusicList.get(position - 1).getItemId());
+                MusicDetailActivity.actionStart(GlobalContext.getContext(), mMusicList.get(position - 1).getItemId());
             }
         });
     }
@@ -225,10 +218,10 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             @Override
             protected void onPostExecute(Void result) {
                 if (isFirstLoadingMore){            //如果这是第一次加载更多数据
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();    //通知适配器更新数据
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
-                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();

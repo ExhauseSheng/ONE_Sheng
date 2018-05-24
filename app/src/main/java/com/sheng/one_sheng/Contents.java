@@ -28,10 +28,12 @@ public class Contents {
     //PaperId更多内容的url地址
     public static final String PAPER_MORE_URL = "http://v3.wufazhuce.com:8000/api/hp/idlist/2065?version=3.5.0&platform=android";
 
-    //插画的三个属性：插画id，插画列表，插画图片
+    //PaperActivity
     public static final int PAPER_ID = 1;
     public static final int PAPER_LIST = 2;
+
     public static final int PAPER_IMAGE = 3;
+    public static final int FINISH_DELAY = 4;   //判断是否要退出程序
 
     //轮播图睡眠时间
     public static final int VIEW_PAGER_DELAY = 3500;       //睡眠3.5s
@@ -39,6 +41,6 @@ public class Contents {
     //开场动画缩放时间
     public static final int VIEW_START_DELAY = 4000;        //缩放4s
 
-    //判断是否要退出程序
-    public static final int FINISH_DELAY = 4;
+
+
 }

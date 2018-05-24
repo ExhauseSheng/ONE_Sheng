@@ -2,12 +2,10 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MovieListAdapter;
-import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Movie;
-import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.ui.OnRefreshListener;
 import com.sheng.one_sheng.ui.RefreshListView;
@@ -35,8 +31,6 @@ import java.util.List;
 
 import static com.sheng.one_sheng.Contents.MOVIE_LIST_URL;
 import static com.sheng.one_sheng.Contents.MOVIE_MORE_URL;
-import static com.sheng.one_sheng.Contents.READ_LIST_URL;
-import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
 public class MovieActivity extends BaseActivity implements OnRefreshListener {
 
@@ -118,7 +112,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                     @Override
                     public void run() {
                         //将服务器返回的数据缓存下来
-                        SPUtil.setParam(MyApplication.getContext(), "movies", responseText);
+                        SPUtil.setParam(GlobalContext.getContext(), "movies", responseText);
                     }
                 });
                 if (url.equals(MOVIE_LIST_URL)){
@@ -168,7 +162,6 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                     for (int i = 0; i < movieList.size(); i++){
                         mMovieList.add(movieList.get(i));
                     }
-
                     break;
                 default:
                     break;
@@ -180,7 +173,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
      * 影视列表适配器的设置
      */
     private void setAdapter(){
-        mAdapter = new MovieListAdapter(MyApplication.getContext(), R.layout.layout_card_movie, mMovieList);
+        mAdapter = new MovieListAdapter(GlobalContext.getContext(), R.layout.layout_card_movie, mMovieList);
         mListView.setAdapter(mAdapter);
         mDialog.dismiss();   //关闭加载框
 
@@ -188,7 +181,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               MovieDetailActivity.actionStart(MyApplication.getContext(), mMovieList.get(position - 1).getItemId());
+               MovieDetailActivity.actionStart(GlobalContext.getContext(), mMovieList.get(position - 1).getItemId());
             }
         });
     }
@@ -232,7 +225,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                     mAdapter.notifyDataSetChanged();
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
-                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();

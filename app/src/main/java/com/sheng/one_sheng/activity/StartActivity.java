@@ -1,6 +1,5 @@
 package com.sheng.one_sheng.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -8,7 +7,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
-import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 
 import static com.sheng.one_sheng.Contents.VIEW_START_DELAY;
@@ -51,7 +50,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                PaperActivity.actionStart(MyApplication.getContext());
+                PaperActivity.actionStart(GlobalContext.getContext());
                 //用于呈现淡入淡出效果
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();

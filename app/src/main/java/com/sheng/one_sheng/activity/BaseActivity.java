@@ -10,12 +10,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.MyApplication;
+import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.CommentListAdapter;
 import com.sheng.one_sheng.bean.Comment;
 import com.sheng.one_sheng.ui.NoScrollListView;
-import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.Utilty;
@@ -99,7 +98,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MyApplication.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GlobalContext.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -111,7 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * @param commentList
      */
     protected void setCommentAdapter(List<Comment> commentList){
-        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
+        CommentListAdapter adapter = new CommentListAdapter(GlobalContext.getContext(),
                 R.layout.layout_item_comment, commentList);
         NoScrollListView listView = (NoScrollListView) findViewById(R.id.lv_comment_list_view);
         listView.setAdapter(adapter);
