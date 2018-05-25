@@ -2,10 +2,12 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,18 +71,18 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back);               //显示返回图片
         }
 
-//        //取出缓存
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        String movieListString = prefs.getString("movies", null);
-//        if (movieListString != null){
-//            //如果有缓存就直接解析
-//            List<Movie> moviesList = Utilty.handleMovieListResponse(movieListString);
-//            Log.d("MovieActivity", "成功取出缓存：大小为：" + moviesList.size() + "");
-//            setAdapter(moviesList);
-//        } else {
-//            //如果没有缓存就从服务器中获取数据
+        //取出缓存
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String movieListString = prefs.getString("movie_list", null);
+        if (movieListString != null){
+            //如果有缓存就直接解析
+            mMovieList = Utilty.handleMovieListResponse(movieListString);
+            Log.d("MovieActivity", "成功取出缓存");
+            setAdapter();
+        } else {
+            //如果没有缓存就从服务器中获取数据
             initMovie(MOVIE_LIST_URL);
-//        }
+        }
     }
 
     /**
@@ -109,20 +111,15 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
             public void onFinish(String response) {
                 final String responseText = response;
                 final List<Movie> movies = Utilty.handleMovieListResponse(responseText);
-                Log.d("MovieActivity", "集合2的大小为：" + movies.size() + "");
-                runOnUiThread(new Runnable() {  //切换到主线程进行ui操作
-                    @Override
-                    public void run() {
-                        //将服务器返回的数据缓存下来
-                        SPUtil.setParam(GlobalContext.getContext(), "movies", responseText);
-                    }
-                });
+
                 if (url.equals(MOVIE_LIST_URL)){
-                    Log.d("MovieActivity", "发出集合1");
                     Message message = new Message();
                     message.what = 0;
                     message.obj = movies;
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //同时将服务器返回的数据缓存起来
+                    SPUtil.setParam(GlobalContext.getContext(), "movie_list", responseText);
+
                 } else if (url.equals(MOVIE_MORE_URL)){  //如果加载更多
                     for (int i =0; i < movies.size(); i++){
                         for (int j = 0; j < mMovieList.size(); j++){
@@ -135,6 +132,8 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                     message.what = 1;
                     message.obj = movies;            //将删除重复对象之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //同时将服务器返回的数据缓存起来
+                    SPUtil.setParam(GlobalContext.getContext(), "movie_more", responseText);
                 }
             }
 
@@ -221,7 +220,18 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);  //加载时间
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    initMovie(MOVIE_MORE_URL);
+                    //取出缓存
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
+                    String movieListString = prefs.getString("movie_more", null);
+                    if (movieListString != null){
+                        Log.d("MovieActivity", "取出缓存成功！");
+                        List<Movie> movieList = Utilty.handleMovieListResponse(movieListString);
+                        for (int i = 0; i < movieList.size(); i++){
+                            mMovieList.add(movieList.get(i));       //循环将新的集合的对象装到原有集合里面
+                        }
+                    } else {
+                        initMovie(MOVIE_MORE_URL);
+                    }
                 }
                 return null;
             }

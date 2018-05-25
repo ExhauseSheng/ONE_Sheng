@@ -2,10 +2,12 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,17 +73,17 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         }
 
         //检测是否有缓存
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        String musicListString = prefs.getString("musics", null);
-//        if (musicListString != null){
-//            //如果有缓存就直接解析
-//            List<Music> musicList = Utilty.handleMusicListResponse(musicListString);
-//            Log.d("MusicActivity", "成功取出缓存：大小为：" + musicList.size() + "");
-//            setAdapter();
-//        } else {
-//            //如果没有缓存就从服务器中获取数据
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String musicListString = prefs.getString("music_list", null);
+        if (musicListString != null){
+            //如果有缓存就直接解析
+            mMusicList = Utilty.handleMusicListResponse(musicListString);
+            Log.d("MusicActivity", "成功取出缓存");
+            setAdapter();
+        } else {
+            //如果没有缓存就从服务器中获取数据
             initMusic(MUSIC_LIST_URL);
-//        }
+        }
     }
 
     @Override
@@ -105,18 +107,14 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             public void onFinish(String response) {
                 final String responseText = response;
                 final List<Music> musics = Utilty.handleMusicListResponse(responseText);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //将服务器返回的数据缓存下来
-                        SPUtil.setParam(GlobalContext.getContext(), "musics", responseText);
-                    }
-                });
                 if (url.equals(MUSIC_LIST_URL)){
                     Message message = new Message();
                     message.what = 0;
                     message.obj = musics;
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //将数据缓存下来
+                    SPUtil.setParam(GlobalContext.getContext(), "music_list", responseText);
+
                 } else if (url.equals(MUSIC_MORE_URL)){  //如果加载更多
                     for (int i =0; i < musics.size(); i++){
                         for (int j = 0; j < mMusicList.size(); j++){
@@ -129,6 +127,8 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                     message.what = 1;
                     message.obj = musics;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //将数据缓存下来
+                    SPUtil.setParam(GlobalContext.getContext(), "music_more", responseText);
                 }
             }
 
@@ -217,7 +217,16 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    initMusic(MUSIC_MORE_URL);  //发送网络请求获取更多内容
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
+                    String musicListString = prefs.getString("music_more", null);
+                    if (musicListString != null){
+                        List<Music> musicList = Utilty.handleMusicListResponse(musicListString);
+                        for (int i = 0; i < musicList.size(); i++){
+                            mMusicList.add(musicList.get(i));   //循环将新的集合内容加在原有集合里面
+                        }
+                    } else {
+                        initMusic(MUSIC_MORE_URL);  //发送网络请求获取更多内容
+                    }
                 }
                 return null;
             }

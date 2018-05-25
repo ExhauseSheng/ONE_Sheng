@@ -2,10 +2,12 @@ package com.sheng.one_sheng.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,17 +73,17 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         }
 
         //检测是否有缓存
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        String readListString = prefs.getString("reads", null);
-//        if (readListString != null){
-//            //如果有缓存就直接解析
-//            mReadList = Utilty.handleReadListResponse(readListString);
-//            Log.d("ReadActivity", "成功取出缓存：大小为：" + mReadList.size() + "");
-//            setAdapter(mReadList);
-//        } else {
-//            //如果没有缓存就从服务器中获取数据
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String readListString = prefs.getString("reads", null);
+        if (readListString != null){
+            //如果有缓存就直接解析
+            mReadList = Utilty.handleReadListResponse(readListString);
+            Log.d("ReadActivity", "成功取出缓存");
+            setAdapter();
+        } else {
+           //如果没有缓存就从服务器中获取数据
             initRead(READ_LIST_URL);
-//        }
+        }
     }
 
     @Override
@@ -105,20 +107,14 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
             public void onFinish(String response) {
                 final String responseText = response;
                 final List<Read> reads = Utilty.handleReadListResponse(responseText);
-                Log.d("ReadActivity", "集合2的大小为：" + reads.size() + "");
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        SPUtil.setParam(GlobalContext.getContext(), "reads", responseText);
-                    }
-                });
                 if (url.equals(READ_LIST_URL)){
-                    Log.d("ReadActivity", "发出集合1");
                     Message message = new Message();
                     message.what = 0;
                     message.obj = reads;
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //将数据缓存下来
+                    SPUtil.setParam(GlobalContext.getContext(), "read_list", responseText);
+
                 } else if (url.equals(READ_MORE_URL)){  //如果加载更多
                     for (int i =0; i < reads.size(); i++){
                         for (int j = 0; j < mReadList.size(); j++){
@@ -127,11 +123,12 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Log.d("ReadActivity", "发出集合1.5（加载更多）大小为：" + reads.size());
                     Message message = new Message();
                     message.what = 1;
                     message.obj = reads;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
+                    //将数据缓存下来
+                    SPUtil.setParam(GlobalContext.getContext(), "read_more", responseText);
                 }
             }
 
@@ -184,6 +181,9 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         });
     }
 
+    /**
+     * 下拉刷新的回调方法
+     */
     @Override
     public void onDownPullRefresh() {
         new AsyncTask<Void, Void, Void>() {
@@ -204,6 +204,9 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         }.execute(new Void[]{});
     }
 
+    /**
+     * 加载更多的回调方法
+     */
     @Override
     public void onLoadingMore() {
         new AsyncTask<Void, Void, Void>() {
@@ -212,7 +215,19 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    initRead(READ_MORE_URL);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
+                    String readListString = prefs.getString("read_more", null);
+                    if (readListString != null){
+                        //如果有缓存就直接解析
+                        List<Read> readList = Utilty.handleReadListResponse(readListString);
+                        Log.d("ReadActivity", "成功取出缓存");
+                        for (int i = 0; i < readList.size(); i++){
+                            mReadList.add(readList.get(i));         //将新的内容添加到原来的集合里面
+                        }
+                    } else {
+                        //如果没有缓存就从服务器中获取数据
+                        initRead(READ_MORE_URL);
+                    }
                 }
                 return null;
             }
