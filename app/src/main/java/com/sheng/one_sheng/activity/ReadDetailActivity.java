@@ -19,7 +19,7 @@ import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.Utilty;
 
-public class ReadDetailActivity extends BaseActivity {
+public class ReadDetailActivity extends CommentActivity {
 
     private ScrollView mSlreadLayout;
     private TextView mTvTitle;

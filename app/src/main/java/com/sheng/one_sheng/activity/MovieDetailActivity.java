@@ -20,7 +20,7 @@ import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.util.Utilty;
 
-public class MovieDetailActivity extends BaseActivity {
+public class MovieDetailActivity extends CommentActivity {
 
     private ScrollView mSvMovieLayout;
     private TextView mTvTitle;
@@ -86,7 +86,7 @@ public class MovieDetailActivity extends BaseActivity {
 
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
                "/0?&platform=android";
-        requestCommentList(url);     //请求评论列表
+        requestCommentList(url);
     }
 
     @Override

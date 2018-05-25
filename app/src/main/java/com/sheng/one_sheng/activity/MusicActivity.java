@@ -144,18 +144,21 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         });
     }
 
+    /**
+     * 消息处理器
+     */
     private Handler handler = new Handler() {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
                     mMusicList = (List<Music>)msg.obj;
-                    setAdapter();
+                    setAdapter();   //设置适配器
                     break;
                 case 1:
                     List<Music> musicList = (List<Music>) msg.obj;
                     for (int i = 0; i < musicList.size(); i++){
-                        mMusicList.add(musicList.get(i));
+                        mMusicList.add(musicList.get(i));   //循环将新的集合内容加在原有集合里面
                     }
                     break;
                 default:
@@ -214,7 +217,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    initMusic(MUSIC_MORE_URL);
+                    initMusic(MUSIC_MORE_URL);  //发送网络请求获取更多内容
                 }
                 return null;
             }
@@ -223,7 +226,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             protected void onPostExecute(Void result) {
                 if (isFirstLoadingMore){            //如果这是第一次加载更多数据
                     mAdapter.notifyDataSetChanged();    //通知适配器更新数据
-                    isFirstLoadingMore = false;     //不再是第一次
+                    isFirstLoadingMore = false;     //这时候就不再是第一次加载更多了
                 }else {
                     Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }

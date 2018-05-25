@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
+        ActivityCollector.addActivity(this);    //添加活动
     }
 
     @Override
@@ -74,46 +74,6 @@ public abstract class BaseActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
         setSupportActionBar(mToolbar);
-    }
-
-    /**
-     * 根据itemId发送网络请求获取装有评论列表数据的对象
-     */
-    protected void requestCommentList(final String url){
-        HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
-            @Override
-            public void onFinish(String response) {
-                final String responseText = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<Comment> commentList = Utilty.handleCommentResponse(responseText);
-                        setCommentAdapter(commentList);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(GlobalContext.getContext(), "获取评论列表失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-    }
-
-    /**
-     * 评论列表适配器的设置
-     * @param commentList
-     */
-    protected void setCommentAdapter(List<Comment> commentList){
-        CommentListAdapter adapter = new CommentListAdapter(GlobalContext.getContext(),
-                R.layout.layout_item_comment, commentList);
-        NoScrollListView listView = (NoScrollListView) findViewById(R.id.lv_comment_list_view);
-        listView.setAdapter(adapter);
     }
 }
 

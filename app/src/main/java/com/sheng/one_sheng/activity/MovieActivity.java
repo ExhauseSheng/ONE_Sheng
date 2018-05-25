@@ -131,10 +131,9 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Log.d("MovieActivity", "发出集合1.5（加载更多）大小为：" + movies.size());
                     Message message = new Message();
                     message.what = 1;
-                    message.obj = movies;            //将删除之后新的集合发送出去
+                    message.obj = movies;            //将删除重复对象之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                 }
             }
@@ -162,7 +161,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                 case 1:
                     List<Movie> movieList = (List<Movie>) msg.obj;
                     for (int i = 0; i < movieList.size(); i++){
-                        mMovieList.add(movieList.get(i));
+                        mMovieList.add(movieList.get(i));       //循环将新的集合的对象装到原有集合里面
                     }
                     break;
                 default:
@@ -188,13 +187,16 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
         });
     }
 
+    /**
+     * 下拉刷新的回调方法
+     */
     @Override
     public void onDownPullRefresh() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(LIST_REFRESH_TIME);
+                SystemClock.sleep(LIST_REFRESH_TIME);   //加载时间
                 mMovieList.clear();           //先将集合里面的内容清空重新收集一遍
                 initMovie(MOVIE_LIST_URL);     //重新初始化阅读列表
                 isFirstLoadingMore = true;   //重新变成第一次加载更多数据
@@ -208,13 +210,16 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
         }.execute(new Void[]{});
     }
 
+    /**
+     * 上拉加载更多的回调方法
+     */
     @Override
     public void onLoadingMore() {
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(LIST_MORE_TIME);
+                SystemClock.sleep(LIST_MORE_TIME);  //加载时间
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
                     initMovie(MOVIE_MORE_URL);
                 }
@@ -224,7 +229,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
             @Override
             protected void onPostExecute(Void result) {
                 if (isFirstLoadingMore){            //如果这是第一次加载更多数据
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();    //通知适配器更新数据
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
                     Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();

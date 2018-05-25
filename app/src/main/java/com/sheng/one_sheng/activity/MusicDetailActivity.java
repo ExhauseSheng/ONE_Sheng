@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MusicDetailActivity extends BaseActivity {
+public class MusicDetailActivity extends CommentActivity {
 
     private ScrollView mSlMusicLayout;
     private ImageView mIvMusicImage;

@@ -146,7 +146,7 @@ public class imageLoader {
         public void run() {
             final Bitmap bitmap = HttpUtil.downloadBitmap(mUrl);
             write2Local(mUrl, bitmap);  //存储到本地
-            mCaches.put(mUrl, bitmap);  //存储到内存
+            setLruCaches(mUrl, bitmap);  //存储到内存
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -177,7 +177,7 @@ public class imageLoader {
             if (file.exists()){
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 //存储到内存
-                mCaches.put(url, bitmap);
+                setLruCaches(url, bitmap);
                 return bitmap;
             }
         }catch (Exception e){
