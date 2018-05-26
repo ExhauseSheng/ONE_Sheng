@@ -15,6 +15,10 @@ import com.sheng.one_sheng.R;
 
 import java.text.SimpleDateFormat;
 
+import static com.sheng.one_sheng.Contents.DOWN_PULL_REFRESH;
+import static com.sheng.one_sheng.Contents.REFRESHING;
+import static com.sheng.one_sheng.Contents.RELEASE_REFRESH;
+
 /**
  * Created by 一个傻傻的小男孩 on 2018/5/16.
  */
@@ -30,10 +34,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     private int headerViewHeight; // 头布局的高度
     private View headerView; // 头布局的对象
 
-    private final int DOWN_PULL_REFRESH = 0; // 下拉刷新状态
-    private final int RELEASE_REFRESH = 1; // 松开刷新
-    private final int REFRESHING = 2; // 正在刷新中
-    private int currentState = DOWN_PULL_REFRESH; // 头布局的状态: 默认为下拉刷新状态
+    public static int currentState = DOWN_PULL_REFRESH; // 头布局的状态: 默认为下拉刷新状态
 
     private Animation upAnimation; // 向上旋转的动画
     private Animation downAnimation; // 向下旋转的动画
@@ -43,7 +44,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     private TextView tvState; // 头布局的状态
     private TextView tvLastUpdateTime; // 头布局的最后更新时间
 
-    private OnRefreshListener mOnRefershListener;
+    private OnRefreshListener mOnRefershListener;   //定义接口
     private boolean isScrollToBottom; // 是否滑动到底部
     private View footerView; // 脚布局的对象
     private int footerViewHeight; // 脚布局的高度
@@ -63,9 +64,12 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
         //取出脚布局
         footerView = View.inflate(getContext(), R.layout.listview_footer, null);
         footerView.measure(0, 0); //系统会帮我们测量出footerView的高度
+        //这个视图的高度在最近一次调用Mesure()中进行测量。
         footerViewHeight = footerView.getMeasuredHeight();
+        //给View的四周补白
         footerView.setPadding(0, -footerViewHeight, 0, 0);
-        this.addFooterView(footerView); //向ListView的顶部添加一个view对象
+        //调用addFootView方法向ListView的底部添加一个view对象
+        this.addFooterView(footerView);
     }
 
     /**
@@ -74,19 +78,22 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     private void initHeaderView() {
         //取出头布局
         headerView = View.inflate(getContext(), R.layout.listview_header, null);
-        ivArrow = (ImageView) headerView.findViewById(R.id.iv_listview_header_arrow);
-        mProgressBar = (ProgressBar) headerView.findViewById(R.id.pb_listview_header);
-        tvState = (TextView) headerView.findViewById(R.id.tv_listview_header_state);
+        ivArrow = (ImageView) headerView.findViewById(R.id.iv_listview_header_arrow);   //初始化箭头图片
+        mProgressBar = (ProgressBar) headerView.findViewById(R.id.pb_listview_header);  //初始化进度条
+        tvState = (TextView) headerView.findViewById(R.id.tv_listview_header_state);    //初始化状态文本
+        //初始化刷新时间文本
         tvLastUpdateTime = (TextView) headerView.findViewById(R.id.tv_listview_header_last_update_time);
 
         // 设置最后刷新时间
         tvLastUpdateTime.setText("最后刷新时间: " + getLastUpdateTime());
-
-        headerView.measure(0, 0); // 系统会帮我们测量出headerView的高度
-        headerViewHeight = headerView.getMeasuredHeight();
+        //指定一个规格或者标准让系统帮我们测量View的宽高
+        headerView.measure(0, 0); //这里我们都用0，系统将不采用这个规格去测量，而是根据实际情况去测量
+        headerViewHeight = headerView.getMeasuredHeight();  //获取真实的头布局的高度
+        //给View的四周补白，让top值为-headerViewHeight实现“隐藏”
         headerView.setPadding(0, -headerViewHeight, 0, 0);
-        this.addHeaderView(headerView); // 向ListView的顶部添加一个view对象
-        initAnimation();
+        //调用addHeaderView方法向ListView的顶部添加一个view对象
+        this.addHeaderView(headerView);
+        initAnimation();    //初始化动画
     }
 
     /**
@@ -95,6 +102,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
      * @return
      */
     private String getLastUpdateTime() {
+        //年-月-日 时：分：秒
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //时间格式
         return sdf.format(System.currentTimeMillis());
     }
@@ -104,16 +112,16 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
      */
     private void initAnimation() {
         //向上旋转的动画
+        //参数：旋转开始的角度，旋转结束的角度，以及两种对RELATIVE_TO_SELF的描述，0.5f是指变化点在中心
         upAnimation = new RotateAnimation(0f, -180f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        //旋转的速率
+        //这个动画应该持续多久。持续时间不能是负的。
         upAnimation.setDuration(500);
         upAnimation.setFillAfter(true); // 动画结束后, 停留在结束的位置上
 
         //向下旋转的动画
         downAnimation = new RotateAnimation(-180f, -360f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        //旋转的速率
         downAnimation.setDuration(500);
         downAnimation.setFillAfter(true); // 动画结束后, 停留在结束的位置上
     }

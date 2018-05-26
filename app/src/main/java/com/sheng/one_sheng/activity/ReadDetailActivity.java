@@ -19,6 +19,11 @@ import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
 import com.sheng.one_sheng.util.Utilty;
 
+import static com.sheng.one_sheng.Contents.COMMENT_NEXT;
+import static com.sheng.one_sheng.Contents.READ_COMMENT_PRE;
+import static com.sheng.one_sheng.Contents.READ_DETAIL_NEXT;
+import static com.sheng.one_sheng.Contents.READ_DETAIL_PRE;
+
 public class ReadDetailActivity extends CommentActivity {
 
     private ScrollView mSlreadLayout;
@@ -78,12 +83,11 @@ public class ReadDetailActivity extends CommentActivity {
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
-        Log.d("ReadDetailActivity", "此时详细内容id为：" + itemId);
         mSlreadLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
         requestReadDetail(itemId);
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/" + itemId +
-                "/0?&platform=android";
+
+        String url = READ_COMMENT_PRE + itemId + COMMENT_NEXT;
         requestCommentList(url);
     }
 
@@ -105,7 +109,7 @@ public class ReadDetailActivity extends CommentActivity {
      */
     private void requestReadDetail(final String itemId){
         Log.d("ReadDetailActivity", "传递之后详细内容id为：" + itemId);
-        String url = "http://v3.wufazhuce.com:8000/api/essay/" + itemId + "?platform=android";
+        String url = READ_DETAIL_PRE + itemId + READ_DETAIL_NEXT;
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {

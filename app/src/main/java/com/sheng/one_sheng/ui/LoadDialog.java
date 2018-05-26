@@ -22,7 +22,7 @@ public class LoadDialog extends Dialog {
     private ImageView mIvProgress;
 
 
-    public LoadDialog(Context context, int themeResId) {
+    private LoadDialog(Context context, int themeResId) {
         super(context, themeResId);
         this.mContext = context;
 
@@ -41,7 +41,8 @@ public class LoadDialog extends Dialog {
         super.onWindowFocusChanged(hasFocus);
         if(hasFocus && mDialog != null){
             mIvProgress = (ImageView) mDialog.findViewById(R.id.ivProgress);  //加载的图片
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.progress_anim);   //动画设置
+            //动画设置，调用AnimationUtils的loadAnimation方法，传进去一个context对象和动画文件
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.progress_anim);
             mIvProgress.startAnimation(animation);   //开启动画
         }
     }

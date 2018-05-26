@@ -20,8 +20,9 @@ public class NoScrollListView extends ListView {
      */
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
+//        一个MeasureSpec封装了父布局传递给子布局的布局要求，每个MeasureSpec代表了一组宽度和高度的要求
         int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
-                MeasureSpec.AT_MOST);
+                MeasureSpec.AT_MOST);   //AT_MOST —— 至多达到指定大小的值
         super.onMeasure(widthMeasureSpec, expandSpec);
 
     }

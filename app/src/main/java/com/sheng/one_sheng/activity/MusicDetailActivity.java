@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Music;
 import com.sheng.one_sheng.ui.LoadDialog;
@@ -34,6 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import static com.sheng.one_sheng.Contents.COMMENT_NEXT;
+import static com.sheng.one_sheng.Contents.MUSIC_COMMENT_PRE;
+import static com.sheng.one_sheng.Contents.MUSIC_DETAIL_NEXT;
+import static com.sheng.one_sheng.Contents.MUSIC_DETAIL_PRE;
 
 public class MusicDetailActivity extends CommentActivity {
 
@@ -103,14 +107,12 @@ public class MusicDetailActivity extends CommentActivity {
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
-        Log.d("MusicDetailActivity", "此时详细内容id为：" + itemId);
         mSlMusicLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
         requestMusicDetail(itemId); //请求音乐详细内容
 
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/" + itemId +
-                "/0?&platform=android";
+        String url = MUSIC_COMMENT_PRE + itemId + COMMENT_NEXT;
         requestCommentList(url);    //请求评论列表
     }
 
@@ -131,7 +133,7 @@ public class MusicDetailActivity extends CommentActivity {
      * @param itemId
      */
     private void requestMusicDetail(String itemId){
-        String url = "http://v3.wufazhuce.com:8000/api/music/detail/" + itemId + "?version=3.5.0&platform=android";
+        String url = MUSIC_DETAIL_PRE + itemId + MUSIC_DETAIL_NEXT;
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
@@ -168,7 +170,7 @@ public class MusicDetailActivity extends CommentActivity {
         if (music != null){
             mIvMusicImage.setImageResource(R.drawable.loading);
             String url = music.getCover();
-            imageLoader mLoader = new imageLoader(GlobalContext.getContext());
+            imageLoader mLoader = new imageLoader(MyApplication.getContext());
             mLoader.loadingImage(mIvMusicImage, url);   //异步加载专辑图片
 
             mTvSongName.setText(" 歌曲： 《 " + music.getSongTitle() + " 》");

@@ -34,6 +34,21 @@ public class Contents {
     public static final int PAPER_IMAGE = 3;
     public static final int FINISH_DELAY = 4;   //判断是否要退出程序
 
+    //PaperDetail
+    public static final String PAPER_DETAIL_PRE = "http://v3.wufazhuce.com:8000/api/hp/detail/";
+    public static final String PAPER_DETAIL_NEXT = "?version=3.5.0&platform=android";
+
+    //ReadDetail
+    public static final String READ_DETAIL_PRE = "http://v3.wufazhuce.com:8000/api/essay/";
+    public static final String READ_DETAIL_NEXT = "?platform=android";
+    //MusicDtail
+    public static final String MUSIC_DETAIL_PRE = "http://v3.wufazhuce.com:8000/api/music/detail/";
+    public static final String MUSIC_DETAIL_NEXT = "?version=3.5.0&platform=android";
+    //MovieDetail
+    public static final String MOVIE_DETAIL_PRE = "http://v3.wufazhuce.com:8000/api/movie/";
+    public static final String MOVIE_DETAIL_NEXT = "/story/1/0?platform=android";
+
+
     //ReadActivity
     public static final int READ_LIST = 0;
     public static final int READ_MORE = 1;
@@ -45,6 +60,17 @@ public class Contents {
     //MovieActivity
     public static final int MOVIE_LIST = 0;
     public static final int MOVIE_MORE = 1;
+
+    //Comment
+    public static final String READ_COMMENT_PRE = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/essay/";
+    public static final String MUSIC_COMMENT_PRE = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/music/";
+    public static final String MOVIE_COMMENT_PRE = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/";
+    public static final String COMMENT_NEXT = "/0?&platform=android";
+
+    //RefreshListView
+    public static final int DOWN_PULL_REFRESH = 0;    // 下拉刷新状态
+    public static final int RELEASE_REFRESH = 1;      // 松开刷新
+    public static final int REFRESHING = 2;           // 正在刷新中
 
     //轮播图睡眠时间
     public static final int VIEW_PAGER_DELAY = 3500;       //睡眠3.5s

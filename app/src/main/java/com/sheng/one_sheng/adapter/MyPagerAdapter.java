@@ -47,7 +47,7 @@ public class MyPagerAdapter extends PagerAdapter {
         Log.d("Adapter", "instantiateItem: position: " + position);
         ret = mItems.get(position);
         //如果View已经在之前添加到了一个父组件，则必须先remove，否则会抛出IllegalStateException异常
-        ViewParent viewParent = ret.getParent();
+        ViewParent viewParent = ret.getParent();     //取出view的父布局
         if (viewParent != null){
             ViewGroup parent = (ViewGroup) viewParent;
             parent.removeView(ret);
@@ -75,7 +75,7 @@ public class MyPagerAdapter extends PagerAdapter {
     public int getCount() {
         int ret = 0;
         if (mItems.size() > 0){
-            ret = MAX_SCROLL_VALUE;
+            ret = MAX_SCROLL_VALUE;     //最大滚动值
         }
         return ret;
     }

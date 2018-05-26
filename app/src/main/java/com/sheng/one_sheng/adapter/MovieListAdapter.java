@@ -2,7 +2,6 @@ package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.imageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +40,7 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
         if (parent != null){
             mListView = (RefreshListView) parent;
         }
-        imageLoader mImageLoader = new imageLoader(GlobalContext.getContext(),mListView);
+        imageLoader mImageLoader = new imageLoader(MyApplication.getContext(),mListView);
         Movie movie = getItem(position);
         View view;
         MovieViewHolder viewHolder;

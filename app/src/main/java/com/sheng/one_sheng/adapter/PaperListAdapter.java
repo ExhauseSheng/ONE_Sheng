@@ -1,7 +1,6 @@
 package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +8,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Paper;
-import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.imageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,7 +40,7 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
         if (parent != null){
             this.mListView = (RefreshListView) parent;
         }
-        mImageLoader = new imageLoader(GlobalContext.getContext(), mListView);
+        mImageLoader = new imageLoader(MyApplication.getContext(), mListView);
         Paper paper = getItem(position);    //获取当前项的Paper实例
         View view;
         PaperViewHolder viewHolder;
@@ -74,9 +71,9 @@ public class PaperListAdapter extends ArrayAdapter<Paper> {
 
         String url = paper.getImageUrl();
         viewHolder.mIvPaperImage.setImageResource(R.drawable.loading);
-        viewHolder.mIvPaperImage.setTag(url);
+        viewHolder.mIvPaperImage.setTag(url);   //将图片的url地址设置为图片的Tag标签
 
-        mImageLoader.loadingImage(viewHolder.mIvPaperImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvPaperImage, url);   //异步加载网络图片
         return view;
     }
 

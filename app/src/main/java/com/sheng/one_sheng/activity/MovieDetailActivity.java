@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
@@ -17,8 +16,13 @@ import com.sheng.one_sheng.bean.Movie;
 import com.sheng.one_sheng.ui.LoadDialog;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.util.Utilty;
+
+import static com.sheng.one_sheng.Contents.COMMENT_NEXT;
+import static com.sheng.one_sheng.Contents.MOVIE_COMMENT_PRE;
+import static com.sheng.one_sheng.Contents.MOVIE_DETAIL_NEXT;
+import static com.sheng.one_sheng.Contents.MOVIE_DETAIL_PRE;
 
 public class MovieDetailActivity extends CommentActivity {
 
@@ -78,14 +82,12 @@ public class MovieDetailActivity extends CommentActivity {
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
-        Log.d("MovieDetailActivity", "此时详细内容id为：" + itemId);
         mSvMovieLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
         requestMovieDetail(itemId);     //请求影视内容
 
-        String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
-               "/0?&platform=android";
+        String url = MOVIE_COMMENT_PRE + itemId + COMMENT_NEXT;
         requestCommentList(url);        //请求评论列表
     }
 
@@ -111,7 +113,7 @@ public class MovieDetailActivity extends CommentActivity {
      * @param itemId
      */
     private void requestMovieDetail(final String itemId){
-        String url = "http://v3.wufazhuce.com:8000/api/movie/" + itemId + "/story/1/0?platform=android";
+        String url = MOVIE_DETAIL_PRE + itemId + MOVIE_DETAIL_NEXT;
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
@@ -126,7 +128,7 @@ public class MovieDetailActivity extends CommentActivity {
                             showMovieInfo(movie);   //内容显示
                         }
                         else {
-                            Toast.makeText(GlobalContext.getContext(), "请求失败，请检查网络是否可用", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), "请求失败，请检查网络是否可用", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

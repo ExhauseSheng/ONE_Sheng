@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MusicListAdapter;
 import com.sheng.one_sheng.bean.Music;
@@ -75,8 +75,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         }
 
         //检测是否有缓存
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String musicListString = prefs.getString("music_list", null);
+        String musicListString = (String) SPUtil.getParam(MyApplication.getContext(), "music_list", "");
         if (musicListString != null){
             //如果有缓存就直接解析
             mMusicList = Utilty.handleMusicListResponse(musicListString);
@@ -115,12 +114,12 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                 final String responseText = response;
                 final List<Music> musics = Utilty.handleMusicListResponse(responseText);
                 if (url.equals(MUSIC_LIST_URL)){
-                    Message message = new Message();
+                    Message message = handler.obtainMessage();
                     message.what = MUSIC_LIST;
                     message.obj = musics;
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
-                    SPUtil.setParam(GlobalContext.getContext(), "music_list", responseText);
+                    SPUtil.setParam(MyApplication.getContext(), "music_list", responseText);
 
                 } else if (url.equals(MUSIC_MORE_URL)){  //如果加载更多
                     for (int i =0; i < musics.size(); i++){
@@ -130,12 +129,12 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Message message = new Message();
+                    Message message = handler.obtainMessage();
                     message.what = MUSIC_MORE;
                     message.obj = musics;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
-                    SPUtil.setParam(GlobalContext.getContext(), "music_more", responseText);
+                    SPUtil.setParam(MyApplication.getContext(), "music_more", responseText);
                 }
             }
 
@@ -178,14 +177,14 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
      * 设置音乐列表的适配器
      */
     private void setAdapter(){
-        mAdapter = new MusicListAdapter(GlobalContext.getContext(), R.layout.layout_card_music, mMusicList);
+        mAdapter = new MusicListAdapter(MyApplication.getContext(), R.layout.layout_card_music, mMusicList);
         mListView.setAdapter(mAdapter);
         mDialog.dismiss();
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MusicDetailActivity.actionStart(GlobalContext.getContext(), mMusicList.get(position - 1).getItemId());
+                MusicDetailActivity.actionStart(MyApplication.getContext(), mMusicList.get(position - 1).getItemId());
             }
         });
     }
@@ -224,8 +223,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
-                    String musicListString = prefs.getString("music_more", null);
+                    String musicListString = (String) SPUtil.getParam(MyApplication.getContext(), "music_more", "");
                     if (musicListString != null){
                         List<Music> musicList = Utilty.handleMusicListResponse(musicListString);
                         for (int i = 0; i < musicList.size(); i++){
@@ -244,7 +242,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                     mAdapter.notifyDataSetChanged();    //通知适配器更新数据
                     isFirstLoadingMore = false;     //这时候就不再是第一次加载更多了
                 }else {
-                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();

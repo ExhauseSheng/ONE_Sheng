@@ -1,19 +1,11 @@
 package com.sheng.one_sheng.activity;
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.CommentListAdapter;
-import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.bean.Comment;
-import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.NoScrollListView;
 import com.sheng.one_sheng.util.HttpCallbackListener;
 import com.sheng.one_sheng.util.HttpUtil;
@@ -53,7 +45,7 @@ public class CommentActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(GlobalContext.getContext(), "获取评价失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyApplication.getContext(), "获取评价失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -65,7 +57,7 @@ public class CommentActivity extends BaseActivity {
      * @param commentList
      */
     protected void setCommentAdapter(List<Comment> commentList){
-        CommentListAdapter adapter = new CommentListAdapter(GlobalContext.getContext(),
+        CommentListAdapter adapter = new CommentListAdapter(MyApplication.getContext(),
                 R.layout.layout_item_comment, commentList);
         NoScrollListView listView = (NoScrollListView)  findViewById(R.id.lv_comment_list_view);
         listView.setAdapter(adapter);

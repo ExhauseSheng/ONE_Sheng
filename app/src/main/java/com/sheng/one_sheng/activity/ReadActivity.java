@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.ReadListAdapter;
 import com.sheng.one_sheng.bean.Read;
@@ -75,8 +75,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         }
 
         //检测是否有缓存
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String readListString = prefs.getString("read_list", null);
+        String readListString = (String) SPUtil.getParam(MyApplication.getContext(), "read_list", "");
         if (readListString != null){
             //如果有缓存就直接解析
             mReadList = Utilty.handleReadListResponse(readListString);
@@ -110,12 +109,12 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 final String responseText = response;
                 final List<Read> reads = Utilty.handleReadListResponse(responseText);
                 if (url.equals(READ_LIST_URL)){
-                    Message message = new Message();
+                    Message message = handler.obtainMessage();
                     message.what = READ_LIST;
                     message.obj = reads;
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
-                    SPUtil.setParam(GlobalContext.getContext(), "read_list", responseText);
+                    SPUtil.setParam(MyApplication.getContext(), "read_list", responseText);
 
                 } else if (url.equals(READ_MORE_URL)){  //如果加载更多
                     for (int i =0; i < reads.size(); i++){
@@ -125,12 +124,12 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Message message = new Message();
+                    Message message = handler.obtainMessage();
                     message.what = READ_MORE;
                     message.obj = reads;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
-                    SPUtil.setParam(GlobalContext.getContext(), "read_more", responseText);
+                    SPUtil.setParam(MyApplication.getContext(), "read_more", responseText);
                 }
             }
 
@@ -139,7 +138,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(GlobalContext.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyApplication.getContext(), "获取阅读列表失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -178,7 +177,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ReadDetailActivity.actionStart(GlobalContext.getContext(),
+                ReadDetailActivity.actionStart(MyApplication.getContext(),
                         mReadList.get(position - 1).getItemId());
             }
         });
@@ -218,12 +217,10 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(LIST_MORE_TIME);
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
-                    String readListString = prefs.getString("read_more", null);
+                    String readListString = (String) SPUtil.getParam(MyApplication.getContext(), "read_more", "");
                     if (readListString != null){
                         //如果有缓存就直接解析
                         List<Read> readList = Utilty.handleReadListResponse(readListString);
-                        Log.d("ReadActivity", "成功取出缓存");
                         for (int i = 0; i < readList.size(); i++){
                             mReadList.add(readList.get(i));         //将新的内容添加到原来的集合里面
                         }
@@ -241,7 +238,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                     mAdapter.notifyDataSetChanged();
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
-                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();

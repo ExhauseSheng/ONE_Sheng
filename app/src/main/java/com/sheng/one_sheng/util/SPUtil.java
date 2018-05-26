@@ -58,24 +58,25 @@ public class SPUtil {
      */
     public static Object getParam(Context context , String key, Object defaultObject){
         //获取传入数据的类型
-        String type = defaultObject.getClass().getSimpleName();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        //根据数据类型取出相应的值
-        if("String".equals(type)){
-            return prefs.getString(key, (String)defaultObject);
-        }
-        else if("Integer".equals(type)){
-            return prefs.getInt(key, (Integer)defaultObject);
-        }
-        else if("Boolean".equals(type)){
-            return prefs.getBoolean(key, (Boolean)defaultObject);
-        }
-        else if("Float".equals(type)){
-            return prefs.getFloat(key, (Float)defaultObject);
-        }
-        else if("Long".equals(type)){
-            return prefs.getLong(key, (Long)defaultObject);
+        if (defaultObject != null){
+            String type = defaultObject.getClass().getSimpleName();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            //根据数据类型取出相应的值
+            if("String".equals(type)){
+                return prefs.getString(key, "");
+            }
+            else if("Integer".equals(type)){
+                return prefs.getInt(key, 0);
+            }
+            else if("Boolean".equals(type)){
+                return prefs.getBoolean(key, false);
+            }
+            else if("Float".equals(type)){
+                return prefs.getFloat(key, 0.1f);
+            }
+            else if("Long".equals(type)){
+                return prefs.getLong(key, 0L);
+            }
         }
         return null;
     }

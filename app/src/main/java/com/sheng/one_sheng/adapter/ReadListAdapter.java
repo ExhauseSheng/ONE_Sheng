@@ -2,7 +2,6 @@ package com.sheng.one_sheng.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.bean.Read;
 import com.sheng.one_sheng.ui.RefreshListView;
 import com.sheng.one_sheng.util.imageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,10 +39,10 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (parent != null){
-            this.mListView = (RefreshListView) parent;
+            this.mListView = (RefreshListView) parent;  //parent就是一个ListView对象
         }
-        mImageLoader = new imageLoader(GlobalContext.getContext(), mListView);
-        Read read = getItem(position);    //获取当前项的Paper实例
+        mImageLoader = new imageLoader(MyApplication.getContext(), mListView);  //new 一个图片加载器
+        Read read = getItem(position);    //获取当前项的read实例
         View view;
         ReadViewHolder viewHolder;
         if (convertView == null){
@@ -72,7 +70,7 @@ public class ReadListAdapter extends ArrayAdapter<Read> {
         viewHolder.mIvStoryImage.setImageResource(R.drawable.loading);
         viewHolder.mIvStoryImage.setTag(url);
 
-        mImageLoader.loadingImage(viewHolder.mIvStoryImage, url);
+        mImageLoader.loadingImage(viewHolder.mIvStoryImage, url);   //异步加载网络图片
         return view;
     }
 

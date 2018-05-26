@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
+import com.sheng.one_sheng.MyApplication;
 import com.sheng.one_sheng.R;
 import com.sheng.one_sheng.adapter.MyPagerAdapter;
 import com.sheng.one_sheng.adapter.PaperListAdapter;
@@ -41,6 +40,8 @@ import java.util.List;
 import static com.sheng.one_sheng.Contents.FINISH_DELAY;
 import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
 import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
+import static com.sheng.one_sheng.Contents.PAPER_DETAIL_NEXT;
+import static com.sheng.one_sheng.Contents.PAPER_DETAIL_PRE;
 import static com.sheng.one_sheng.Contents.PAPER_ID;
 import static com.sheng.one_sheng.Contents.PAPER_IMAGE;
 import static com.sheng.one_sheng.Contents.PAPER_LIST;
@@ -109,13 +110,13 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                 switch (item.getItemId()){
                     //启动相应的活动
                     case R.id.nav_read:
-                        ReadActivity.actionStart(GlobalContext.getContext());
+                        ReadActivity.actionStart(MyApplication.getContext());
                         break;
                     case R.id.nav_music:
-                        MusicActivity.actionStart(GlobalContext.getContext());
+                        MusicActivity.actionStart(MyApplication.getContext());
                         break;
                     case R.id.nav_movie:
-                        MovieActivity.actionStart(GlobalContext.getContext());
+                        MovieActivity.actionStart(MyApplication.getContext());
                         break;
                     default:
                         break;
@@ -172,10 +173,8 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                             }
                         }
                     }
-                    Log.d("ReadActivity", "发出集合1.5（加载更多）大小为：" + paperIdList.size());
-
                 }
-                Message message = new Message();
+                Message message = handler.obtainMessage();
                 message.what = PAPER_ID;
                 message.obj = paperIdList;            //将删除之后新的集合发送出去
                 handler.sendMessage(message);   //将Message对象发送出去
@@ -206,12 +205,12 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                     //将服务器返回来的数据解析成Paper实体类
                     final String responseText = response;
                     final Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                    Message message = new Message();
+                    Message message = handler.obtainMessage();
                     message.what = PAPER_LIST;
                     message.obj = paper;
                     handler.sendMessage(message);   //将Message对象发送出去
 
-                    Message message2 = new Message();
+                    Message message2 = handler.obtainMessage();
                     message2.what = PAPER_IMAGE;
                     message2.obj = paper.getImageUrl();
                     handler.sendMessage(message2);   //将Message2对象发送出去
@@ -241,8 +240,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                     List<String> paperIds = (List<String>) msg.obj;
                     if (paperIds.size() > 0){
                         for (int i = 0; i < paperIds.size(); i++) {
-                            String paperUrl = "http://v3.wufazhuce.com:8000/api/hp/detail/" +
-                                    paperIds.get(i) + "?version=3.5.0&platform=android";
+                            String paperUrl = PAPER_DETAIL_PRE + paperIds.get(i) + PAPER_DETAIL_NEXT;
                             initPaper(paperUrl);
                         }
                     }
@@ -273,7 +271,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
      * 插画列表适配器的设置
      */
     private void setAdapter(){
-        mAdapter = new PaperListAdapter(GlobalContext.getContext(), R.layout.layout_card_paper, mPapers);
+        mAdapter = new PaperListAdapter(MyApplication.getContext(), R.layout.layout_card_paper, mPapers);
         mListView.setAdapter(mAdapter);     //给ListView设置适配器
         mDialog.dismiss();          //关闭加载框
     }
@@ -323,7 +321,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                     mAdapter.notifyDataSetChanged();
                     isFirstLoadingMore = false;     //不再是第一次
                 }else {
-                    Toast.makeText(GlobalContext.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getContext(), "已无更多", Toast.LENGTH_SHORT).show();
                 }
                 // 控制脚布局隐藏
                 mListView.hideFooterView();
@@ -342,7 +340,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
             ImageView view = new ImageView(this);       //定义一个imageView来放图片
             String imgUrl = imageUrls.get(i);           //取出每一张图片的url地址
             view.setImageResource(R.drawable.loading);  //默认图片
-            imageLoader mLoader = new imageLoader(GlobalContext.getContext());    //定义图片加载器
+            imageLoader mLoader = new imageLoader(MyApplication.getContext());    //定义图片加载器
             mLoader.loadingImage(view, imgUrl);   //加载网络图片
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);  //设置缩放方式
             mItems.add(view);       //将新建的view添加进Imageview集合里面
@@ -452,7 +450,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         if (keyCode == KeyEvent.KEYCODE_BACK){  //如果按下的是返回键
             if (!isExit){       //如果isExit是false的话
                 isExit = true;      //变成true
-                Toast.makeText(GlobalContext.getContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApplication.getContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
                 handler.sendEmptyMessageDelayed(FINISH_DELAY, 2000);  //延迟两秒发送一条消息，在处理器里面再次将isExit变成false，重复此操作
             } else {
                 //如果在两秒内再次按下返回键，这时isExit就是true了，就会直接退出程序

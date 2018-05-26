@@ -6,20 +6,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.sheng.one_sheng.GlobalContext;
 import com.sheng.one_sheng.R;
-import com.sheng.one_sheng.adapter.CommentListAdapter;
-import com.sheng.one_sheng.bean.Comment;
-import com.sheng.one_sheng.ui.NoScrollListView;
-import com.sheng.one_sheng.util.HttpCallbackListener;
-import com.sheng.one_sheng.util.HttpUtil;
-import com.sheng.one_sheng.util.Utilty;
-
-import java.util.List;
 
 /**
  * Created by 一个傻傻的小男孩 on 2018/5/9.
@@ -35,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);    //添加活动
+        Log.d("BaseActivity", getClass().getSimpleName());
     }
 
     @Override
@@ -51,7 +42,6 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     /**
