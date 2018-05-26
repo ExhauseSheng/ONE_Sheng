@@ -52,18 +52,19 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
 
     private RefreshListView mListView;
     private List<Paper> mPapers;
-    private List<String> mImageUrls;
     private DrawerLayout mDrawerLayout;     //滑动菜单布局
     private PaperListAdapter mAdapter;   //ListView适配器
-    private LoadDialog mDialog;
+    private LoadDialog mDialog;         //加载窗口
     private boolean isExit;     //用来判断是否退出的一个布尔值，用于按两次返回键退出程序
     private boolean isFirstLoadingMore = true;  //判断是不是第一次上拉加载更多
 
+    //轮播图相关
+    private List<String> mImageUrls;        //所有轮播图的url地址
     private MyPagerAdapter mPaperAdapter;    //轮播图适配器
-    private List<ImageView> mItems;         //轮播图片的集合
-    private ImageView[] mIvBottomImages;      //底下小白点图片的集合
-    private LinearLayout mLlBottomLiner;      //底下小白点图片的布局
-    private ViewPager mViewPager;
+    private List<ImageView> mItems;         //所有装载轮播图片的ImageView的集合
+    private ImageView[] mIvBottomImages;      //底下小白点图片的ImageView数组
+    private LinearLayout mLlBottomLiner;      //底下小白点图片的线性布局
+    private ViewPager mViewPager;           //轮播图适配器
     private int currentViewPageItem;    //当前页数
     private boolean isAutoPlay;     //是否自动播放
     private MyHandler mHandler;     //自定义Handler
@@ -84,16 +85,16 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         setToolbar();
         changeStatusBar();
         mDialog = LoadDialog.showDialog(PaperActivity.this);
-        mDialog.show();
+        mDialog.show();     //显示加载框
         mListView = (RefreshListView) findViewById(R.id.paper_list_view);
         mListView.setOnRefreshListener(this);
         mPapers = new ArrayList<>();
         mImageUrls = new ArrayList<>();
         mItems = new ArrayList<>();
         mHandler = new MyHandler(this);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);  //菜单子项
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);      //显示菜单按钮
@@ -106,6 +107,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()){
+                    //启动相应的活动
                     case R.id.nav_read:
                         ReadActivity.actionStart(GlobalContext.getContext());
                         break;
@@ -118,7 +120,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                     default:
                         break;
                 }
-                mDrawerLayout.closeDrawers();
+                mDrawerLayout.closeDrawers();   //关闭滑动菜单
                 return true;
             }
         });
@@ -133,7 +135,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         mViewPager.addOnPageChangeListener(this);
         isAutoPlay = true;
 
-        requestPaperId(PAPER_LIST_URL);     //发送请求获取数据
+        requestPaperId(PAPER_LIST_URL);     //发送请求获取数据Paper Id
     }
 
     /**
@@ -248,15 +250,15 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                 case PAPER_LIST:
                     Paper paper = (Paper) msg.obj;
                     mPapers.add(paper);
-                    if (mPapers.size() == 10){
+                    if (mPapers.size() == 10){  //如果累计装载了10个Paper对象
                         setAdapter();
                     }
                     break;
                 case PAPER_IMAGE:
-                    String imageUrl = (String) msg.obj;
-                    mImageUrls.add(imageUrl);
-                    if (mImageUrls.size() == 10){
-                        addImageView(mImageUrls);
+                    String imageUrl = (String) msg.obj;     //取出对应图片的url地址
+                    mImageUrls.add(imageUrl);       //添加进imageUrl集合
+                    if (mImageUrls.size() == 10){   //如果累计装载了10个url地址
+                        addImageView(mImageUrls);   //把它们放进轮播图集合
                     }
                 case FINISH_DELAY:
                     isExit = false;
@@ -272,8 +274,8 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
      */
     private void setAdapter(){
         mAdapter = new PaperListAdapter(GlobalContext.getContext(), R.layout.layout_card_paper, mPapers);
-        mListView.setAdapter(mAdapter);
-        mDialog.dismiss();
+        mListView.setAdapter(mAdapter);     //给ListView设置适配器
+        mDialog.dismiss();          //关闭加载框
     }
 
     /**
@@ -308,9 +310,9 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(LIST_MORE_TIME);
+                SystemClock.sleep(LIST_MORE_TIME);  //加载时间
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
-                    requestPaperId(PAPER_MORE_URL);
+                    requestPaperId(PAPER_MORE_URL);     //获取更多数据
                 }
                 return null;
             }
@@ -354,8 +356,9 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
      * 设置轮播图小点
      */
     private void setBottomIndicator(){
+        //初始化小白点的布局
         mLlBottomLiner = (LinearLayout)findViewById(R.id.live_indicator);
-        //右下方小圆点
+        //右下方小圆点（白点数量 = 图片的数量）
         mIvBottomImages = new ImageView[mItems.size()];
         for (int i = 0; i < mIvBottomImages.length; i++){
             ImageView imageView = new ImageView(this);
@@ -377,15 +380,15 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
         //让其在最大值的中间开始滑动，一定要在mBottomImages初始化之前完成
         int mid = MyPagerAdapter.MAX_SCROLL_VALUE / 2;
         mViewPager.setCurrentItem(mid);
-        currentViewPageItem = mid;
+        currentViewPageItem = mid;      //现在的页数
 
-        //定时发送消息
+        //定时发送消息实现自动轮播
         new Thread(){
             @Override
             public void run() {
                 super.run();
                 while (true){
-                    mHandler.sendEmptyMessage(0);
+                    mHandler.sendEmptyMessage(0);   //发送空消息
                     try {
                         Thread.sleep(VIEW_PAGER_DELAY);   //睡眠
                     }catch (InterruptedException e){
@@ -410,7 +413,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
     public void onPageSelected(int position) {
         currentViewPageItem = position;
         if (mItems != null){
-            //给当前页数取整
+            //给当前页数取模
             position %= mIvBottomImages.length;
             //总页数
             int total = mIvBottomImages.length;
@@ -456,7 +459,7 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
-                System.exit(0);
+                System.exit(0);     //退出程序
             }
             return false;
         } else {
@@ -488,7 +491,8 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
             switch (msg.what){
                 case 0:
                     PaperActivity activity = mWeakReference.get();
-                    if (activity.isAutoPlay){
+                    if (activity.isAutoPlay){   ///如果是自动轮播
+                        //当前页数就+1
                         activity.mViewPager.setCurrentItem(++activity.currentViewPageItem);
                     }
                     break;

@@ -34,7 +34,9 @@ import java.util.List;
 
 import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
 import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
+import static com.sheng.one_sheng.Contents.MUSIC_LIST;
 import static com.sheng.one_sheng.Contents.MUSIC_LIST_URL;
+import static com.sheng.one_sheng.Contents.MUSIC_MORE;
 import static com.sheng.one_sheng.Contents.MUSIC_MORE_URL;
 
 public class MusicActivity extends BaseActivity implements OnRefreshListener {
@@ -61,7 +63,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         setToolbar();
         changeStatusBar();
         mDialog = LoadDialog.showDialog(MusicActivity.this);
-        mDialog.show();
+        mDialog.show();     //显示加载框
         mListView = (RefreshListView) findViewById(R.id.music_list_view);
         mListView.setOnRefreshListener(this);
         mMusicList = new ArrayList<>();
@@ -86,6 +88,11 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
         }
     }
 
+    /**
+     * 对返回键做监听
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -109,7 +116,7 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                 final List<Music> musics = Utilty.handleMusicListResponse(responseText);
                 if (url.equals(MUSIC_LIST_URL)){
                     Message message = new Message();
-                    message.what = 0;
+                    message.what = MUSIC_LIST;
                     message.obj = musics;
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
@@ -118,13 +125,13 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                 } else if (url.equals(MUSIC_MORE_URL)){  //如果加载更多
                     for (int i =0; i < musics.size(); i++){
                         for (int j = 0; j < mMusicList.size(); j++){
-                            if (musics.get(i).getId().equals(mMusicList.get(j).getId())){//根据id来判断有没有重复的内容
+                            if (musics.get(i).getId().equals(mMusicList.get(j).getId())){   //根据id来判断有没有重复的内容
                                 musics.remove(i);    //如果有重复的内容就删除掉
                             }
                         }
                     }
                     Message message = new Message();
-                    message.what = 1;
+                    message.what = MUSIC_MORE;
                     message.obj = musics;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
@@ -151,11 +158,11 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case MUSIC_LIST:
                     mMusicList = (List<Music>)msg.obj;
                     setAdapter();   //设置适配器
                     break;
-                case 1:
+                case MUSIC_MORE:
                     List<Music> musicList = (List<Music>) msg.obj;
                     for (int i = 0; i < musicList.size(); i++){
                         mMusicList.add(musicList.get(i));   //循环将新的集合内容加在原有集合里面

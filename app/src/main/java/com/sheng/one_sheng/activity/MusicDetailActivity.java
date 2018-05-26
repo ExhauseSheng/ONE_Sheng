@@ -132,13 +132,15 @@ public class MusicDetailActivity extends CommentActivity {
      */
     private void requestMusicDetail(String itemId){
         String url = "http://v3.wufazhuce.com:8000/api/music/detail/" + itemId + "?version=3.5.0&platform=android";
-        Log.d("MusicDetailActivity", "传递之后详细内容的id为：" + itemId);
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 final String responseText = response;
                 final Music music = Utilty.handleMusicDetailResponse(responseText);
                 runOnUiThread(new Runnable() {
+                    /**
+                     * 切换到主线程进行ui操作
+                     */
                     @Override
                     public void run() {
                         if (music != null){
@@ -167,7 +169,7 @@ public class MusicDetailActivity extends CommentActivity {
             mIvMusicImage.setImageResource(R.drawable.loading);
             String url = music.getCover();
             imageLoader mLoader = new imageLoader(GlobalContext.getContext());
-            mLoader.loadingImage(mIvMusicImage, url);
+            mLoader.loadingImage(mIvMusicImage, url);   //异步加载专辑图片
 
             mTvSongName.setText(" 歌曲： 《 " + music.getSongTitle() + " 》");
             mTvSongAlbum.setText("专辑： 《 " + music.getAlbum() + " 》");
@@ -200,7 +202,7 @@ public class MusicDetailActivity extends CommentActivity {
     private final class NetWorkImageGetter implements Html.ImageGetter {
 
         /**
-         * 当HTML解析器遇到<img>标签时调用此方法。
+         * 当HTML解析器遇到<img>标签时会回调用此方法。
          * @param source
          * @return
          */
@@ -241,8 +243,10 @@ public class MusicDetailActivity extends CommentActivity {
             if (bitmap != null){
                 BitmapDrawable drawable = new BitmapDrawable(bitmap);
                 mDrawable.addLevel(1, 1, drawable);     //给drawable设置level
-                mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());   //给drawable设置边界大小
+                //给drawable设置边界大小，必须设为图片的边际,不然TextView显示不出图片
+                mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
                 mDrawable.setLevel(1);
+                //CharSequence是一个接口，char值的一个可读序列，此接口对许多不同种类的char序列提供统一的自读访问
                 CharSequence charSequence = mTvEssayContent.getText();
                 mTvEssayContent.setText(charSequence);
             }

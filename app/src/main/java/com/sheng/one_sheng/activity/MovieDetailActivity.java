@@ -78,7 +78,7 @@ public class MovieDetailActivity extends CommentActivity {
         final String itemId;
 
         itemId = getIntent().getStringExtra("item_id");
-        Log.d("MusicDetailActivity", "此时详细内容id为：" + itemId);
+        Log.d("MovieDetailActivity", "此时详细内容id为：" + itemId);
         mSvMovieLayout.setVisibility(View.INVISIBLE);
         //请求数据的时候先将ScrollView隐藏，不然空数据的界面看上去会很奇怪
 
@@ -86,9 +86,14 @@ public class MovieDetailActivity extends CommentActivity {
 
         String url = "http://v3.wufazhuce.com:8000/api/comment/praiseandtime/movie/" + itemId +
                "/0?&platform=android";
-        requestCommentList(url);
+        requestCommentList(url);        //请求评论列表
     }
 
+    /**
+     * 给返回键做监听
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -107,12 +112,14 @@ public class MovieDetailActivity extends CommentActivity {
      */
     private void requestMovieDetail(final String itemId){
         String url = "http://v3.wufazhuce.com:8000/api/movie/" + itemId + "/story/1/0?platform=android";
-        Log.d("MovieDetailActivity", "传递之后详细内容的id为：" + itemId);
         HttpUtil.sendHttpRequest(url, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 final Movie movie = Utilty.handleMovieDetailResponse(response);
                 runOnUiThread(new Runnable() {
+                    /**
+                     * 切换到主线程进行ui操作
+                     */
                     @Override
                     public void run() {
                         if (movie != null){

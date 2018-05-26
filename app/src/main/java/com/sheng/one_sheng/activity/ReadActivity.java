@@ -34,7 +34,9 @@ import java.util.List;
 
 import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
 import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
+import static com.sheng.one_sheng.Contents.READ_LIST;
 import static com.sheng.one_sheng.Contents.READ_LIST_URL;
+import static com.sheng.one_sheng.Contents.READ_MORE;
 import static com.sheng.one_sheng.Contents.READ_MORE_URL;
 
 public class ReadActivity extends BaseActivity implements OnRefreshListener {
@@ -74,7 +76,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
 
         //检测是否有缓存
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String readListString = prefs.getString("reads", null);
+        String readListString = prefs.getString("read_list", null);
         if (readListString != null){
             //如果有缓存就直接解析
             mReadList = Utilty.handleReadListResponse(readListString);
@@ -109,7 +111,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 final List<Read> reads = Utilty.handleReadListResponse(responseText);
                 if (url.equals(READ_LIST_URL)){
                     Message message = new Message();
-                    message.what = 0;
+                    message.what = READ_LIST;
                     message.obj = reads;
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
@@ -124,7 +126,7 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                         }
                     }
                     Message message = new Message();
-                    message.what = 1;
+                    message.what = READ_MORE;
                     message.obj = reads;            //将删除之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                     //将数据缓存下来
@@ -148,14 +150,14 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case READ_LIST:
                     mReadList = (List<Read>)msg.obj;
                     setAdapter();
                     break;
-                case 1:
+                case READ_MORE:
                     List<Read> readList = (List<Read>) msg.obj;
                     for (int i = 0; i < readList.size(); i++){
-                        mReadList.add(readList.get(i));
+                        mReadList.add(readList.get(i));     //将新集合里面的内容赋到原有集合里面
                     }
                     break;
                 default:
@@ -176,7 +178,8 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ReadDetailActivity.actionStart(GlobalContext.getContext(), mReadList.get(position - 1).getItemId());
+                ReadDetailActivity.actionStart(GlobalContext.getContext(),
+                        mReadList.get(position - 1).getItemId());
             }
         });
     }

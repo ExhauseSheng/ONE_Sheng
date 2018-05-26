@@ -33,7 +33,9 @@ import java.util.List;
 
 import static com.sheng.one_sheng.Contents.LIST_MORE_TIME;
 import static com.sheng.one_sheng.Contents.LIST_REFRESH_TIME;
+import static com.sheng.one_sheng.Contents.MOVIE_LIST;
 import static com.sheng.one_sheng.Contents.MOVIE_LIST_URL;
+import static com.sheng.one_sheng.Contents.MOVIE_MORE;
 import static com.sheng.one_sheng.Contents.MOVIE_MORE_URL;
 
 public class MovieActivity extends BaseActivity implements OnRefreshListener {
@@ -114,7 +116,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
 
                 if (url.equals(MOVIE_LIST_URL)){
                     Message message = new Message();
-                    message.what = 0;
+                    message.what = MOVIE_LIST;
                     message.obj = movies;
                     handler.sendMessage(message);   //将Message对象发送出去
                     //同时将服务器返回的数据缓存起来
@@ -129,7 +131,7 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                         }
                     }
                     Message message = new Message();
-                    message.what = 1;
+                    message.what = MOVIE_MORE;
                     message.obj = movies;            //将删除重复对象之后新的集合发送出去
                     handler.sendMessage(message);   //将Message对象发送出去
                     //同时将服务器返回的数据缓存起来
@@ -153,11 +155,11 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case MOVIE_LIST:
                     mMovieList = (List<Movie>)msg.obj;
                     setAdapter();
                     break;
-                case 1:
+                case MOVIE_MORE:
                     List<Movie> movieList = (List<Movie>) msg.obj;
                     for (int i = 0; i < movieList.size(); i++){
                         mMovieList.add(movieList.get(i));       //循环将新的集合的对象装到原有集合里面
@@ -181,7 +183,8 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               MovieDetailActivity.actionStart(GlobalContext.getContext(), mMovieList.get(position - 1).getItemId());
+               MovieDetailActivity.actionStart(GlobalContext.getContext(),
+                       mMovieList.get(position - 1).getItemId());
             }
         });
     }
@@ -221,7 +224,8 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                 SystemClock.sleep(LIST_MORE_TIME);  //加载时间
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
                     //取出缓存
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GlobalContext.getContext());
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
+                            (GlobalContext.getContext());
                     String movieListString = prefs.getString("movie_more", null);
                     if (movieListString != null){
                         Log.d("MovieActivity", "取出缓存成功！");

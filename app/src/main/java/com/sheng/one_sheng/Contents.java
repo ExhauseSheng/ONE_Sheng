@@ -31,9 +31,20 @@ public class Contents {
     //PaperActivity
     public static final int PAPER_ID = 1;
     public static final int PAPER_LIST = 2;
-
     public static final int PAPER_IMAGE = 3;
     public static final int FINISH_DELAY = 4;   //判断是否要退出程序
+
+    //ReadActivity
+    public static final int READ_LIST = 0;
+    public static final int READ_MORE = 1;
+
+    //MusicActivity
+    public static final int MUSIC_LIST = 0;
+    public static final int MUSIC_MORE = 1;
+
+    //MovieActivity
+    public static final int MOVIE_LIST = 0;
+    public static final int MOVIE_MORE = 1;
 
     //轮播图睡眠时间
     public static final int VIEW_PAGER_DELAY = 3500;       //睡眠3.5s
