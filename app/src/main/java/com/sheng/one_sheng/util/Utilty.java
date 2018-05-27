@@ -106,7 +106,6 @@ public class Utilty {
                         music.setFansTotal(musicList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
                         musics.add(music);
                     }
-                    Log.d("MusicUtily", "集合1的大小为：" + musics.size() + "");
                     return musics;
                 }
             }catch (Exception e){
@@ -144,7 +143,6 @@ public class Utilty {
                         movie.setFansTotal(movieList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
                         movies.add(movie);
                     }
-                    Log.d("MovieUtily", "集合1的大小为：" + movies.size() + "");
                     return movies;
                 }
             }catch (Exception e){
@@ -181,7 +179,6 @@ public class Utilty {
                         read.setFansTotal(readList.getJSONObject(i).getJSONObject("author").getString("fans_total"));
                         reads.add(read);
                     }
-                    Log.d("ReadUtily", "集合1的大小为：" + reads.size() + "");
                     return reads;
                 }
             }catch (Exception e){

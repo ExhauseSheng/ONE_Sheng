@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,10 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-        setToolbar();
         changeStatusBar();
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
+        setSupportActionBar(mToolbar);
         mDialog = LoadDialog.showDialog(MusicActivity.this);
         mDialog.show();     //显示加载框
         mListView = (RefreshListView) findViewById(R.id.music_list_view);
@@ -114,11 +117,9 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                 final String responseText = response;
                 final List<Music> musics = Utilty.handleMusicListResponse(responseText);
                 if (url.equals(MUSIC_LIST_URL)){
-                    Message message = handler.obtainMessage();
-                    message.what = MUSIC_LIST;
-                    message.obj = musics;
-                    handler.sendMessage(message);   //将Message对象发送出去
-                    //将数据缓存下来
+                    //发送消息
+                    handler.obtainMessage(MUSIC_LIST, musics).sendToTarget();
+                    //同时将数据缓存下来
                     SPUtil.setParam(MyApplication.getContext(), "music_list", responseText);
 
                 } else if (url.equals(MUSIC_MORE_URL)){  //如果加载更多
@@ -129,11 +130,9 @@ public class MusicActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Message message = handler.obtainMessage();
-                    message.what = MUSIC_MORE;
-                    message.obj = musics;            //将删除之后新的集合发送出去
-                    handler.sendMessage(message);   //将Message对象发送出去
-                    //将数据缓存下来
+                    //发送消息
+                    handler.obtainMessage(MUSIC_MORE, musics).sendToTarget();
+                    //同时将数据缓存下来
                     SPUtil.setParam(MyApplication.getContext(), "music_more", responseText);
                 }
             }

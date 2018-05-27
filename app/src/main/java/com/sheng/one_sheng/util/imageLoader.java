@@ -34,13 +34,17 @@ import java.util.concurrent.Future;
  * 异步图片加载工具
  * 借鉴于网络:
  * @author cuiran
+ *
+ * 补充LruCache的理解：
+ * 对有限数量的值保持强引用的高速缓存。每次访问一个值时，它被移动到队列的头部。
+ * 当一个值被添加到一个完整的缓存中时，该队列末尾的值被删除，并且可能成为垃圾收集的合格条件。
  */
 public class imageLoader {
     private LruCache<String, Bitmap> mCaches;   //创建对象
     private ListView mListView;
     private Context mContext;
     private static Handler mHandler;
-    private static ExecutorService mThreadPool;
+    private static ExecutorService mThreadPool;     //一个线程池
     private static Map<ImageView,Future<?>> mTaskTags=new LinkedHashMap<>();
 
     public imageLoader(Context context){
@@ -53,12 +57,11 @@ public class imageLoader {
                 return value.getByteCount();    //每次存入缓存的时候调用，返回Bitmap的大小
             }
         };
-
         if(mHandler == null){
             mHandler = new Handler();
         }
         if(mThreadPool == null){
-            mThreadPool = Executors.newFixedThreadPool(3);
+            mThreadPool = Executors.newFixedThreadPool(3);  //创建一个有3个线程的线程池
         }
     }
 
@@ -73,7 +76,6 @@ public class imageLoader {
                 return value.getByteCount();    //每次存入缓存的时候调用，返回Bitmap的大小
             }
         };
-
         if(mHandler == null){
             mHandler = new Handler();
         }
@@ -82,53 +84,65 @@ public class imageLoader {
         }
     }
 
+    /**
+     * 取出缓存数据
+     * @param url
+     * @return
+     */
     private Bitmap getLruCaches(String url) {
-        if (mCaches.get(url) != null){
-            Log.d("imageLoader", "成功从缓存中取出图片");
-        }
         return mCaches.get(url);
         //通过url从缓存中相应的bitmap
     }
 
     /**
      * 添加缓存数据，添加前推断数据是否存在
+     * @param url
+     * @param bitmap
      */
     private void setLruCaches(String url, Bitmap bitmap) {
         if (getLruCaches(url) == null){
             //假设缓存中不存在url相应的Bitmap，则把bitmap增加进去mCaches
             mCaches.put(url, bitmap);
-            Log.d("imageLoader", "成功放进缓存区");
         }
     }
 
+    /**
+     * 给相应的imageView加载网络图片
+     * @param img
+     * @param url
+     */
     public void loadingImage(ImageView img, String url){
 //        从缓存中取出图片
         Bitmap bitmap = getLruCaches(url);
         if (bitmap != null){
-            //假设在缓存中没有这个图片，则从网络上下载
+            //假设在缓存中有这个图片，则直接给imageView加载图片
             img.setImageBitmap(bitmap);
             return;
         }
 //        从硬盘中取出图片
         bitmap = loadBitmapFromLocal(url);
+        //假设在硬盘中有这个图片，则直接给imageView加载图片
         if (bitmap != null) {
             img.setImageBitmap(bitmap);
             return;
         }
 //        从网络中获取图片
-        img.setImageResource(R.drawable.loading);
+        img.setImageResource(R.drawable.loading);   //获取到图片之前先加载默认图片
         loadBitmapFromNet(img, url);
     }
 
     private void loadBitmapFromNet(ImageView img, String url){
         //开启线程去网络获取 使用线程池管理
         //判断是否有线程为img加载数据
+        //Future是一个接口，提供给了我们方法来检测当前的任务是否已经结束，还可以等待任务结束并且拿到一个结果
         Future<?> future = mTaskTags.get(img);
+        //问号说明没有返回值，那么就返回一个null好了
         if (future != null && !future.isCancelled() && !future.isDone()){
             //线程正在执行
             future.cancel(true);
             future = null;
         }
+        //线程池执行一个任务
         future = mThreadPool.submit(new ImageLoadTask(img, url));
         mTaskTags.put(img, future);
     }
@@ -144,6 +158,7 @@ public class imageLoader {
 
         @Override
         public void run() {
+            //从网络下载图片
             final Bitmap bitmap = HttpUtil.downloadBitmap(mUrl);
             write2Local(mUrl, bitmap);  //存储到本地
             setLruCaches(mUrl, bitmap);  //存储到内存
@@ -151,11 +166,13 @@ public class imageLoader {
                 @Override
                 public void run() {
                     if (mListView != null){
+                        //用于ListView，取出ListView中Tag为mUrl的ImageView，可以防止图片出现错乱
                         ImageView img = (ImageView) mListView.findViewWithTag(mUrl);
                         if (img != null && bitmap != null){
                             img.setImageBitmap(bitmap);
                         }
                     } else {
+                        //不是的话直接调用loadingImage方法加载图片
                         loadingImage(img, mUrl);
                     }
                 }

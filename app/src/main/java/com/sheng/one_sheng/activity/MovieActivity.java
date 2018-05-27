@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,10 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
-        setToolbar();
         changeStatusBar();
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
+        setSupportActionBar(mToolbar);
         mDialog = LoadDialog.showDialog(MovieActivity.this);
         mDialog.show();
         mListView = (RefreshListView) findViewById(R.id.movie_list_view);
@@ -114,10 +117,8 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                 final List<Movie> movies = Utilty.handleMovieListResponse(responseText);
 
                 if (url.equals(MOVIE_LIST_URL)){
-                    Message message = handler.obtainMessage();
-                    message.what = MOVIE_LIST;
-                    message.obj = movies;
-                    handler.sendMessage(message);   //将Message对象发送出去
+                    //发送消息
+                    handler.obtainMessage(MOVIE_LIST, movies).sendToTarget();
                     //同时将服务器返回的数据缓存起来
                     SPUtil.setParam(MyApplication.getContext(), "movie_list", responseText);
 
@@ -129,10 +130,8 @@ public class MovieActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Message message = handler.obtainMessage();
-                    message.what = MOVIE_MORE;
-                    message.obj = movies;            //将删除重复对象之后新的集合发送出去
-                    handler.sendMessage(message);   //将Message对象发送出去
+                    //发送消息
+                    handler.obtainMessage(MOVIE_MORE, movies).sendToTarget();
                     //同时将服务器返回的数据缓存起来
                     SPUtil.setParam(MyApplication.getContext(), "movie_more", responseText);
                 }

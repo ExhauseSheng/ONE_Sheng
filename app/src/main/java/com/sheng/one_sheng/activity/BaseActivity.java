@@ -21,7 +21,6 @@ import com.sheng.one_sheng.R;
  */
 public abstract class BaseActivity extends AppCompatActivity
 {
-    protected Toolbar mToolbar;    //定制toolbar
 
     @Override
     protected void onCreate( Bundle savedInstanceState) {
@@ -61,9 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * 设置toolbar，代替AvtionBar，并添加返回按钮
      */
     protected void setToolbar(){
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
-        setSupportActionBar(mToolbar);
+
     }
 }
 

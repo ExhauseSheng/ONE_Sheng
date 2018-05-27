@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -83,8 +84,10 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
-        setToolbar();
         changeStatusBar();
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
+        setSupportActionBar(mToolbar);
         mDialog = LoadDialog.showDialog(PaperActivity.this);
         mDialog.show();     //显示加载框
         mListView = (RefreshListView) findViewById(R.id.paper_list_view);
@@ -174,10 +177,8 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                         }
                     }
                 }
-                Message message = handler.obtainMessage();
-                message.what = PAPER_ID;
-                message.obj = paperIdList;            //将删除之后新的集合发送出去
-                handler.sendMessage(message);   //将Message对象发送出去
+                //发送消息
+                handler.obtainMessage(PAPER_ID, paperIdList).sendToTarget();
             }
 
             @Override
@@ -205,15 +206,10 @@ public class PaperActivity extends BaseActivity implements OnRefreshListener, Vi
                     //将服务器返回来的数据解析成Paper实体类
                     final String responseText = response;
                     final Paper paper = Utilty.handlePaperDetailResponse(responseText);
-                    Message message = handler.obtainMessage();
-                    message.what = PAPER_LIST;
-                    message.obj = paper;
-                    handler.sendMessage(message);   //将Message对象发送出去
-
-                    Message message2 = handler.obtainMessage();
-                    message2.what = PAPER_IMAGE;
-                    message2.obj = paper.getImageUrl();
-                    handler.sendMessage(message2);   //将Message2对象发送出去
+                    //将Message对象发送出去
+                    handler.obtainMessage(PAPER_LIST, paper).sendToTarget();
+                    //将Message2对象发送出去
+                    handler.obtainMessage(PAPER_IMAGE, paper.getImageUrl()).sendToTarget();
                 }
 
                 @Override

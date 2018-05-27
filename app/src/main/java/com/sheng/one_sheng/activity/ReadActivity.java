@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,12 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
-        setToolbar();
         changeStatusBar();
+        //设置Toolbar
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");   //将原本的标题栏清空，而用一个新的TextView代替
+        setSupportActionBar(mToolbar);
+        //设置加载框
         mDialog = LoadDialog.showDialog(ReadActivity.this);
         mDialog.show();
         mListView = (RefreshListView) findViewById(R.id.read_list_view);
@@ -109,11 +114,9 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                 final String responseText = response;
                 final List<Read> reads = Utilty.handleReadListResponse(responseText);
                 if (url.equals(READ_LIST_URL)){
-                    Message message = handler.obtainMessage();
-                    message.what = READ_LIST;
-                    message.obj = reads;
-                    handler.sendMessage(message);   //将Message对象发送出去
-                    //将数据缓存下来
+                    //发送消息
+                    handler.obtainMessage(READ_LIST, reads).sendToTarget();
+                    //同时将数据缓存下来
                     SPUtil.setParam(MyApplication.getContext(), "read_list", responseText);
 
                 } else if (url.equals(READ_MORE_URL)){  //如果加载更多
@@ -124,11 +127,9 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
                             }
                         }
                     }
-                    Message message = handler.obtainMessage();
-                    message.what = READ_MORE;
-                    message.obj = reads;            //将删除之后新的集合发送出去
-                    handler.sendMessage(message);   //将Message对象发送出去
-                    //将数据缓存下来
+                    //发送消息
+                    handler.obtainMessage(READ_MORE, reads).sendToTarget();
+                    //同时将数据缓存下来
                     SPUtil.setParam(MyApplication.getContext(), "read_more", responseText);
                 }
             }
@@ -215,8 +216,9 @@ public class ReadActivity extends BaseActivity implements OnRefreshListener {
 
             @Override
             protected Void doInBackground(Void... params) {
-                SystemClock.sleep(LIST_MORE_TIME);
+                SystemClock.sleep(LIST_MORE_TIME);  //加载时间
                 if (isFirstLoadingMore) {      //如果这是第一次加载更多数据
+                    //取出缓存
                     String readListString = (String) SPUtil.getParam(MyApplication.getContext(), "read_more", "");
                     if (readListString != null){
                         //如果有缓存就直接解析
